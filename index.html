@@ -73,7 +73,9 @@
       text-shadow:0 3px 26px rgba(0,0,0,.55),0 1px 4px rgba(0,0,0,.4)}
   .slider-content .kicker,.slider-content .slogan{text-shadow:0 2px 14px rgba(0,0,0,.6)}
   .eq-heart{filter:drop-shadow(0 10px 30px rgba(0,0,0,.65))}
-  .slider-content h1 .grad{background:linear-gradient(100deg,var(--coral),var(--yellow) 30%,var(--teal) 60%,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% auto;animation:flow 6s linear infinite}
+  /* Renk geçişli kelime: harf içi saydam olduğu için text-shadow harflerin
+     İÇİNDEN görünüp rengi kirletiyor — bu kelimede gölge kapalı. */
+  .slider-content h1 .grad{background:linear-gradient(100deg,var(--coral),var(--yellow) 30%,var(--teal) 60%,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% auto;animation:flow 6s linear infinite;text-shadow:none}
   @keyframes flow{to{background-position:200% center}}
   .slogan{font-size:clamp(17px,2.2vw,24px);font-weight:400;opacity:.92;margin-top:20px;letter-spacing:.2em}
   .slogan b{font-weight:700}
