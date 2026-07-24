@@ -95,11 +95,17 @@
   .palet .swatch:hover{transform:scale(1.18)}
   .palet .ozel{width:20px;height:20px;border:none;border-radius:50%;padding:0;cursor:pointer;background:conic-gradient(#ff0007,#ffca11,#00bac5,#0081ba,#f75843,#ff0007);box-shadow:0 0 0 1px rgba(0,0,0,.18)}
   .palet input[type=color]{width:0;height:0;opacity:0;position:absolute;pointer-events:none}
-  .onizle{margin-top:10px;background:#1d1d1d;border-radius:11px;padding:14px 17px}
-  .onizle-lbl{display:block;font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#7a7a7a;margin-bottom:9px}
-  .onizle-govde{color:#fff;font-size:16px;line-height:1.5;word-break:break-word}
-  .onizle-govde .c{color:#49a6d6}
-  .onizle-govde b{font-weight:800}
+  /* WYSIWYG yazı kutusu — sitenin koyu zeminini taklit eder,
+     yazdığın şey birebir sitede göründüğü gibi durur */
+  .yaz{background:#1d1d1d;color:#fff;border:1px solid #333;border-radius:11px;
+       padding:14px 17px;font-size:16px;line-height:1.55;min-height:52px;
+       word-break:break-word;outline:none;transition:border-color .15s;cursor:text}
+  .yaz.uzun{min-height:96px}
+  .yaz:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,129,186,.18)}
+  .yaz.asti{border-color:#d33}
+  .yaz b{font-weight:800}
+  .yaz .c{color:#49a6d6}          /* eski içerikteki mavi sınıf */
+  .yaz:empty:before{content:attr(data-bos);color:#666}
   input[type=text],input[type=url],textarea,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit;background:#fafafa}
   input:focus,textarea:focus,select:focus{outline:none;border-color:var(--blue);background:#fff}
   input.asti,textarea.asti{border-color:#e39c9c;background:#fff8f8}
@@ -320,7 +326,7 @@ function cizMenu(){
 }
 
 /* ==== ANA ÇİZİM ==== */
-function render(){ cizSecici(); cizMenu(); cizPanel(); sayaclariKur(); onizlemeleriKur(); }
+function render(){ cizSecici(); cizMenu(); cizPanel(); sayaclariKur(); editorleriKur(); }
 function yenile(){ render(); }
 const renderRadios=yenile, renderSlides=yenile, renderSlogans=yenile, renderStats=yenile;
 
@@ -559,33 +565,12 @@ function urlInput(v,yol,ph,on){
 function taInput(v,yol,max,ph){
   return '<textarea '+(max?'data-max="'+max+'" ':'')+(ph?'placeholder="'+att(ph)+'" ':'')+'oninput="'+yol+'=this.value">'+att(v)+'</textarea>';
 }
-/* --- Biçimlendirilebilir alan: araç butonları + canlı önizleme ---
-   Kullanıcı HTML yazmak zorunda kalmasın diye; etiketleri butonlar ekler. */
-function zenginAlan(id, etiket, deger, yol, max, araclar, coklu, ipucu){
-  const gorunen = String(deger||'').replace(/<[^>]*>/g,'').length;
-  const sayac = max ? '<span class="lim">en fazla '+max+' karakter</span><span class="say" data-say>'+gorunen+'/'+max+'</span>' : '';
-  const ARAC = { satir:'↵ Satır atla', kalin:'B Kalın', temiz:'✕ Rengi kaldır' };
-  const butonlar = araclar.map(function(a){
-    if(a==='renk') return palet(id);
-    return '<button type="button" onclick="bicim(\''+id+'\',\''+a+'\')">'+ARAC[a]+'</button>';
-  }).join('');
-  /* data-html: sayaç etiketleri değil, GÖRÜNEN metni saysın */
-  const ortak = 'id="'+id+'" data-html="1" '+(max?'data-max="'+max+'" ':'')+'oninput="'+yol+'=this.value;onizle(\''+id+'\')"';
-  const girdi = coklu
-    ? '<textarea '+ortak+'>'+att(deger)+'</textarea>'
-    : '<input type="text" '+ortak+' value="'+att(deger)+'">';
-  return '<div class="field"><label>'+etiket+sayac+'</label>'
-    + '<div class="arac">'+butonlar+'</div>'
-    + girdi
-    + '<div class="onizle"><span class="onizle-lbl">Sitede böyle görünecek</span><div class="onizle-govde" id="'+id+'_onizleme"></div></div>'
-    + (ipucu?'<div class="hint">'+ipucu+'</div>':'')
-    + '</div>';
-}
-function onizle(id){
-  const el=document.getElementById(id), hedef=document.getElementById(id+'_onizleme');
-  if(el&&hedef) hedef.innerHTML = el.value || '<span style="opacity:.35">(boş)</span>';
-}
-/* Marka paleti — sitenin dört radyosu + Bayrakstar renkleri */
+/* ============================================================
+   BİÇİMLENDİRİLEBİLİR ALAN (WYSIWYG)
+   Kullanıcı HTML görmez: kutu doğrudan sonucu gösterir, Enter satır
+   atlar, renk anında uygulanır. Yazılan içerik kaydederken temiz
+   HTML'e çevrilir (yalnız <br>, <b>, <i>, <span style="color:...">).
+   ============================================================ */
 const PALET = [
   ['#ff0007','Kırmızı (Fenomen)'],
   ['#f75843','Mercan'],
@@ -594,33 +579,134 @@ const PALET = [
   ['#0081ba','Mavi (İstanbul FM)'],
   ['#ffffff','Beyaz']
 ];
+
+function zenginAlan(id, etiket, deger, yol, max, araclar, coklu, ipucu){
+  const gorunen = String(deger||'').replace(/<br\s*\/?>/gi,' ').replace(/<[^>]*>/g,'').length;
+  const sayac = max ? '<span class="lim">en fazla '+max+' karakter</span><span class="say" data-say>'+gorunen+'/'+max+'</span>' : '';
+  const ARAC = { kalin:'<b>B</b>&nbsp;Kalın', temiz:'✕ Biçimi temizle' };
+  const butonlar = araclar.filter(function(a){return a!=='satir';}).map(function(a){
+    if(a==='renk') return palet(id);
+    return '<button type="button" onmousedown="event.preventDefault()" onclick="yazArac(\''+id+'\',\''+a+'\')">'+ARAC[a]+'</button>';
+  }).join('');
+  const cokSatir = araclar.indexOf('satir')>=0;
+  return '<div class="field"><label>'+etiket+sayac+'</label>'
+    + '<div class="arac">'+butonlar+'</div>'
+    + '<div class="yaz'+(coklu?' uzun':'')+'" id="'+id+'" contenteditable="true" spellcheck="false"'
+    +   ' data-yol="'+att(yol)+'"'+(max?' data-max="'+max+'"':'')+(cokSatir?' data-satir="1"':'')
+    +   ' data-baslangic="'+att(deger)+'"></div>'
+    + '<div class="hint">'+(cokSatir?'Alt satıra geçmek için <b>Enter</b>’a bas. ':'')
+    +   (ipucu||'Kelimeyi seç, sonra bir renk yuvarlağına ya da <b>B</b>’ye bas.')+'</div>'
+    + '</div>';
+}
+
 function palet(id){
   const kutular = PALET.map(function(r){
     return '<button type="button" class="swatch" style="background:'+r[0]+'" title="'+r[1]+'" '
-         + 'onclick="bicim(\''+id+'\',\'renk\',\''+r[0]+'\')"></button>';
+         + 'onmousedown="event.preventDefault()" onclick="yazArac(\''+id+'\',\'renk\',\''+r[0]+'\')"></button>';
   }).join('');
   return '<span class="palet"><span class="plbl">🎨 Renk</span>'+kutular
        + '<button type="button" class="ozel" title="Başka bir renk seç" '
+       + 'onmousedown="event.preventDefault();secimiSakla(\''+id+'\')" '
        + 'onclick="document.getElementById(\''+id+'_renk\').click()"></button>'
        + '<input type="color" id="'+id+'_renk" value="#ff0007" '
-       + 'oninput="bicim(\''+id+'\',\'renk\',this.value)"></span>';
+       + 'oninput="yazArac(\''+id+'\',\'renk\',this.value)"></span>';
 }
 
-function bicim(id,tip,deger){
-  const el=document.getElementById(id); if(!el) return;
-  const bas=el.selectionStart, son=el.selectionEnd, secili=el.value.slice(bas,son);
-  let ekle, imlec;
-  if(tip==='satir'){ ekle='<br>'; imlec=bas+4; }
-  else if(tip==='renk'){ ekle='<span style="color:'+deger+'">'+(secili||'renkli yazı')+'</span>'; imlec=bas+ekle.length; }
-  else if(tip==='temiz'){ ekle=(secili||'').replace(/<\/?span[^>]*>/gi,''); imlec=bas+ekle.length; }
-  else { ekle='<b>'+(secili||'kalın yazı')+'</b>'; imlec=bas+ekle.length; }
-  el.value = el.value.slice(0,bas)+ekle+el.value.slice(son);
-  el.dispatchEvent(new Event('input',{bubbles:true}));   /* D'ye yaz + sayaç + önizleme */
-  el.focus(); el.setSelectionRange(imlec,imlec);
+/* --- seçimi sakla/geri yükle (renk seçici odağı çalıyor) --- */
+let _secim=null;
+function secimiSakla(){
+  const s=window.getSelection();
+  _secim = (s && s.rangeCount) ? s.getRangeAt(0).cloneRange() : null;
 }
-function onizlemeleriKur(){
-  document.querySelectorAll('#panel [id$="_onizleme"]').forEach(function(h){
-    onizle(h.id.replace('_onizleme',''));
+function secimiGeriYukle(){
+  if(!_secim) return;
+  const s=window.getSelection(); s.removeAllRanges(); s.addRange(_secim);
+}
+
+/* --- araç uygula --- */
+function yazArac(id,tip,deger){
+  const el=document.getElementById(id); if(!el) return;
+  el.focus();
+  if(tip==='renk' && _secim){ secimiGeriYukle(); _secim=null; }
+  try{ document.execCommand('styleWithCSS', false, tip==='renk'); }catch(e){}
+  if(tip==='renk')       document.execCommand('foreColor', false, deger);
+  else if(tip==='kalin') document.execCommand('bold');
+  else if(tip==='temiz') document.execCommand('removeFormat');
+  yazDegisti(el);
+}
+
+/* --- düzenlenen içeriği TEMİZ HTML'e çevir --- */
+function seriHTML(kok){
+  function kacir(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function renkAl(n){
+    if(n.style && n.style.color) return n.style.color;
+    if(n.tagName==='FONT' && n.getAttribute('color')) return n.getAttribute('color');
+    return '';
+  }
+  function kalinMi(n){
+    if(n.tagName==='B'||n.tagName==='STRONG') return true;
+    const w=n.style && n.style.fontWeight;
+    return w==='bold' || (+w>=600);
+  }
+  function egikMi(n){
+    return n.tagName==='I'||n.tagName==='EM' || (n.style && n.style.fontStyle==='italic');
+  }
+  function gez(n){
+    let cikti='';
+    for(let i=0;i<n.childNodes.length;i++){
+      const c=n.childNodes[i];
+      if(c.nodeType===3){ cikti+=kacir(c.nodeValue); continue; }
+      if(c.nodeType!==1) continue;
+      if(c.tagName==='BR'){ cikti+='<br>'; continue; }
+      let ic=gez(c);
+      if(!ic) continue;
+      if(kalinMi(c)) ic='<b>'+ic+'</b>';
+      if(egikMi(c))  ic='<i>'+ic+'</i>';
+      const renk=renkAl(c);
+      if(renk) ic='<span style="color:'+renk+'">'+ic+'</span>';
+      /* contenteditable bazen DIV/P üretir — satır sonuna çevir */
+      if((c.tagName==='DIV'||c.tagName==='P') && cikti && !/<br>$/.test(cikti)) cikti+='<br>';
+      cikti+=ic;
+    }
+    return cikti;
+  }
+  return gez(kok).replace(/(<br>\s*)+$/,'');
+}
+
+function yazDegisti(el){
+  const v=seriHTML(el);
+  try{ new Function('D','v', el.getAttribute('data-yol')+'=v;')(D,v); }catch(e){}
+  const s=el.closest('.field').querySelector('[data-say]');
+  const max=+el.getAttribute('data-max');
+  if(s && max){
+    const n=el.textContent.length, asti=n>max;
+    s.textContent=n+'/'+max;
+    s.classList.toggle('asti',asti);
+    s.classList.toggle('yakin',!asti && n>max*0.9);
+    el.classList.toggle('asti',asti);
+  }
+}
+
+/* --- editörleri kur (her render sonrası) --- */
+function editorleriKur(){
+  document.querySelectorAll('#panel .yaz[contenteditable]').forEach(function(el){
+    /* Eski içerikteki sınıf tabanlı mavi (<span class="c">) satır içi renge
+       çevrilir; yoksa ilk düzenlemede rengi kaybolurdu. */
+    el.innerHTML = (el.getAttribute('data-baslangic') || '')
+      .replace(/<span\s+class=["']c["']\s*>/gi, '<span style="color:#0081ba">');
+    el.addEventListener('input', function(){ yazDegisti(el); });
+    el.addEventListener('keydown', function(e){
+      if(e.key!=='Enter') return;
+      e.preventDefault();
+      if(el.getAttribute('data-satir')) document.execCommand('insertLineBreak');
+    });
+    /* yapıştırmada dış biçimlendirme gelmesin — düz metin olarak al */
+    el.addEventListener('paste', function(e){
+      e.preventDefault();
+      const t=(e.clipboardData||window.clipboardData).getData('text/plain');
+      document.execCommand('insertText', false, t);
+    });
+    yazDegisti(el);
   });
 }
 
@@ -653,6 +739,9 @@ function logoAlani(r,i){
 /* ==== KARAKTER SAYAÇLARI ==== */
 function sayaclariKur(){
   document.querySelectorAll('#panel [data-max]').forEach(function(el){
+    /* WYSIWYG kutuları (.yaz) kendi sayacını yazDegisti() ile yönetir —
+       burada dokunma, div'de el.value yok, hata verir */
+    if(el.isContentEditable) return;
     const max=+el.getAttribute('data-max');
     /* Sayaç YALNIZCA etiketli tek alanlarda (.field) gösterilir; etiketin sağında durur.
        Satır içi alanlara (frekans/yayıncı/akış/istatistik) kutu EKLENMEZ — eklenirse
