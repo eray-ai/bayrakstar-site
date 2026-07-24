@@ -77,9 +77,16 @@
     return (r && r.color) ? r.color : null;
   }
 
-  /* açılışta: bulunduğumuz sayfanın rengi (radyo sayfasında --brand) */
-  var brand = getComputedStyle(document.documentElement).getPropertyValue('--brand').trim();
-  perdeyiBoya(brand || null);
+  /* Açılış perdesi: rengi ADRESTEKİ slug'dan çöz.
+     --brand kullanılamaz — CSS'te varsayılanı kırmızı ve gerçek marka rengi
+     ancak bulut verisi geldikten SONRA atanıyor; o yüzden sarı radyoya
+     geçerken perde önce sarı kapanıp kırmızı açılıyordu. */
+  var mevcutRenk = null;
+  if(curSlug){
+    var mr = (D.radios||[]).find(function(x){ return x.slug===curSlug; });
+    if(mr && mr.color) mevcutRenk = mr.color;
+  }
+  perdeyiBoya(mevcutRenk);
   requestAnimationFrame(function(){ curtain.classList.add('out'); });
 
   function goTo(href){
