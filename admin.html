@@ -83,6 +83,16 @@
   .say.yakin{color:#d98324}
   .say.asti{color:#d33}
   .say-mini{margin-left:0;flex:0 0 auto;font-size:10px;min-width:42px;text-align:right;transition:opacity .2s}
+
+  /* biçimlendirme araçları + canlı önizleme */
+  .arac{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap}
+  .arac button{background:#f2f1ee;border:1px solid var(--line);border-radius:7px;padding:6px 11px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;color:#555;transition:.12s}
+  .arac button:hover{background:#e7e6e2;border-color:#cfccc5}
+  .onizle{margin-top:10px;background:#1d1d1d;border-radius:11px;padding:14px 17px}
+  .onizle-lbl{display:block;font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#7a7a7a;margin-bottom:9px}
+  .onizle-govde{color:#fff;font-size:16px;line-height:1.5;word-break:break-word}
+  .onizle-govde .c{color:#49a6d6}
+  .onizle-govde b{font-weight:800}
   input[type=text],input[type=url],textarea,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit;background:#fafafa}
   input:focus,textarea:focus,select:focus{outline:none;border-color:var(--blue);background:#fff}
   input.asti,textarea.asti{border-color:#e39c9c;background:#fff8f8}
@@ -303,7 +313,7 @@ function cizMenu(){
 }
 
 /* ==== ANA ÇİZİM ==== */
-function render(){ cizSecici(); cizMenu(); cizPanel(); sayaclariKur(); }
+function render(){ cizSecici(); cizMenu(); cizPanel(); sayaclariKur(); onizlemeleriKur(); }
 function yenile(){ render(); }
 const renderRadios=yenile, renderSlides=yenile, renderSlogans=yenile, renderStats=yenile;
 
@@ -332,8 +342,8 @@ function panelSite(b){
     + '</div>'
     + alan('Başlık — 2. bölüm', txtInput(D.hero.title2,'D.hero.title2',14), 14, D.hero.title2,
            'Üç parça birleşince tek başlık olur. Toplam 40 karakteri geçerse telefonda satır taşar.')
-    + alan('Slogan', txtInput(D.hero.slogan,'D.hero.slogan',45), 45, D.hero.slogan,
-           'HTML kullanılabilir; kalın için &lt;b&gt;kelime&lt;/b&gt;.');
+    + zenginAlan('z_slogan','Slogan', D.hero.slogan, 'D.hero.slogan', 45, ['kalin'], false,
+           'Bir kelimeyi kalın yapmak için seç, sonra “B Kalın”a bas.');
 
   if(b.id==='slider') return baslik(b,'Ana sayfanın tepesinde sırayla geçen tam ekran görseller.')
     + oneriKutu(GORSEL.slide)
@@ -368,10 +378,10 @@ function panelSite(b){
 
   if(b.id==='tanitim') return baslik(b,'Radyo kartlarının üstündeki Bayrakstar tanıtım bölümü ve sayı kutuları.')
     + alan('Etiket', txtInput(D.intro.tag,'D.intro.tag',26), 26, D.intro.tag)
-    + alan('Başlık', taInput(D.intro.headline,'D.intro.headline',70), 70, D.intro.headline,
-           'HTML kullanılabilir; alt satıra geçmek için &lt;br&gt;.')
-    + alan('1. Paragraf', taInput(D.intro.p1,'D.intro.p1',260), 260, D.intro.p1)
-    + alan('2. Paragraf', taInput(D.intro.p2,'D.intro.p2',260), 260, D.intro.p2,
+    + zenginAlan('z_head','Başlık', D.intro.headline, 'D.intro.headline', 70, ['satir','renk','kalin'], true,
+           'Renklendirmek istediğin kelimeleri seç, “🎨 Renkli yap”a bas. Alt satıra geçmek için imleci koy, “↵ Satır atla”ya bas.')
+    + zenginAlan('z_p1','1. Paragraf', D.intro.p1, 'D.intro.p1', 300, ['kalin'], true)
+    + zenginAlan('z_p2','2. Paragraf', D.intro.p2, 'D.intro.p2', 300, ['kalin'], true,
            'İki paragraf yan yana dizilir; benzer uzunlukta olmaları daha düzgün durur.')
     + '<label style="margin-top:20px">İstatistik kutuları</label>'
     + '<div class="hint" style="margin-bottom:10px">Sayı en fazla <b>6</b>, etiket en fazla <b>18</b> karakter.</div>'
@@ -398,8 +408,7 @@ function panelSite(b){
     + '<button class="add" onclick="addRadio()">+ Radyo Ekle</button>';
 
   if(b.id==='footer') return baslik(b,'Sayfaların en altındaki bilgi ve sosyal medya bağlantıları.')
-    + alan('Hakkında metni', taInput(D.footer.about,'D.footer.about',180), 180, D.footer.about,
-           'HTML kullanılabilir.')
+    + zenginAlan('z_footer','Hakkında metni', D.footer.about, 'D.footer.about', 180, ['kalin'], true)
     + '<div class="grid2">'
     +   alan('Instagram linki', urlInput(D.footer.socials.ig,'D.footer.socials.ig'))
     +   alan('YouTube linki',   urlInput(D.footer.socials.yt,'D.footer.socials.yt'))
@@ -543,6 +552,52 @@ function urlInput(v,yol,ph,on){
 function taInput(v,yol,max,ph){
   return '<textarea '+(max?'data-max="'+max+'" ':'')+(ph?'placeholder="'+att(ph)+'" ':'')+'oninput="'+yol+'=this.value">'+att(v)+'</textarea>';
 }
+/* --- Biçimlendirilebilir alan: araç butonları + canlı önizleme ---
+   Kullanıcı HTML yazmak zorunda kalmasın diye; etiketleri butonlar ekler. */
+function zenginAlan(id, etiket, deger, yol, max, araclar, coklu, ipucu){
+  const gorunen = String(deger||'').replace(/<[^>]*>/g,'').length;
+  const sayac = max ? '<span class="lim">en fazla '+max+' karakter</span><span class="say" data-say>'+gorunen+'/'+max+'</span>' : '';
+  const ARAC = {
+    satir: '↵ Satır atla',
+    renk:  '🎨 Renkli yap',
+    kalin: 'B Kalın'
+  };
+  const butonlar = araclar.map(function(a){
+    return '<button type="button" onclick="bicim(\''+id+'\',\''+a+'\')">'+ARAC[a]+'</button>';
+  }).join('');
+  /* data-html: sayaç etiketleri değil, GÖRÜNEN metni saysın */
+  const ortak = 'id="'+id+'" data-html="1" '+(max?'data-max="'+max+'" ':'')+'oninput="'+yol+'=this.value;onizle(\''+id+'\')"';
+  const girdi = coklu
+    ? '<textarea '+ortak+'>'+att(deger)+'</textarea>'
+    : '<input type="text" '+ortak+' value="'+att(deger)+'">';
+  return '<div class="field"><label>'+etiket+sayac+'</label>'
+    + '<div class="arac">'+butonlar+'</div>'
+    + girdi
+    + '<div class="onizle"><span class="onizle-lbl">Sitede böyle görünecek</span><div class="onizle-govde" id="'+id+'_onizleme"></div></div>'
+    + (ipucu?'<div class="hint">'+ipucu+'</div>':'')
+    + '</div>';
+}
+function onizle(id){
+  const el=document.getElementById(id), hedef=document.getElementById(id+'_onizleme');
+  if(el&&hedef) hedef.innerHTML = el.value || '<span style="opacity:.35">(boş)</span>';
+}
+function bicim(id,tip){
+  const el=document.getElementById(id); if(!el) return;
+  const bas=el.selectionStart, son=el.selectionEnd, secili=el.value.slice(bas,son);
+  let ekle, imlec;
+  if(tip==='satir'){ ekle='<br>'; imlec=bas+4; }
+  else if(tip==='renk'){ ekle='<span class="c">'+(secili||'renkli yazı')+'</span>'; imlec=bas+ekle.length; }
+  else { ekle='<b>'+(secili||'kalın yazı')+'</b>'; imlec=bas+ekle.length; }
+  el.value = el.value.slice(0,bas)+ekle+el.value.slice(son);
+  el.dispatchEvent(new Event('input',{bubbles:true}));   /* D'ye yaz + sayaç + önizleme */
+  el.focus(); el.setSelectionRange(imlec,imlec);
+}
+function onizlemeleriKur(){
+  document.querySelectorAll('#panel [id$="_onizleme"]').forEach(function(h){
+    onizle(h.id.replace('_onizleme',''));
+  });
+}
+
 function selectInput(secenekler,secili,yol){
   return '<select onchange="'+yol+'=this.value">'+secenekler.map(function(f){
     return '<option '+(f===secili?'selected':'')+'>'+f+'</option>';}).join('')+'</select>';
@@ -573,33 +628,29 @@ function logoAlani(r,i){
 function sayaclariKur(){
   document.querySelectorAll('#panel [data-max]').forEach(function(el){
     const max=+el.getAttribute('data-max');
-    let s=null, satirIci=false;
-
-    /* 1) Etiketli tek alan (.field) ise sayaç etiketin sağında durur */
+    /* Sayaç YALNIZCA etiketli tek alanlarda (.field) gösterilir; etiketin sağında durur.
+       Satır içi alanlara (frekans/yayıncı/akış/istatistik) kutu EKLENMEZ — eklenirse
+       grid/flex satırının fazladan hücresi olup düzeni bozuyor. Orada uyarı,
+       kutunun kırmızıya dönmesi + fare üstüne gelince çıkan ipucu ile veriliyor. */
+    let s=null;
     const f=el.closest('.field');
     if(f && f.querySelectorAll('[data-max]').length===1) s=f.querySelector('label [data-say]');
-
-    /* 2) Satır içi alan (frekans/yayıncı/akış satırları): her girdiye KENDİ sayacı */
-    if(!s){
-      satirIci=true;
-      const yan=el.nextElementSibling;
-      if(yan && yan.hasAttribute && yan.hasAttribute('data-say')) s=yan;
-      else{
-        s=document.createElement('span'); s.className='say say-mini'; s.setAttribute('data-say','');
-        el.insertAdjacentElement('afterend', s);
-      }
-    }
-    if(!s) return;
     el.setAttribute('title','En fazla '+max+' karakter önerilir');
 
+    const gorunenUzunluk=function(){
+      /* biçimlendirilebilir alanlarda <b>, <br>, <span> gibi etiketler sayılmaz */
+      return el.hasAttribute('data-html')
+        ? el.value.replace(/<[^>]*>/g,'').length
+        : el.value.length;
+    };
     const guncelle=function(){
-      const n=el.value.length, asti=n>max, yakin=!asti && n>max*0.9;
-      s.textContent=n+'/'+max;
-      s.classList.toggle('asti', asti);
-      s.classList.toggle('yakin', yakin);
+      const n=gorunenUzunluk(), asti=n>max, yakin=!asti && n>max*0.9;
       el.classList.toggle('asti', asti);
-      /* satır içi sayaç sadece sınıra yaklaşınca görünür, satırı kalabalıklaştırmasın */
-      if(satirIci) s.style.opacity = (asti||yakin) ? '1' : '0';
+      if(s){
+        s.textContent=n+'/'+max;
+        s.classList.toggle('asti', asti);
+        s.classList.toggle('yakin', yakin);
+      }
     };
     el.addEventListener('input',guncelle); guncelle();
   });
