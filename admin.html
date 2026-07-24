@@ -85,9 +85,16 @@
   .say-mini{margin-left:0;flex:0 0 auto;font-size:10px;min-width:42px;text-align:right;transition:opacity .2s}
 
   /* biçimlendirme araçları + canlı önizleme */
-  .arac{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap}
+  .arac{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap;align-items:center}
   .arac button{background:#f2f1ee;border:1px solid var(--line);border-radius:7px;padding:6px 11px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;color:#555;transition:.12s}
   .arac button:hover{background:#e7e6e2;border-color:#cfccc5}
+  /* renk paleti */
+  .palet{display:flex;gap:4px;align-items:center;background:#f2f1ee;border:1px solid var(--line);border-radius:7px;padding:4px 7px}
+  .palet .plbl{font-size:11px;font-weight:800;color:#555;margin-right:3px}
+  .palet .swatch{width:20px;height:20px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.18);cursor:pointer;padding:0;transition:transform .12s}
+  .palet .swatch:hover{transform:scale(1.18)}
+  .palet .ozel{width:20px;height:20px;border:none;border-radius:50%;padding:0;cursor:pointer;background:conic-gradient(#ff0007,#ffca11,#00bac5,#0081ba,#f75843,#ff0007);box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+  .palet input[type=color]{width:0;height:0;opacity:0;position:absolute;pointer-events:none}
   .onizle{margin-top:10px;background:#1d1d1d;border-radius:11px;padding:14px 17px}
   .onizle-lbl{display:block;font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#7a7a7a;margin-bottom:9px}
   .onizle-govde{color:#fff;font-size:16px;line-height:1.5;word-break:break-word}
@@ -342,8 +349,8 @@ function panelSite(b){
     + '</div>'
     + alan('Başlık — 2. bölüm', txtInput(D.hero.title2,'D.hero.title2',14), 14, D.hero.title2,
            'Üç parça birleşince tek başlık olur. Toplam 40 karakteri geçerse telefonda satır taşar.')
-    + zenginAlan('z_slogan','Slogan', D.hero.slogan, 'D.hero.slogan', 45, ['kalin'], false,
-           'Bir kelimeyi kalın yapmak için seç, sonra “B Kalın”a bas.');
+    + zenginAlan('z_slogan','Slogan', D.hero.slogan, 'D.hero.slogan', 45, ['renk','kalin','temiz'], false,
+           'Bir kelimeyi seç, sonra renk yuvarlağına ya da “B Kalın”a bas.');
 
   if(b.id==='slider') return baslik(b,'Ana sayfanın tepesinde sırayla geçen tam ekran görseller.')
     + oneriKutu(GORSEL.slide)
@@ -378,10 +385,10 @@ function panelSite(b){
 
   if(b.id==='tanitim') return baslik(b,'Radyo kartlarının üstündeki Bayrakstar tanıtım bölümü ve sayı kutuları.')
     + alan('Etiket', txtInput(D.intro.tag,'D.intro.tag',26), 26, D.intro.tag)
-    + zenginAlan('z_head','Başlık', D.intro.headline, 'D.intro.headline', 70, ['satir','renk','kalin'], true,
-           'Renklendirmek istediğin kelimeleri seç, “🎨 Renkli yap”a bas. Alt satıra geçmek için imleci koy, “↵ Satır atla”ya bas.')
-    + zenginAlan('z_p1','1. Paragraf', D.intro.p1, 'D.intro.p1', 300, ['kalin'], true)
-    + zenginAlan('z_p2','2. Paragraf', D.intro.p2, 'D.intro.p2', 300, ['kalin'], true,
+    + zenginAlan('z_head','Başlık', D.intro.headline, 'D.intro.headline', 70, ['satir','renk','kalin','temiz'], true,
+           'Renklendirmek istediğin kelimeleri seç, sonra bir renk yuvarlağına bas. Sağdaki gökkuşağı düğmesinden istediğin rengi de seçebilirsin.')
+    + zenginAlan('z_p1','1. Paragraf', D.intro.p1, 'D.intro.p1', 300, ['renk','kalin','temiz'], true)
+    + zenginAlan('z_p2','2. Paragraf', D.intro.p2, 'D.intro.p2', 300, ['renk','kalin','temiz'], true,
            'İki paragraf yan yana dizilir; benzer uzunlukta olmaları daha düzgün durur.')
     + '<label style="margin-top:20px">İstatistik kutuları</label>'
     + '<div class="hint" style="margin-bottom:10px">Sayı en fazla <b>6</b>, etiket en fazla <b>18</b> karakter.</div>'
@@ -408,7 +415,7 @@ function panelSite(b){
     + '<button class="add" onclick="addRadio()">+ Radyo Ekle</button>';
 
   if(b.id==='footer') return baslik(b,'Sayfaların en altındaki bilgi ve sosyal medya bağlantıları.')
-    + zenginAlan('z_footer','Hakkında metni', D.footer.about, 'D.footer.about', 180, ['kalin'], true)
+    + zenginAlan('z_footer','Hakkında metni', D.footer.about, 'D.footer.about', 180, ['renk','kalin','temiz'], true)
     + '<div class="grid2">'
     +   alan('Instagram linki', urlInput(D.footer.socials.ig,'D.footer.socials.ig'))
     +   alan('YouTube linki',   urlInput(D.footer.socials.yt,'D.footer.socials.yt'))
@@ -557,12 +564,9 @@ function taInput(v,yol,max,ph){
 function zenginAlan(id, etiket, deger, yol, max, araclar, coklu, ipucu){
   const gorunen = String(deger||'').replace(/<[^>]*>/g,'').length;
   const sayac = max ? '<span class="lim">en fazla '+max+' karakter</span><span class="say" data-say>'+gorunen+'/'+max+'</span>' : '';
-  const ARAC = {
-    satir: '↵ Satır atla',
-    renk:  '🎨 Renkli yap',
-    kalin: 'B Kalın'
-  };
+  const ARAC = { satir:'↵ Satır atla', kalin:'B Kalın', temiz:'✕ Rengi kaldır' };
   const butonlar = araclar.map(function(a){
+    if(a==='renk') return palet(id);
     return '<button type="button" onclick="bicim(\''+id+'\',\''+a+'\')">'+ARAC[a]+'</button>';
   }).join('');
   /* data-html: sayaç etiketleri değil, GÖRÜNEN metni saysın */
@@ -581,12 +585,34 @@ function onizle(id){
   const el=document.getElementById(id), hedef=document.getElementById(id+'_onizleme');
   if(el&&hedef) hedef.innerHTML = el.value || '<span style="opacity:.35">(boş)</span>';
 }
-function bicim(id,tip){
+/* Marka paleti — sitenin dört radyosu + Bayrakstar renkleri */
+const PALET = [
+  ['#ff0007','Kırmızı (Fenomen)'],
+  ['#f75843','Mercan'],
+  ['#ffca11','Sarı (Boombox)'],
+  ['#00bac5','Turkuaz'],
+  ['#0081ba','Mavi (İstanbul FM)'],
+  ['#ffffff','Beyaz']
+];
+function palet(id){
+  const kutular = PALET.map(function(r){
+    return '<button type="button" class="swatch" style="background:'+r[0]+'" title="'+r[1]+'" '
+         + 'onclick="bicim(\''+id+'\',\'renk\',\''+r[0]+'\')"></button>';
+  }).join('');
+  return '<span class="palet"><span class="plbl">🎨 Renk</span>'+kutular
+       + '<button type="button" class="ozel" title="Başka bir renk seç" '
+       + 'onclick="document.getElementById(\''+id+'_renk\').click()"></button>'
+       + '<input type="color" id="'+id+'_renk" value="#ff0007" '
+       + 'oninput="bicim(\''+id+'\',\'renk\',this.value)"></span>';
+}
+
+function bicim(id,tip,deger){
   const el=document.getElementById(id); if(!el) return;
   const bas=el.selectionStart, son=el.selectionEnd, secili=el.value.slice(bas,son);
   let ekle, imlec;
   if(tip==='satir'){ ekle='<br>'; imlec=bas+4; }
-  else if(tip==='renk'){ ekle='<span class="c">'+(secili||'renkli yazı')+'</span>'; imlec=bas+ekle.length; }
+  else if(tip==='renk'){ ekle='<span style="color:'+deger+'">'+(secili||'renkli yazı')+'</span>'; imlec=bas+ekle.length; }
+  else if(tip==='temiz'){ ekle=(secili||'').replace(/<\/?span[^>]*>/gi,''); imlec=bas+ekle.length; }
   else { ekle='<b>'+(secili||'kalın yazı')+'</b>'; imlec=bas+ekle.length; }
   el.value = el.value.slice(0,bas)+ekle+el.value.slice(son);
   el.dispatchEvent(new Event('input',{bubbles:true}));   /* D'ye yaz + sayaç + önizleme */
