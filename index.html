@@ -80,11 +80,16 @@
   .dots button.on{background:#fff;width:48px}
 
   /* ============ RED SLOGAN BAND ============ */
-  .band{background:linear-gradient(90deg,var(--red),var(--coral));position:relative;z-index:10;overflow:hidden;height:66px;display:flex;align-items:center}
-  .band .rot{position:relative;width:100%;height:100%}
+  /* Bant, o an gösterilen sloganın radyosunun rengine yumuşakça geçer.
+     Degrade animasyonlanamadığı için zemin DÜZ renk; parlama ayrı katman. */
+  .band{background-color:var(--red);position:relative;z-index:10;overflow:hidden;height:66px;display:flex;align-items:center;
+        transition:background-color .85s ease,color .85s ease}
+  .band::before{content:"";position:absolute;inset:0;pointer-events:none;
+        background:linear-gradient(90deg,rgba(255,255,255,.16),rgba(255,255,255,0) 52%,rgba(0,0,0,.12))}
+  .band .rot{position:relative;width:100%;height:100%;z-index:2}
   .band .sl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:16px;opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s;font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:clamp(15px,2.2vw,22px)}
   .band .sl.on{opacity:1;transform:none}
-  .band .sl .star{width:9px;height:9px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite}
+  .band .sl .star{width:9px;height:9px;border-radius:50%;background:currentColor;animation:pulse 1.4s infinite}
   @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
 
   /* ============ INTRO / TANITIM ============ */
@@ -373,9 +378,40 @@ if(slides.length>1) setInterval(()=>go((si+1)%slides.length),5500);
 
 /* ---- RED SLOGAN BAND ---- */
 const rot=document.getElementById('rot');
+const band=document.querySelector('.band');
 D.slogans.forEach((s,i)=>{const d=document.createElement('div');d.className='sl'+(i===0?' on':'');d.innerHTML='<span class="star"></span> '+esc(s)+' <span class="star"></span>';rot.appendChild(d);});
 const sls=[...rot.children];let bi=0;
-if(sls.length>1) setInterval(()=>{sls[bi].classList.remove('on');bi=(bi+1)%sls.length;sls[bi].classList.add('on');},2600);
+
+/* Slogan hangi radyoya aitse bant o radyonun rengine döner. */
+function _rgb(h){h=String(h||'').replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');
+  return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];}
+function _parlaklik(h){const c=_rgb(h).map(v=>v/255);return .2126*c[0]+.7152*c[1]+.0722*c[2];}
+
+function bandTemasi(s,i){
+  const t=String(s||'').toLocaleLowerCase('tr').trim();
+  const radyolar=D.radios||[];
+  /* önce sloganı birebir eşleştir, tutmazsa sıraya göre eşle */
+  let r=radyolar.find(x=>String(x.slogan||'').toLocaleLowerCase('tr').trim()===t);
+  if(!r && D.slogans.length<=radyolar.length) r=radyolar[i];
+  if(!r||!r.color) return null;
+  return { renk:r.color, yazi:_parlaklik(r.color)>.62?'#141414':'#ffffff' };
+}
+const bandTemalari=D.slogans.map(bandTemasi);
+
+function bandRengiUygula(i){
+  if(!band) return;
+  const t=bandTemalari[i];
+  band.style.backgroundColor = t ? t.renk : '';
+  band.style.color           = t ? t.yazi : '';
+}
+bandRengiUygula(0);
+
+if(sls.length>1) setInterval(()=>{
+  sls[bi].classList.remove('on');
+  bi=(bi+1)%sls.length;
+  sls[bi].classList.add('on');
+  bandRengiUygula(bi);
+},2600);
 
 /* ---- INTRO ---- */
 document.getElementById('iTag').textContent = D.intro.tag;
