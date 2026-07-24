@@ -37,7 +37,7 @@
     .pagecurtain.out{transform:translateY(-100%)}
     .pagecurtain.in{transform:translateY(0)}
     .pagecurtain .cload{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;gap:5px}
-    .pagecurtain .cload i{width:6px;height:34px;background:#fff;border-radius:4px;animation:cl .8s ease-in-out infinite}
+    .pagecurtain .cload i{width:6px;height:34px;background:var(--cbar,#fff);border-radius:4px;animation:cl .8s ease-in-out infinite}
     .pagecurtain .cload i:nth-child(2){animation-delay:.12s}.pagecurtain .cload i:nth-child(3){animation-delay:.24s}
     .pagecurtain .cload i:nth-child(4){animation-delay:.36s}.pagecurtain .cload i:nth-child(5){animation-delay:.48s}
     @keyframes cl{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
@@ -49,12 +49,41 @@
   curtain.className = 'pagecurtain';
   curtain.innerHTML = '<div class="cload"><i></i><i></i><i></i><i></i><i></i></div>';
   document.body.appendChild(curtain);
-  // temada marka rengi varsa perdeyi ona göre boya (radyo sayfaları)
+  /* Bayrakstar (çatı) sayfaları için çok renkli marka degradesi */
+  var CATI_GRADYAN = 'linear-gradient(120deg,#ff0007,#f75843 40%,#00bac5 75%,#0081ba)';
+
+  function _rgb(h){h=String(h||'').replace('#','');if(h.length===3)h=h.split('').map(function(c){return c+c;}).join('');
+    return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];}
+  function _parlak(h){var c=_rgb(h).map(function(v){return v/255;});return .2126*c[0]+.7152*c[1]+.0722*c[2];}
+
+  /* Perdeyi bir radyonun markasına göre boyar; radyo yoksa çatı degradesi */
+  function perdeyiBoya(renk){
+    if(renk){
+      curtain.style.background='linear-gradient(120deg,'+renk+', #111 118%)';
+      /* açık markalarda (Boombox sarısı) beyaz çubuklar kaybolur */
+      curtain.style.setProperty('--cbar', _parlak(renk)>.62 ? '#141414' : '#ffffff');
+    }else{
+      curtain.style.background=CATI_GRADYAN;
+      curtain.style.setProperty('--cbar','#ffffff');
+    }
+  }
+
+  /* href'ten hedef radyonun rengini bul */
+  function hedefRengi(href){
+    var m=/radyo\.html\?r=([^&#]+)/.exec(href||'');
+    if(!m) return null;
+    var slug=decodeURIComponent(m[1]);
+    var r=(D.radios||[]).find(function(x){ return x.slug===slug; });
+    return (r && r.color) ? r.color : null;
+  }
+
+  /* açılışta: bulunduğumuz sayfanın rengi (radyo sayfasında --brand) */
   var brand = getComputedStyle(document.documentElement).getPropertyValue('--brand').trim();
-  if(brand) curtain.style.background = 'linear-gradient(120deg,'+brand+', #111 120%)';
+  perdeyiBoya(brand || null);
   requestAnimationFrame(function(){ curtain.classList.add('out'); });
 
   function goTo(href){
+    perdeyiBoya(hedefRengi(href));      /* GİDİLEN sayfanın rengiyle kapan */
     curtain.classList.remove('out'); curtain.classList.add('in');
     setTimeout(function(){ location.href = href; }, 460);
   }
