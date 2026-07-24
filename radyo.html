@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bayrakstar Radyo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;500;700;900&family=Nunito:wght@400;600;700;800;900&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="data.js"></script>
+<script src="bulut.js"></script>
+<style>
+  :root{
+    --brand:#ff0007;--accent:#ffca11;--accent2:#00bac5;--ink:#fff;
+    --head:'Anton',sans-serif;--body:'Roboto',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);background:#111;color:#fff;overflow-x:hidden;padding-bottom:84px}
+  a{color:inherit;text-decoration:none}
+  .head-font{font-family:var(--head)}
+  ::selection{background:var(--brand);color:#fff}
+  img{display:block}
+
+  /* header */
+  header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 5vw;transition:background .4s,padding .4s;}
+  header.scr{background:rgba(15,15,15,.85);backdrop-filter:blur(14px);padding:10px 5vw}
+  .back{display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;opacity:.85;transition:opacity .2s}
+  .back:hover{opacity:1}
+  .back img{height:26px}
+  .sib{display:flex;gap:8px;flex-wrap:wrap}
+  .sib a{font-size:12px;font-weight:700;padding:7px 13px;border-radius:30px;border:1px solid rgba(255,255,255,.2);opacity:.75;transition:.2s;white-space:nowrap}
+  .sib a:hover,.sib a.on{opacity:1;background:var(--brand);border-color:var(--brand)}
+
+  /* hero */
+  .hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 6vw 90px;overflow:hidden}
+  .hero-bg{position:absolute;inset:0;z-index:0}
+  .hero-bg img{width:100%;height:100%;object-fit:cover;transform:scale(1.1);animation:kb 18s ease-in-out infinite alternate;opacity:.4}
+  @keyframes kb{to{transform:scale(1.25)}}
+  .hero-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 30%,color-mix(in srgb,var(--brand) 55%,transparent),rgba(10,10,10,.9) 78%),linear-gradient(180deg,rgba(10,10,10,.4),rgba(10,10,10,.92))}
+  .hero-in{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;width:100%}
+  .hero-logo{max-width:min(560px,82vw);max-height:200px;object-fit:contain;filter:drop-shadow(0 14px 40px rgba(0,0,0,.5));margin-bottom:8px;animation:pop 1s cubic-bezier(.2,.9,.3,1.2) both}
+  @keyframes pop{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:none}}
+  .hero .slg{font-family:var(--head);font-size:clamp(30px,6vw,74px);letter-spacing:.01em;line-height:1;margin-top:18px;color:var(--brand);text-shadow:0 2px 24px rgba(0,0,0,.6);text-transform:uppercase;animation:rise .8s .15s both}
+  .hero .freqline{margin-top:22px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;animation:rise .8s .3s both}
+  .chip{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(6px);padding:9px 18px;border-radius:40px;font-weight:700;font-size:14px}
+  .chip b{color:var(--brand)}
+  @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+  .hero-btns{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;justify-content:center;animation:rise .8s .45s both}
+  .btn{padding:15px 30px;border-radius:44px;font-weight:800;font-size:15px;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:10px;transition:transform .2s,box-shadow .2s}
+  .btn-play{background:var(--brand);color:var(--onbrand)}
+  .btn-play:hover{transform:translateY(-3px);box-shadow:0 14px 32px color-mix(in srgb,var(--brand) 55%,transparent)}
+  .btn-ghost{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.4);color:#fff}
+  .btn-ghost:hover{background:rgba(255,255,255,.18)}
+  /* floating eq bars */
+  .fx{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+  .fx span{position:absolute;bottom:-60px;width:10px;border-radius:6px;opacity:.16;animation:fly linear infinite}
+  @keyframes fly{0%{transform:translateY(0) rotate(0);opacity:0}12%{opacity:.2}100%{transform:translateY(-120vh) rotate(220deg);opacity:0}}
+
+  /* about */
+  .about{position:relative;padding:110px 6vw;background:#151515;overflow:hidden}
+  .about .blob{position:absolute;width:420px;height:420px;border-radius:50%;filter:blur(90px);opacity:.28;background:var(--brand);top:-120px;right:-100px;animation:drift 16s ease-in-out infinite}
+  .about .blob2{background:var(--accent);left:-120px;bottom:-140px;top:auto;right:auto;animation-delay:-6s}
+  @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.15)}}
+  .about-in{position:relative;z-index:2;max-width:900px;margin:0 auto;text-align:center}
+  .tag{display:inline-block;font-weight:800;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:22px}
+  .about h2{font-family:var(--head);font-size:clamp(30px,5vw,56px);line-height:1.05;text-transform:uppercase;letter-spacing:.01em;margin-bottom:26px}
+  .about p{font-size:18px;line-height:1.85;opacity:.82;max-width:720px;margin:0 auto 18px}
+  .feats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:44px}
+  .feat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:22px;min-width:150px;transition:transform .25s,border-color .25s}
+  .feat:hover{transform:translateY(-5px);border-color:var(--brand)}
+  .feat .ic{font-size:24px}
+  .feat .ft{font-weight:800;margin-top:10px}
+  .feat .fd{font-size:13px;opacity:.6;margin-top:3px}
+
+  /* other radios */
+  .others{padding:80px 5vw 100px;background:#111;text-align:center}
+  .others h3{font-family:var(--head);text-transform:uppercase;font-size:26px;margin-bottom:30px;opacity:.85}
+  .other-grid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .ocard{border-radius:16px;overflow:hidden;height:120px;display:flex;align-items:center;justify-content:center;position:relative;transition:transform .25s}
+  .ocard:hover{transform:translateY(-5px)}
+  .ocard img{max-width:66%;max-height:52%;object-fit:contain;position:relative;z-index:2;filter:drop-shadow(0 3px 8px rgba(0,0,0,.4))}
+  @media(max-width:640px){.other-grid{grid-template-columns:1fr 1fr}}
+
+  /* ===== BOTTOM LIVE BAND ===== */
+  .band{position:fixed;left:0;right:0;bottom:0;z-index:120;background:rgba(16,16,16,.96);backdrop-filter:blur(20px);border-top:2px solid var(--brand);box-shadow:0 -12px 40px rgba(0,0,0,.5)}
+  .band-in{max-width:1400px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:16px}
+  .band .cov{width:52px;height:52px;border-radius:12px;background:#1c1c1c;border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+  .band .cov img{max-width:80%;max-height:80%;object-fit:contain}
+  .band .meta{min-width:0;width:170px}
+  .band .nm{font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .band .sb{font-size:11px;opacity:.6;margin-top:2px;display:flex;align-items:center;gap:6px}
+  .band .sb .ld{width:7px;height:7px;border-radius:50%;background:var(--brand);animation:live 1.5s infinite}
+  @keyframes live{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--brand) 60%,transparent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+  .band .play{width:52px;height:52px;border-radius:50%;background:var(--brand);border:none;color:var(--onbrand);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s}
+  .band .play:hover{transform:scale(1.08)}
+  .band .play svg{width:22px;height:22px;fill:var(--onbrand)}
+  .viz{flex:1;display:flex;align-items:center;gap:3px;height:38px;min-width:50px;overflow:hidden;opacity:.3;transition:opacity .3s}
+  .band.on .viz{opacity:1}
+  .viz i{flex:1;min-width:2px;background:var(--brand);border-radius:2px;height:20%;transform-origin:bottom}
+  .band.on .viz i{animation:vz .8s ease-in-out infinite}
+  @keyframes vz{0%,100%{transform:scaleY(.22)}50%{transform:scaleY(1)}}
+  .vol{display:flex;align-items:center;gap:8px;width:120px;flex-shrink:0}
+  .vol svg{width:20px;height:20px;fill:rgba(255,255,255,.65)}
+  .vol input{width:100%;accent-color:var(--brand);cursor:pointer}
+  .band .siteb{flex-shrink:0;font-size:12px;font-weight:700;padding:9px 15px;border-radius:30px;border:1px solid rgba(255,255,255,.25);white-space:nowrap;transition:.2s}
+  .band .siteb:hover{background:var(--brand);border-color:var(--brand)}
+  @media(max-width:820px){.viz,.vol,.meta{display:none}.band-in{justify-content:space-between}}
+
+  /* info sections */
+  .sec{padding:80px 6vw;position:relative}
+  .sec .wrapc{max-width:1100px;margin:0 auto}
+  .sec h2{font-family:var(--head);font-size:clamp(26px,4.4vw,46px);text-transform:uppercase;letter-spacing:.01em;margin-bottom:8px;text-align:center}
+  .sec .lead{text-align:center;opacity:.6;margin-bottom:40px;font-size:15px}
+  .dark{background:#111}.darker{background:#0d0d0d}
+
+  /* yayıncı kartları */
+  .host-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+  .host{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;transition:transform .3s,border-color .3s}
+  .host:hover{transform:translateY(-6px);border-color:var(--brand)}
+  .host .ph{position:relative;aspect-ratio:1/1;overflow:hidden}
+  .host .ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s;filter:saturate(.95)}
+  .host:hover .ph img{transform:scale(1.07)}
+  .host .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(10,10,10,.85))}
+  /* resmî afiş kullanılan kart: afişin kendi yazısı okunsun diye karartma yok */
+  .host.afisli .ph::after{display:none}
+  .host.afisli .ph img{filter:none}
+  .host .ph .badge{position:absolute;left:14px;bottom:12px;z-index:2;background:var(--brand);font-size:11px;font-weight:800;letter-spacing:.05em;padding:5px 11px;border-radius:30px}
+  .host .in{padding:18px 20px 22px}
+  .host .hn{font-weight:800;font-size:19px}
+  .host .hs{color:var(--brand);font-weight:700;font-size:13px;margin-top:3px}
+  .host .badge{color:var(--onbrand)!important}
+  .host .hb{opacity:.62;font-size:13px;line-height:1.6;margin-top:10px}
+
+  /* yayın akışı */
+  .days{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+  .days button{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;font-weight:700;font-size:13px;padding:9px 16px;border-radius:30px;cursor:pointer;transition:.2s}
+  .days button.on{background:var(--brand);border-color:var(--brand);color:var(--onbrand)}
+  .timeline{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+  .tl{display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 20px;transition:background .2s,border-color .2s}
+  .tl:hover{background:rgba(255,255,255,.07)}
+  .tl.live{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 14%,transparent)}
+  .tl .tm{font-family:var(--head);font-size:16px;color:var(--brand);min-width:118px;letter-spacing:.02em}
+  .tl .info{flex:1}
+  .tl .pn{font-weight:800;font-size:16px}
+  .tl .ph2{font-size:13px;opacity:.6;margin-top:2px}
+  .tl .now{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.1em;background:var(--brand);color:var(--onbrand);padding:5px 11px;border-radius:30px;flex-shrink:0}
+  .wnote{max-width:760px;margin:22px auto 0;text-align:center;font-size:13px;opacity:.55;line-height:1.6}
+
+  .freq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+  .freq-cell{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:18px;text-align:center;transition:border-color .25s}
+  .freq-cell:hover{border-color:var(--brand)}
+  .freq-cell .fc{font-size:13px;opacity:.6;margin-bottom:6px}
+  .freq-cell .ff{font-family:var(--head);font-size:26px;color:var(--brand)}
+  .freq-cell .fu{font-size:12px;opacity:.5}
+
+  .chans{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .chan{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);padding:10px 18px;border-radius:40px;font-weight:700;font-size:14px}
+  .chan .d{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--brand);margin-right:8px}
+
+  .socrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+  .socrow a{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;transition:.25s;border:1px solid rgba(255,255,255,.12)}
+  .socrow a:hover{background:var(--brand);transform:translateY(-4px);border-color:var(--brand)}
+  .metaline{text-align:center;opacity:.45;font-size:13px;margin-top:26px;line-height:1.7}
+
+  .reveal{opacity:0;transform:translateY(40px);transition:.8s}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<header id="hdr">
+  <a class="back" href="index.html"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"> <span>← Bayrakstar</span></a>
+  <div class="sib" id="sib"></div>
+</header>
+
+<section class="hero">
+  <div class="hero-bg"><img id="heroImg" src="" alt=""></div>
+  <div class="fx" id="fx"></div>
+  <div class="hero-in">
+    <img class="hero-logo" id="heroLogo" src="" alt="">
+    <div class="slg head-font" id="slogan"></div>
+    <div class="freqline" id="freqline"></div>
+    <div class="hero-btns">
+      <button class="btn btn-play" onclick="togglePlay()"><svg viewBox="0 0 24 24" width="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Canlı Dinle</button>
+      <a class="btn btn-ghost" id="siteBtn" target="_blank" rel="noopener">Resmî Web Sitesi ↗</a>
+    </div>
+  </div>
+</section>
+
+<section class="about">
+  <div class="blob"></div><div class="blob blob2"></div>
+  <div class="about-in reveal">
+    <span class="tag" id="aboutTag">Radyo Hakkında</span>
+    <h2 class="head-font" id="aboutTitle"></h2>
+    <p id="aboutText"></p>
+    <div class="feats">
+      <div class="feat"><div class="ic">📻</div><div class="ft">7/24 Yayın</div><div class="fd">Kesintisiz canlı</div></div>
+      <div class="feat"><div class="ic">🎧</div><div class="ft">Dijital Kalite</div><div class="fd">Net ses</div></div>
+      <div class="feat"><div class="ic">📱</div><div class="ft">Her Cihazda</div><div class="fd">Web & mobil</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- YAYINCILAR -->
+<section class="sec dark reveal" id="secHosts" style="display:none">
+  <div class="wrapc">
+    <h2 class="head-font">Yayıncılarımız</h2>
+    <div class="lead">Mikrofonun ardındaki isimler</div>
+    <div class="host-grid" id="hostGrid"></div>
+  </div>
+</section>
+
+<!-- YAYIN AKIŞI -->
+<section class="sec darker reveal" id="secSched" style="display:none">
+  <div class="wrapc">
+    <h2 class="head-font">Yayın Akışı</h2>
+    <div class="lead">Gün boyu ekranında ne var?</div>
+    <div class="days" id="days"></div>
+    <div class="timeline" id="timeline"></div>
+    <div class="wnote" id="wnote"></div>
+  </div>
+</section>
+
+<!-- ALT KANALLAR -->
+<section class="sec darker reveal" id="secChan" style="display:none">
+  <div class="wrapc">
+    <h2 class="head-font">Kanallarımız</h2>
+    <div class="lead">Her zevke uygun alt yayın kanalları</div>
+    <div class="chans" id="chanList"></div>
+  </div>
+</section>
+
+<!-- FREKANSLAR -->
+<section class="sec dark reveal" id="secFreq" style="display:none">
+  <div class="wrapc">
+    <h2 class="head-font">Frekanslar</h2>
+    <div class="lead">Türkiye genelinde FM üzerinden yayındayız</div>
+    <div class="freq-grid" id="freqGrid"></div>
+  </div>
+</section>
+
+<!-- SOSYAL & İLETİŞİM -->
+<section class="sec darker reveal" id="secSocial" style="display:none">
+  <div class="wrapc">
+    <h2 class="head-font">Takip Et</h2>
+    <div class="lead">Sosyal medyada bizi kaçırma</div>
+    <div class="socrow" id="socRow"></div>
+    <div class="metaline" id="metaLine"></div>
+  </div>
+</section>
+
+<section class="others">
+  <h3 class="head-font">Diğer Radyolarımız</h3>
+  <div class="other-grid" id="others"></div>
+</section>
+
+<!-- BOTTOM LIVE BAND -->
+<div class="band" id="band">
+  <audio id="audio" preload="none"></audio>
+  <div class="band-in">
+    <div class="cov" id="bandCov"><img id="bandLogo" src="" alt=""></div>
+    <div class="meta">
+      <div class="nm" id="bandName">—</div>
+      <div class="sb"><span class="ld"></span><span id="bandSub">Canlı Yayın</span></div>
+    </div>
+    <button class="play" id="playBtn" onclick="togglePlay()"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+    <div class="viz" id="viz"></div>
+    <div class="vol">
+      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02z"/></svg>
+      <input type="range" id="vol" min="0" max="100" value="85">
+    </div>
+    <a class="siteb" id="bandSite" target="_blank" rel="noopener">Web Sitesi ↗</a>
+  </div>
+</div>
+
+<script>
+window.bulutHazir.then(function(){
+const D = window.getSiteData();
+const esc = s => (s==null?'':String(s));
+function q(k){return new URLSearchParams(location.search).get(k);}
+
+let slug = q('r') || (D.radios[0] && D.radios[0].slug);
+let R = D.radios.find(r=>r.slug===slug) || D.radios[0];
+if(!R){document.body.innerHTML='<p style="padding:40px">Radyo bulunamadı.</p>';throw 0;}
+
+/* tema */
+const rs=document.documentElement.style;
+rs.setProperty('--brand', R.color || '#ff0007');
+rs.setProperty('--accent', R.accent || '#ffca11');
+rs.setProperty('--accent2', R.accent2 || R.accent || '#00bac5');
+rs.setProperty('--head', "'"+(R.font||'Anton')+"',sans-serif");
+rs.setProperty('--body', "'"+(R.bodyFont||'Roboto')+"',sans-serif");
+// marka rengi açık mı (sarı gibi)? o zaman üzerindeki yazı siyah olsun
+function _lum(hex){hex=String(hex||'').replace('#','');if(hex.length===3)hex=hex.split('').map(function(c){return c+c;}).join('');var r=parseInt(hex.substr(0,2),16)/255,g=parseInt(hex.substr(2,2),16)/255,b=parseInt(hex.substr(4,2),16)/255;return 0.2126*r+0.7152*g+0.0722*b;}
+var brandLight = _lum(R.color) > 0.6;
+rs.setProperty('--onbrand', brandLight ? '#111111' : '#ffffff');
+document.title = R.name + ' — Bayrakstar';
+
+/* hero */
+document.getElementById('heroImg').src = R.hero || R.img || '';
+document.getElementById('heroLogo').src = R.logo || '';
+document.getElementById('slogan').textContent = R.slogan || '';
+const fl=document.getElementById('freqline');
+if(R.genre) fl.innerHTML += '<div class="chip">🎵 '+esc(R.genre)+'</div>';
+if(R.freq && R.freq.trim()) fl.innerHTML += '<div class="chip">📡 <b>'+esc(R.freq)+'</b> MHz</div>';
+fl.innerHTML += '<div class="chip">🔴 Canlı Yayında</div>';
+const sBtn=document.getElementById('siteBtn'); sBtn.href=R.url||'#';
+
+/* about */
+document.getElementById('aboutTitle').textContent = R.name;
+document.getElementById('aboutText').textContent = R.about || '';
+
+/* --- YAYINCILAR --- */
+(function(){
+  if(!R.hosts || !R.hosts.length) return;
+  document.getElementById('hostGrid').innerHTML = R.hosts.map(function(h){
+    var img = h.photo || R.img;
+    /* h.afis = resmî program afişi: kendi yazısı var, rozet+karartma bindirme */
+    return '<div class="host'+(h.afis?' afisli':'')+'"><div class="ph"><img src="'+esc(img)+'" alt="'+esc(h.name)+'" onerror="this.style.opacity=.3">'+
+      (h.show && !h.afis?'<span class="badge">'+esc(h.show)+'</span>':'')+'</div>'+
+      '<div class="in"><div class="hn">'+esc(h.name)+'</div>'+(h.show?'<div class="hs">'+esc(h.show)+'</div>':'')+
+      (h.bio?'<div class="hb">'+esc(h.bio)+'</div>':'')+'</div></div>';
+  }).join('');
+  document.getElementById('secHosts').style.display='';
+})();
+
+/* --- YAYIN AKIŞI (gün sekmeli + şimdi yayında) --- */
+(function(){
+  if(!R.schedule || !R.schedule.length) return;
+  var days=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+  var jsDay=(new Date().getDay()+6)%7; // 0=Pzt
+  var daysEl=document.getElementById('days');
+  daysEl.innerHTML = days.map(function(d,i){return '<button data-d="'+i+'"'+(i===jsDay?' class="on"':'')+'>'+d+'</button>';}).join('');
+  daysEl.querySelectorAll('button').forEach(function(b){b.onclick=function(){daysEl.querySelectorAll('button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');render(+b.dataset.d);};});
+
+  function startHour(t){var m=(t||'').match(/(\d{2}):(\d{2})/);return m?(+m[1]+ (+m[2])/60):-1;}
+  function render(dayIdx){
+    var now=new Date();var curH=now.getHours()+now.getMinutes()/60;
+    var isToday=(dayIdx===jsDay);
+    var sched=R.schedule;
+    // şimdi yayında olanı bul
+    var liveIdx=-1;
+    if(isToday){ for(var i=0;i<sched.length;i++){var s=startHour(sched[i].t);var e=(i+1<sched.length)?startHour(sched[i+1].t):24;if(e<=s)e=24;if(curH>=s&&curH<e){liveIdx=i;break;}} }
+    document.getElementById('timeline').innerHTML = sched.map(function(s,i){
+      var host = s.host?('<div class="ph2">'+esc(s.host)+'</div>'):'';
+      var live = (i===liveIdx)?'<span class="now">● ŞİMDİ</span>':'';
+      return '<div class="tl'+(i===liveIdx?' live':'')+'"><div class="tm">'+esc(s.t)+'</div><div class="info"><div class="pn">'+esc(s.name)+'</div>'+host+'</div>'+live+'</div>';
+    }).join('');
+  }
+  render(jsDay);
+  var wn=document.getElementById('wnote');
+  if(R.weekendNote) wn.textContent='ℹ️ '+R.weekendNote;
+  document.getElementById('secSched').style.display='';
+})();
+
+/* --- ALT KANALLAR --- */
+(function(){
+  if(!R.channels || !R.channels.length) return;
+  document.getElementById('chanList').innerHTML = R.channels.map(function(c){
+    return '<span class="chan"><span class="d"></span>'+esc(c)+'</span>';
+  }).join('');
+  document.getElementById('secChan').style.display='';
+})();
+
+/* --- FREKANSLAR --- */
+(function(){
+  if(!R.frequencies || !R.frequencies.length) return;
+  document.getElementById('freqGrid').innerHTML = R.frequencies.map(function(f){
+    var isNum = /[0-9]/.test(f.f||'');
+    return '<div class="freq-cell"><div class="fc">'+esc(f.c)+'</div><div class="ff">'+esc(f.f)+'</div>'+(isNum?'<div class="fu">MHz</div>':'')+'</div>';
+  }).join('');
+  document.getElementById('secFreq').style.display='';
+})();
+
+/* --- SOSYAL & İLETİŞİM --- */
+(function(){
+  var s = R.social||{}; var map={ig:'IG',x:'X',yt:'YT',fb:'FB',tiktok:'TT'};
+  var links = Object.keys(map).filter(function(k){return s[k];}).map(function(k){
+    return '<a href="'+esc(s[k])+'" target="_blank" rel="noopener" title="'+k+'">'+map[k]+'</a>';
+  });
+  var meta = [];
+  if(R.company) meta.push(esc(R.company));
+  if(R.whatsapp) meta.push('WhatsApp: '+esc(R.whatsapp));
+  if(!links.length && !meta.length) return;
+  document.getElementById('socRow').innerHTML = links.join('') || '<span style="opacity:.5">Sosyal medya bilgisi yakında</span>';
+  document.getElementById('metaLine').innerHTML = meta.join('<br>');
+  document.getElementById('secSocial').style.display='';
+})();
+
+/* floating eq bars (accent renkli) */
+(function(){const fx=document.getElementById('fx');const cols=[R.color,R.accent,R.accent2||R.accent];
+  for(let i=0;i<14;i++){const s=document.createElement('span');
+    s.style.left=Math.random()*100+'%';s.style.height=(80+Math.random()*220)+'px';
+    s.style.background=cols[i%cols.length];
+    s.style.animationDuration=(9+Math.random()*10)+'s';s.style.animationDelay=(-Math.random()*12)+'s';
+    fx.appendChild(s);}})();
+
+/* siblings + others */
+const sib=document.getElementById('sib');
+const others=document.getElementById('others');
+D.radios.forEach(r=>{
+  const a=document.createElement('a');a.href='radyo.html?r='+r.slug;a.textContent=r.name;
+  if(r.slug===R.slug)a.className='on';sib.appendChild(a);
+  if(r.slug!==R.slug){
+    const o=document.createElement('a');o.className='ocard';o.href='radyo.html?r='+r.slug;
+    o.style.background='linear-gradient(135deg,'+ (r.color==='#111111'?'#222':r.color) +',#111)';
+    o.innerHTML='<img src="'+esc(r.logo)+'" alt="'+esc(r.name)+'">';
+    others.appendChild(o);
+  }
+});
+
+/* ===== ÇALAR ===== */
+const audio=document.getElementById('audio');
+const band=document.getElementById('band');
+document.getElementById('bandName').textContent=R.name;
+document.getElementById('bandLogo').src=R.logo;
+document.getElementById('bandSite').href=R.url||'#';
+let isPlaying=false;
+const viz=document.getElementById('viz');
+for(let i=0;i<44;i++){const b=document.createElement('i');b.style.animationDelay=(Math.random()*.8).toFixed(2)+'s';b.style.animationDuration=(.5+Math.random()*.7).toFixed(2)+'s';viz.appendChild(b);}
+
+function togglePlay(){
+  if(!R.stream || !R.stream.trim()){
+    document.getElementById('bandSub').textContent='Yayın için resmî siteye yönlendiriliyorsunuz…';
+    window.open(R.url,'_blank','noopener');return;
+  }
+  if(isPlaying){audio.pause();return;}
+  if(!audio.src)audio.src=R.stream;
+  audio.volume=document.getElementById('vol').value/100;
+  document.getElementById('bandSub').textContent='Bağlanıyor…';
+  audio.play().catch(()=>{document.getElementById('bandSub').textContent='Yayına ulaşılamadı';});
+}
+function setIcon(p){const h=p?'<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>':'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';document.getElementById('playBtn').innerHTML=h;}
+audio.addEventListener('playing',()=>{isPlaying=true;band.classList.add('on');setIcon(true);document.getElementById('bandSub').textContent='Canlı Yayın';});
+audio.addEventListener('pause',()=>{isPlaying=false;band.classList.remove('on');setIcon(false);});
+audio.addEventListener('waiting',()=>document.getElementById('bandSub').textContent='Tamponlanıyor…');
+audio.addEventListener('error',()=>document.getElementById('bandSub').textContent='Yayına ulaşılamadı');
+document.getElementById('vol').addEventListener('input',e=>audio.volume=e.target.value/100);
+
+/* header scroll + reveal */
+addEventListener('scroll',()=>document.getElementById('hdr').classList.toggle('scr',scrollY>40));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+/* satır içi onclick'ler için global yap */
+window.togglePlay=togglePlay;
+});
+</script>
+<script src="site.js"></script>
+</body>
+</html>

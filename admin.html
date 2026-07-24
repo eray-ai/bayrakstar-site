@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bayrakstar — Yönetim Paneli</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="data.js"></script>
+<script src="bulut.js"></script>
+<style>
+  :root{--red:#ff0007;--coral:#f75843;--blue:#0081ba;--teal:#00bac5;--yellow:#ffca11;--ink:#1c1c1c;--line:#e6e4df;--bg:#f2f1ee}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Open Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+  a{color:var(--blue)}
+
+  /* login */
+  #gate{position:fixed;inset:0;background:#1d1d1d;display:flex;align-items:center;justify-content:center;z-index:50}
+  #gate .box{background:#262626;padding:44px 40px;border-radius:20px;width:340px;text-align:center;color:#fff;box-shadow:0 30px 60px rgba(0,0,0,.4)}
+  #gate h1{font-size:20px;font-weight:800;margin-bottom:6px}
+  #gate p{opacity:.6;font-size:13px;margin-bottom:22px}
+  #gate input{width:100%;padding:13px 16px;border-radius:10px;border:1px solid #3a3a3a;background:#1d1d1d;color:#fff;font-size:15px;margin-bottom:14px}
+  #gate button{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(120deg,var(--red),var(--coral));color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+  #gate .err{color:#ff6b6b;font-size:13px;height:16px;margin-top:8px}
+
+  /* topbar */
+  header{position:sticky;top:0;z-index:25;background:#1d1d1d;color:#fff;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  header .l{display:flex;align-items:center;gap:14px}
+  header img{height:28px}
+  header .t{font-weight:800;letter-spacing:.02em;font-size:15px}
+  header .t small{display:block;font-weight:400;opacity:.55;font-size:11px;letter-spacing:.1em}
+  .actions{display:flex;gap:9px;flex-wrap:wrap}
+  .btn{padding:10px 18px;border-radius:9px;border:none;font-weight:800;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:linear-gradient(120deg,var(--red),var(--coral));color:#fff}
+  .btn-dark{background:#3a3a3a;color:#fff}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid #4a4a4a}
+  .btn-sm{padding:7px 12px;font-size:12px;border-radius:7px}
+
+  /* ---- İKİ SÜTUNLU KABUK ---- */
+  .shell{display:flex;align-items:flex-start;gap:24px;max-width:1260px;margin:0 auto;padding:22px 20px 120px}
+  .side{width:262px;flex:0 0 262px;position:sticky;top:70px}
+  .panel{flex:1;min-width:0}
+
+  /* radyo seçici (sol üst, açılır) */
+  .switcher{position:relative;margin-bottom:14px}
+  .sw-btn{width:100%;display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px 14px;cursor:pointer;font-family:inherit;font-weight:800;font-size:14px;text-align:left;color:var(--ink);transition:.15s}
+  .sw-btn:hover{border-color:#c9c6bf}
+  .sw-btn .sw-lbl{display:block;font-size:10px;font-weight:700;color:#a09c94;letter-spacing:.09em;text-transform:uppercase;margin-bottom:2px}
+  .sw-btn .sw-mid{flex:1;min-width:0}
+  .sw-btn .sw-nm{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sw-caret{font-size:11px;color:#999;transition:transform .2s}
+  .switcher.open .sw-caret{transform:rotate(180deg)}
+  .dot{width:16px;height:16px;border-radius:5px;flex:0 0 16px}
+  .sw-menu{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:13px;box-shadow:0 20px 44px rgba(0,0,0,.16);padding:6px;z-index:30;display:none}
+  .switcher.open .sw-menu{display:block}
+  .sw-menu button{width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;padding:10px 12px;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:#333;text-align:left}
+  .sw-menu button:hover{background:#f4f4f2}
+  .sw-menu button.on{background:#eef6fb;color:var(--blue)}
+  .sw-sep{height:1px;background:var(--line);margin:6px 4px}
+
+  /* bölüm menüsü */
+  .snav{background:#fff;border:1px solid var(--line);border-radius:13px;padding:6px}
+  .snav button{width:100%;display:flex;align-items:center;gap:11px;background:none;border:none;padding:11px 12px;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:#4a4a4a;text-align:left;transition:.12s}
+  .snav button:hover{background:#f4f4f2}
+  .snav button.on{background:var(--ink);color:#fff}
+  .snav .ico{width:24px;height:24px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:12px;flex:0 0 24px}
+  .snav .say-adet{margin-left:auto;font-size:11px;font-weight:800;opacity:.5}
+
+  /* mobil aç/kapa */
+  .side-toggle{display:none;width:100%;margin-bottom:12px}
+
+  /* kartlar */
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 26px;margin-bottom:20px}
+  .card > h2{font-size:19px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+  .card > h2 .ico{width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:15px}
+  .card > .desc{font-size:13px;color:#777;margin-bottom:20px;line-height:1.55}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+  label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#555;margin-bottom:6px;letter-spacing:.02em}
+  .lim{font-weight:600;color:#a8a49c;font-size:11px;letter-spacing:0}
+  .say{margin-left:auto;font-size:11px;font-weight:800;color:#b5b1a9;letter-spacing:0}
+  .say.yakin{color:#d98324}
+  .say.asti{color:#d33}
+  .say-mini{margin-left:0;flex:0 0 auto;font-size:10px;min-width:42px;text-align:right;transition:opacity .2s}
+  input[type=text],input[type=url],textarea,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit;background:#fafafa}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--blue);background:#fff}
+  input.asti,textarea.asti{border-color:#e39c9c;background:#fff8f8}
+  textarea{resize:vertical;min-height:70px;line-height:1.5}
+  .field{margin-bottom:16px}
+  .hint{font-size:11px;color:#999;margin-top:5px;line-height:1.5}
+  .oneri{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#2b7a8a;background:#e8f4f7;border:1px solid #c5e3ea;border-radius:7px;padding:5px 9px;margin-top:6px}
+  .color-inp{display:flex;align-items:center;gap:8px}
+  .color-inp input[type=color]{width:42px;height:38px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:2px;cursor:pointer}
+
+  /* liste öğeleri */
+  .item{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;background:#fcfcfb;position:relative}
+  .item .ihead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .item .ihead .n{font-weight:800;font-size:14px;display:flex;align-items:center;gap:7px}
+  .item .ihead .ctrl{display:flex;gap:6px}
+  .thumb{width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#eee;margin-top:8px}
+  .thumb.logo{height:60px;object-fit:contain;background:#333;padding:8px}
+  .simple-list .sitem{display:flex;gap:10px;margin-bottom:10px;align-items:center}
+  .simple-list .sitem input{flex:1}
+  .add{background:#eef6fb;color:var(--blue);border:1px dashed var(--blue);width:100%;padding:12px;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit}
+  .del{background:#fdeaea;color:#d33;border:none;border-radius:7px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+  .mv{background:#eee;border:none;border-radius:7px;padding:6px 9px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit}
+  .git{background:#eef6fb;color:var(--blue);border:1px solid #c9e3f0;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+  .rowline{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  .rowline input{flex:1;min-width:90px}
+  .subcard{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px;background:#fff}
+  .subcard textarea{margin:8px 0;min-height:52px}
+
+  /* yükleme */
+  .uprow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .uprow input[type=text]{flex:1;min-width:160px}
+  .btn-up{background:#eaf4ea;color:#2b8a3e;border:1px solid #b6e0b6;border-radius:8px;padding:9px 13px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;font-family:inherit}
+  .btn-up:hover{background:#d9edd9}
+  .chip{flex:1;min-width:160px;background:#eaf4ea;color:#2b8a3e;border:1px solid #b6e0b6;border-radius:8px;padding:10px 13px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .btn-x{background:#f1f1f1;border:1px solid #ddd;border-radius:8px;padding:9px 12px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit}
+
+  #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(120%);background:#1d1d1d;color:#fff;padding:14px 24px;border-radius:12px;font-weight:700;font-size:14px;z-index:60;transition:transform .4s;box-shadow:0 14px 34px rgba(0,0,0,.35);display:flex;align-items:center;gap:10px}
+  #toast.show{transform:translateX(-50%) translateY(0)}
+  #toast .ok{width:9px;height:9px;border-radius:50%;background:#3ddc84}
+
+  .stat-row{display:grid;grid-template-columns:1fr 1.6fr auto auto;gap:10px;align-items:center;margin-bottom:10px}
+  .bos{text-align:center;color:#a09c94;font-size:13px;padding:26px 10px;border:1px dashed var(--line);border-radius:12px;margin-bottom:14px}
+
+  @media(max-width:900px){
+    .shell{flex-direction:column;gap:0}
+    .side{width:100%;flex:none;position:static;margin-bottom:14px}
+    .side-toggle{display:block}
+    .side-body{display:none}
+    .side-body.acik{display:block}
+  }
+  @media(max-width:640px){.grid2{grid-template-columns:1fr}.stat-row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- GİRİŞ -->
+<div id="gate">
+  <div class="box">
+    <h1>Bayrakstar Yönetim</h1>
+    <p>Devam etmek için şifre girin</p>
+    <p style="font-size:12px;opacity:.55;margin-top:-14px">Kaydettiklerin doğrudan yayına gider</p>
+    <input type="password" id="pw" placeholder="Şifre" onkeydown="if(event.key==='Enter')login()">
+    <button onclick="login()">Giriş Yap</button>
+    <div class="err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ÜST BAR -->
+<header>
+  <div class="l">
+    <img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar">
+    <div class="t">Yönetim Paneli<small>colorful life</small></div>
+  </div>
+  <div class="actions">
+    <button class="btn btn-ghost btn-sm" onclick="resetAll()">↺ Sıfırla</button>
+    <button class="btn btn-dark btn-sm" onclick="importJson()">⬆ JSON Yükle</button>
+    <button class="btn btn-dark btn-sm" onclick="exportJson()">⬇ JSON İndir</button>
+    <button class="btn btn-primary" onclick="saveAndPreview()">☁️ Kaydet &amp; Yayınla</button>
+  </div>
+</header>
+
+<!-- KABUK -->
+<div class="shell" id="app" style="display:none">
+  <aside class="side">
+    <button class="btn btn-dark side-toggle" onclick="document.getElementById('sideBody').classList.toggle('acik')">☰ Menü</button>
+    <div id="sideBody" class="side-body">
+      <!-- radyo seçici -->
+      <div class="switcher" id="switcher">
+        <button class="sw-btn" onclick="switcherAc(event)">
+          <span class="dot" id="swDot"></span>
+          <span class="sw-mid">
+            <span class="sw-lbl">Düzenlenen</span>
+            <span class="sw-nm" id="swName">Bayrakstar</span>
+          </span>
+          <span class="sw-caret">▼</span>
+        </button>
+        <div class="sw-menu" id="swMenu"></div>
+      </div>
+      <!-- bölümler -->
+      <nav class="snav" id="snav"></nav>
+    </div>
+  </aside>
+
+  <main class="panel" id="panel"></main>
+</div>
+
+<div id="toast"><span class="ok"></span><span id="toastMsg">Kaydedildi</span></div>
+
+<script>
+/* ==== GİRİŞ (Supabase Auth) ==== */
+function login(){
+  const btn=document.querySelector('#gate button');
+  const err=document.getElementById('loginErr');
+  const v=document.getElementById('pw').value;
+  err.textContent=''; btn.disabled=true; btn.textContent='Giriş yapılıyor…';
+  window.BULUT.giris(v).then(function(){
+    btn.disabled=false; btn.textContent='Giriş Yap'; openPanel();
+  }).catch(function(e){
+    btn.disabled=false; btn.textContent='Giriş Yap';
+    err.textContent = /fetch|network|Failed/i.test(e.message)
+      ? 'Bulut sunucusuna ulaşılamadı — internet bağlantını kontrol et.' : 'Şifre yanlış.';
+  });
+}
+function openPanel(){
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='flex';
+  window.bulutHazir.then(function(){
+    D = JSON.parse(JSON.stringify(window.getSiteData()));
+    render();
+  });
+}
+
+/* ==== VERİ ==== */
+const KNOWN_LOGOS=[
+  "logo/fenomen-beyaz.png","logo/fenomen-renkli.png",
+  "logo/fenomenturk-beyaz.png","logo/fenomenturk-renkli.png",
+  "logo/boombox-beyaz.png","logo/boombox-renkli.png",
+  "logo/istanbulfm-beyaz.png","logo/istanbulfm-renkli.png",
+  "logo/bayrakstar-beyaz.png"
+];
+let D = JSON.parse(JSON.stringify(window.getSiteData()));
+
+/* ==== ÖNERİLEN GÖRSEL BOYUTLARI ==== */
+const GORSEL = {
+  slide:   {ol:'1920 × 1080 px', tip:'JPG · yatay (16:9)', not:'Ana sayfa tam ekran kayar görsel. Ortada yazı olduğu için sade, koyu görseller daha iyi durur.'},
+  kart:    {ol:'1200 × 800 px',  tip:'JPG · yatay (3:2)',  not:'Ana sayfadaki radyo kartının arka planı. Üzerine logo ve yazı biner.'},
+  kapak:   {ol:'1920 × 900 px',  tip:'JPG · geniş yatay',  not:'Radyo sayfasının tepesindeki kapak. Üstü koyu filtreyle kaplanır.'},
+  logo:    {ol:'600 × 200 px',   tip:'şeffaf PNG',         not:'Koyu zemine bindiği için beyaz/açık renkli logo kullan.'},
+  yayinci: {ol:'600 × 600 px',   tip:'JPG · KARE (1:1)',   not:'Kart kare olduğu için kare olmayan görselin kenarları kırpılır.'}
+};
+function oneriKutu(g){
+  return '<div class="oneri">🖼️ Önerilen: <b>'+g.ol+'</b> · '+g.tip+'</div><div class="hint">'+g.not+'</div>';
+}
+
+/* ==== BÖLÜM TANIMLARI ==== */
+const B_SITE=[
+  {id:'hero',    ad:'Hero / Karşılama',  ikon:'◆', renk:'#f75843'},
+  {id:'slider',  ad:'Slider Görselleri', ikon:'▦', renk:'#00bac5', say:()=>D.slides.length},
+  {id:'bant',    ad:'Kırmızı Bant',      ikon:'✱', renk:'#ff0007', say:()=>D.slogans.length},
+  {id:'tanitim', ad:'Tanıtım & İstatistik',ikon:'¶',renk:'#0081ba'},
+  {id:'radyolar',ad:'Radyo Listesi',     ikon:'♫', renk:'#ffca11', say:()=>D.radios.length},
+  {id:'footer',  ad:'Alt Bilgi',         ikon:'☰', renk:'#4d4d4d'}
+];
+const B_RADYO=[
+  {id:'genel',   ad:'Genel Bilgiler', ikon:'ℹ',  renk:'#0081ba'},
+  {id:'gorunum', ad:'Görünüm & Logo', ikon:'◐',  renk:'#f75843'},
+  {id:'metin',   ad:'Tanıtım Metni',  ikon:'✎',  renk:'#00bac5'},
+  {id:'frekans', ad:'Frekanslar',     ikon:'📡', renk:'#4d4d4d', say:i=>(D.radios[i].frequencies||[]).length},
+  {id:'yayinci', ad:'Yayıncılar',     ikon:'🎙', renk:'#ff0007', say:i=>(D.radios[i].hosts||[]).length},
+  {id:'akis',    ad:'Yayın Akışı',    ikon:'🗓', renk:'#ffca11', say:i=>(D.radios[i].schedule||[]).length},
+  {id:'kanal',   ad:'Alt Kanallar',   ikon:'📻', renk:'#00bac5', say:i=>(D.radios[i].channels||[]).length},
+  {id:'sosyal',  ad:'Sosyal & İletişim',ikon:'🔗',renk:'#0081ba'}
+];
+
+/* ==== DURUM: hangi varlık + hangi bölüm ==== */
+let st = { varlik:'site', radyo:0, bolum:'hero' };
+
+function bolumler(){ return st.varlik==='site' ? B_SITE : B_RADYO; }
+
+/* ==== SEÇİCİ (sol üst açılır panel) ==== */
+function switcherAc(e){ e.stopPropagation(); document.getElementById('switcher').classList.toggle('open'); }
+document.addEventListener('click', function(){ const s=document.getElementById('switcher'); if(s) s.classList.remove('open'); });
+
+function cizSecici(){
+  const m=document.getElementById('swMenu');
+  let h='<button class="'+(st.varlik==='site'?'on':'')+'" onclick="gecVarlik(\'site\')">'
+      + '<span class="dot" style="background:linear-gradient(120deg,#ff0007,#ffca11,#00bac5)"></span> Bayrakstar <span style="opacity:.5;font-weight:600">· site geneli</span></button>'
+      + '<div class="sw-sep"></div>';
+  D.radios.forEach(function(r,i){
+    h+='<button class="'+(st.varlik==='radyo'&&st.radyo===i?'on':'')+'" onclick="gecVarlik(\'radyo\','+i+')">'
+      +'<span class="dot" style="background:'+att(r.color||'#888')+'"></span> '+att(r.name||'Radyo')+'</button>';
+  });
+  m.innerHTML=h;
+  const site = st.varlik==='site';
+  document.getElementById('swName').textContent = site ? 'Bayrakstar' : (D.radios[st.radyo]||{}).name || 'Radyo';
+  document.getElementById('swDot').style.background = site
+    ? 'linear-gradient(120deg,#ff0007,#ffca11,#00bac5)'
+    : ((D.radios[st.radyo]||{}).color || '#888');
+}
+function gecVarlik(v,i){
+  st.varlik=v;
+  if(v==='radyo') st.radyo=i;
+  st.bolum = bolumler()[0].id;
+  document.getElementById('switcher').classList.remove('open');
+  render();
+}
+function gecBolum(id){ st.bolum=id; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+/* ==== SOL BÖLÜM MENÜSÜ ==== */
+function cizMenu(){
+  const n=document.getElementById('snav');
+  n.innerHTML = bolumler().map(function(b){
+    let adet='';
+    if(b.say){ const s = st.varlik==='site' ? b.say() : b.say(st.radyo); adet='<span class="say-adet">'+s+'</span>'; }
+    return '<button class="'+(st.bolum===b.id?'on':'')+'" onclick="gecBolum(\''+b.id+'\')">'
+         + '<span class="ico" style="background:'+b.renk+'">'+b.ikon+'</span>'+b.ad+adet+'</button>';
+  }).join('');
+}
+
+/* ==== ANA ÇİZİM ==== */
+function render(){ cizSecici(); cizMenu(); cizPanel(); sayaclariKur(); }
+function yenile(){ render(); }
+const renderRadios=yenile, renderSlides=yenile, renderSlogans=yenile, renderStats=yenile;
+
+function baslik(b,aciklama){
+  return '<h2><span class="ico" style="background:'+b.renk+'">'+b.ikon+'</span> '+b.ad+'</h2>'
+       + '<div class="desc">'+aciklama+'</div>';
+}
+
+function cizPanel(){
+  const p=document.getElementById('panel');
+  const b=bolumler().find(x=>x.id===st.bolum) || bolumler()[0];
+  p.innerHTML = '<div class="card">' + (st.varlik==='site' ? panelSite(b) : panelRadyo(b,st.radyo)) + '</div>';
+}
+
+/* ============================================================
+   BAYRAKSTAR (SİTE GENELİ) PANELLERİ
+   ============================================================ */
+function panelSite(b){
+  if(b.id==='hero') return baslik(b,'Ana sayfada slider üzerinde duran büyük başlık ve slogan.')
+    + alan('Üst etiket (kicker)', txtInput(D.hero.kicker,'D.hero.kicker',30), 30, D.hero.kicker,
+           'Başlığın üstündeki küçük yazı. Tamamı BÜYÜK harf görünür.')
+    + '<div class="grid2">'
+    +   alan('Başlık — 1. bölüm', txtInput(D.hero.title1,'D.hero.title1',14), 14, D.hero.title1)
+    +   alan('Başlık — renkli kelime', txtInput(D.hero.accent,'D.hero.accent',12), 12, D.hero.accent,
+             'Renk geçişli görünen kelime.')
+    + '</div>'
+    + alan('Başlık — 2. bölüm', txtInput(D.hero.title2,'D.hero.title2',14), 14, D.hero.title2,
+           'Üç parça birleşince tek başlık olur. Toplam 40 karakteri geçerse telefonda satır taşar.')
+    + alan('Slogan', txtInput(D.hero.slogan,'D.hero.slogan',45), 45, D.hero.slogan,
+           'HTML kullanılabilir; kalın için &lt;b&gt;kelime&lt;/b&gt;.');
+
+  if(b.id==='slider') return baslik(b,'Ana sayfanın tepesinde sırayla geçen tam ekran görseller.')
+    + oneriKutu(GORSEL.slide)
+    + '<div style="height:14px"></div>'
+    + (D.slides.length?'':'<div class="bos">Henüz görsel yok.</div>')
+    + D.slides.map(function(src,i){
+        const up=isUp(src);
+        const inp = up
+          ? '<div class="chip">✓ Bilgisayardan yüklendi</div><button class="btn-x" onclick="D.slides['+i+']=\'https://\';yenile()">Kaldır</button>'
+          : '<input type="text" value="'+att(src)+'" placeholder="Görsel linki (URL)" oninput="D.slides['+i+']=this.value;up_thumb(this)">';
+        return '<div class="item"><div class="ihead"><span class="n">Görsel '+(i+1)+'</span><div class="ctrl">'
+          + '<button class="mv" onclick="mv(D.slides,'+i+',-1,yenile)">↑</button>'
+          + '<button class="mv" onclick="mv(D.slides,'+i+',1,yenile)">↓</button>'
+          + '<button class="del" onclick="D.slides.splice('+i+',1);yenile()">Sil</button></div></div>'
+          + '<div class="uprow">'+inp+'<button class="btn-up" onclick="pickSlide('+i+')">⬆ Bilgisayardan Yükle</button></div>'
+          + '<img class="thumb" src="'+att(src)+'" onerror="this.style.opacity=.2"></div>';
+      }).join('')
+    + '<button class="add" onclick="D.slides.push(\'https://\');yenile()">+ Görsel Ekle</button>';
+
+  if(b.id==='bant') return baslik(b,'Slider’ın hemen altındaki kırmızı bantta sırayla dönen yazılar.')
+    + '<div class="hint" style="margin-bottom:14px">Bant tek satır kaydığı için kısa tutulmalı — <b>en fazla 38 karakter</b>.</div>'
+    + (D.slogans.length?'':'<div class="bos">Henüz slogan yok.</div>')
+    + '<div class="simple-list">'
+    + D.slogans.map(function(s,i){
+        return '<div class="sitem">'
+          + '<input type="text" data-max="38" value="'+att(s)+'" oninput="D.slogans['+i+']=this.value">'
+          + '<button class="mv" onclick="mv(D.slogans,'+i+',-1,yenile)">↑</button>'
+          + '<button class="mv" onclick="mv(D.slogans,'+i+',1,yenile)">↓</button>'
+          + '<button class="del" onclick="D.slogans.splice('+i+',1);yenile()">Sil</button></div>';
+      }).join('')
+    + '</div><button class="add" onclick="D.slogans.push(\'Yeni slogan\');yenile()">+ Slogan Ekle</button>';
+
+  if(b.id==='tanitim') return baslik(b,'Radyo kartlarının üstündeki Bayrakstar tanıtım bölümü ve sayı kutuları.')
+    + alan('Etiket', txtInput(D.intro.tag,'D.intro.tag',26), 26, D.intro.tag)
+    + alan('Başlık', taInput(D.intro.headline,'D.intro.headline',70), 70, D.intro.headline,
+           'HTML kullanılabilir; alt satıra geçmek için &lt;br&gt;.')
+    + alan('1. Paragraf', taInput(D.intro.p1,'D.intro.p1',260), 260, D.intro.p1)
+    + alan('2. Paragraf', taInput(D.intro.p2,'D.intro.p2',260), 260, D.intro.p2,
+           'İki paragraf yan yana dizilir; benzer uzunlukta olmaları daha düzgün durur.')
+    + '<label style="margin-top:20px">İstatistik kutuları</label>'
+    + '<div class="hint" style="margin-bottom:10px">Sayı en fazla <b>6</b>, etiket en fazla <b>18</b> karakter.</div>'
+    + (D.intro.stats||[]).map(function(s,i){
+        return '<div class="stat-row">'
+          + '<input type="text" data-max="6" value="'+att(s.num)+'" placeholder="Sayı" oninput="D.intro.stats['+i+'].num=this.value">'
+          + '<input type="text" data-max="18" value="'+att(s.label)+'" placeholder="Etiket" oninput="D.intro.stats['+i+'].label=this.value">'
+          + '<input type="color" value="'+(s.color||'#ff0007')+'" oninput="D.intro.stats['+i+'].color=this.value" style="width:42px;height:38px;border:1px solid #e6e4df;border-radius:8px;padding:2px">'
+          + '<button class="del" onclick="D.intro.stats.splice('+i+',1);yenile()">Sil</button></div>';
+      }).join('')
+    + '<button class="add" onclick="D.intro.stats.push({num:\'0\',label:\'Etiket\',color:\'#00bac5\'});yenile()">+ İstatistik Ekle</button>';
+
+  if(b.id==='radyolar') return baslik(b,'Çatı altındaki radyolar. Sırayı değiştir, yeni ekle veya birini düzenlemek için “Düzenle”ye bas.')
+    + D.radios.map(function(r,i){
+        return '<div class="item"><div class="ihead">'
+          + '<span class="n"><span class="dot" style="background:'+att(r.color||'#888')+'"></span>'+att(r.name||'Radyo')+'</span>'
+          + '<div class="ctrl">'
+          + '<button class="git" onclick="gecVarlik(\'radyo\','+i+')">Düzenle →</button>'
+          + '<button class="mv" onclick="mv(D.radios,'+i+',-1,yenile)">↑</button>'
+          + '<button class="mv" onclick="mv(D.radios,'+i+',1,yenile)">↓</button>'
+          + '<button class="del" onclick="silRadyo('+i+')">Sil</button></div></div>'
+          + '<div class="hint">'+att(r.slogan||'')+' · radyo.html?r='+att(r.slug||'')+'</div></div>';
+      }).join('')
+    + '<button class="add" onclick="addRadio()">+ Radyo Ekle</button>';
+
+  if(b.id==='footer') return baslik(b,'Sayfaların en altındaki bilgi ve sosyal medya bağlantıları.')
+    + alan('Hakkında metni', taInput(D.footer.about,'D.footer.about',180), 180, D.footer.about,
+           'HTML kullanılabilir.')
+    + '<div class="grid2">'
+    +   alan('Instagram linki', urlInput(D.footer.socials.ig,'D.footer.socials.ig'))
+    +   alan('YouTube linki',   urlInput(D.footer.socials.yt,'D.footer.socials.yt'))
+    +   alan('X (Twitter) linki',urlInput(D.footer.socials.x,'D.footer.socials.x'))
+    +   alan('Spotify linki',   urlInput(D.footer.socials.sp,'D.footer.socials.sp'))
+    + '</div>';
+  return '';
+}
+
+/* ============================================================
+   RADYO PANELLERİ
+   ============================================================ */
+function panelRadyo(b,i){
+  const r=D.radios[i]; if(!r) return '<div class="bos">Radyo bulunamadı.</div>';
+  const P='D.radios['+i+']';
+
+  if(b.id==='genel') return baslik(b,'Radyonun adı, sloganı, frekansı ve canlı yayın bağlantısı.')
+    + '<div class="grid2">'
+    +   alan('Radyo Adı', txtInput(r.name,P+'.name',22), 22, r.name)
+    +   alan('Slogan', txtInput(r.slogan,P+'.slogan',34), 34, r.slogan,
+             'Radyo sayfasının tepesinde kocaman yazar.')
+    +   alan('Tür / Genre', txtInput(r.genre,P+'.genre',44), 44, r.genre, 'örn. Pop · Dance · Hit')
+    +   alan('Frekans', txtInput(r.freq,P+'.freq',9), 9, r.freq, 'örn. 100.4 — boş bırakırsan “CANLI” yazar.')
+    + '</div>'
+    + alan('Web Sitesi (URL)', urlInput(r.url,P+'.url'))
+    + alan('🎧 Canlı Yayın Linki', urlInput(r.stream,P+'.stream','https://... icecast.audio / .m3u8'), 0, '',
+           'Tarayıcıda çalması için <b>https</b> ve doğrudan ses akışı olmalı. <b>.m3u8</b> linkler Safari’de çalar, Chrome’da ek kod gerekir.')
+    + alan('Detay Sayfası Adresi (slug)', txtInput(r.slug,P+'.slug',20), 20, r.slug,
+           'radyo.html?r=<b>'+att(r.slug||'')+'</b> · boşluk ve Türkçe karakter kullanma.');
+
+  if(b.id==='gorunum') return baslik(b,'Radyo sayfasının renkleri, yazı tipleri, logosu ve görselleri.')
+    + '<div class="grid2">'
+    +   alan('Marka Rengi', '<div class="color-inp"><input type="color" value="'+(r.color||'#ff0007')+'" oninput="'+P+'.color=this.value;this.nextElementSibling.value=this.value;yenile()"><input type="text" value="'+att(r.color)+'" oninput="'+P+'.color=this.value"></div>')
+    +   alan('Aksan Rengi', '<div class="color-inp"><input type="color" value="'+(r.accent||'#ffca11')+'" oninput="'+P+'.accent=this.value;this.nextElementSibling.value=this.value"><input type="text" value="'+att(r.accent)+'" oninput="'+P+'.accent=this.value"></div>')
+    +   alan('Başlık Fontu', selectInput(['Anton','Roboto','Nunito','Open Sans'], r.font||'Anton', P+'.font'))
+    +   alan('Metin Fontu',  selectInput(['Roboto','Nunito','Open Sans','Anton'], r.bodyFont||'Roboto', P+'.bodyFont'))
+    + '</div>'
+    + logoAlani(r,i)
+    + gorselAlani('Kart Arka Plan Görseli', r.img, P+'.img', 'pickRadioImg('+i+')', GORSEL.kart)
+    + gorselAlani('Radyo Sayfası Kapak Görseli', r.hero, P+'.hero', 'pickRadioHero('+i+')', GORSEL.kapak);
+
+  if(b.id==='metin') return baslik(b,'Radyo sayfasındaki “Radyo Hakkında” bölümünün metni.')
+    + alan('Tanıtım Metni', taInput(r.about,P+'.about',420,'Radyoyu tanıtan metin…'), 420, r.about,
+           'Ortalanmış tek paragraf olarak görünür. 420 karakteri aşarsa bölüm çok uzar.');
+
+  if(b.id==='frekans') return baslik(b,'Radyonun yayın yaptığı şehirler ve frekansları.')
+    + '<div class="hint" style="margin-bottom:12px">Şehir en fazla <b>16</b>, frekans en fazla <b>6</b> karakter (örn. 100.4).</div>'
+    + ((r.frequencies||[]).length?'':'<div class="bos">Henüz frekans eklenmemiş.</div>')
+    + (r.frequencies||[]).map(function(f,j){
+        return '<div class="rowline">'
+          + '<input type="text" data-max="16" value="'+att(f.c)+'" placeholder="Şehir" oninput="'+P+'.frequencies['+j+'].c=this.value">'
+          + '<input type="text" data-max="6" value="'+att(f.f)+'" placeholder="MHz" style="max-width:110px;flex:0 0 110px" oninput="'+P+'.frequencies['+j+'].f=this.value">'
+          + '<button class="mv" onclick="mv('+P+'.frequencies,'+j+',-1,yenile)">↑</button>'
+          + '<button class="mv" onclick="mv('+P+'.frequencies,'+j+',1,yenile)">↓</button>'
+          + '<button class="del" onclick="'+P+'.frequencies.splice('+j+',1);yenile()">Sil</button></div>';
+      }).join('')
+    + '<button class="add" onclick="ensureArr('+i+',\'frequencies\');'+P+'.frequencies.push({c:\'\',f:\'\'});yenile()">+ Frekans Ekle</button>';
+
+  if(b.id==='yayinci') return baslik(b,'Radyo sayfasındaki yayıncı kartları. Boş bırakırsan bölüm sitede hiç görünmez.')
+    + oneriKutu(GORSEL.yayinci)
+    + '<div class="hint" style="margin:10px 0 16px">İsim en fazla <b>24</b>, program adı <b>32</b>, tanıtım <b>130</b> karakter.</div>'
+    + ((r.hosts||[]).length?'':'<div class="bos">Yayıncı yok — bu bölüm sitede gizli.</div>')
+    + (r.hosts||[]).map(function(h,j){
+        const foto = isUp(h.photo)
+          ? '<div class="chip">✓ Foto yüklendi</div><button class="btn-x" onclick="'+P+'.hosts['+j+'].photo=\'\';yenile()">Kaldır</button>'
+          : '<input type="text" value="'+att(h.photo)+'" placeholder="Fotoğraf yolu veya URL" oninput="'+P+'.hosts['+j+'].photo=this.value;'+P+'.hosts['+j+'].afis=false">';
+        return '<div class="subcard">'
+          + '<div class="rowline">'
+          +   '<input type="text" data-max="24" value="'+att(h.name)+'" placeholder="İsim" oninput="'+P+'.hosts['+j+'].name=this.value">'
+          +   '<input type="text" data-max="32" value="'+att(h.show)+'" placeholder="Program" oninput="'+P+'.hosts['+j+'].show=this.value">'
+          +   '<button class="mv" onclick="mv('+P+'.hosts,'+j+',-1,yenile)">↑</button>'
+          +   '<button class="mv" onclick="mv('+P+'.hosts,'+j+',1,yenile)">↓</button>'
+          +   '<button class="del" onclick="'+P+'.hosts.splice('+j+',1);yenile()">Sil</button>'
+          + '</div>'
+          + '<textarea data-max="130" placeholder="Kısa tanıtım (bio)" oninput="'+P+'.hosts['+j+'].bio=this.value">'+att(h.bio)+'</textarea>'
+          + (h.afis?'<div class="hint" style="margin-bottom:6px">✓ Resmî program afişi kullanılıyor — kartta rozet ve karartma kapalı. Kendi fotoğrafını koyarsan normale döner.</div>':'')
+          + '<div class="uprow">'+foto+'<button class="btn-up" onclick="pickHostPhoto('+i+','+j+')">⬆ Foto Yükle</button></div>'
+          + '<img class="thumb" style="height:78px;width:78px;object-fit:cover;border-radius:12px" src="'+att(h.photo)+'" onerror="this.style.opacity=.2">'
+          + '</div>';
+      }).join('')
+    + '<button class="add" onclick="ensureArr('+i+',\'hosts\');'+P+'.hosts.push({name:\'\',show:\'\',bio:\'\',photo:\'\'});yenile()">+ Yayıncı Ekle</button>';
+
+  if(b.id==='akis') return baslik(b,'Gün içindeki program akışı. Sitede gün sekmeleriyle gösterilir, o an yayında olan program vurgulanır.')
+    + '<div class="hint" style="margin-bottom:12px">Saat biçimi <b>08:00 – 10:00</b> · program adı en fazla <b>36</b>, sunucu <b>20</b> karakter.</div>'
+    + ((r.schedule||[]).length?'':'<div class="bos">Henüz program eklenmemiş.</div>')
+    + (r.schedule||[]).map(function(s,j){
+        return '<div class="rowline">'
+          + '<input type="text" data-max="15" value="'+att(s.t)+'" placeholder="08:00 – 10:00" style="max-width:140px;flex:0 0 140px" oninput="'+P+'.schedule['+j+'].t=this.value">'
+          + '<input type="text" data-max="36" value="'+att(s.name)+'" placeholder="Program adı" oninput="'+P+'.schedule['+j+'].name=this.value">'
+          + '<input type="text" data-max="20" value="'+att(s.host)+'" placeholder="Sunucu (ops.)" style="max-width:140px;flex:0 0 140px" oninput="'+P+'.schedule['+j+'].host=this.value">'
+          + '<button class="mv" onclick="mv('+P+'.schedule,'+j+',-1,yenile)">↑</button>'
+          + '<button class="mv" onclick="mv('+P+'.schedule,'+j+',1,yenile)">↓</button>'
+          + '<button class="del" onclick="'+P+'.schedule.splice('+j+',1);yenile()">Sil</button></div>';
+      }).join('')
+    + '<button class="add" onclick="ensureArr('+i+',\'schedule\');'+P+'.schedule.push({t:\'\',name:\'\',host:\'\'});yenile()">+ Program Ekle</button>'
+    + '<div style="height:18px"></div>'
+    + alan('Hafta sonu notu', txtInput(r.weekendNote,P+'.weekendNote',160,'Hafta sonu özel programları…'), 160, r.weekendNote,
+           'Akışın altında küçük not olarak görünür.');
+
+  if(b.id==='kanal') return baslik(b,'Radyonun alt kanalları (örn. Fenomen Pop, Fenomen Dans). Etiket olarak dizilir.')
+    + '<div class="hint" style="margin-bottom:12px">Kanal adı en fazla <b>26</b> karakter.</div>'
+    + ((r.channels||[]).length?'':'<div class="bos">Alt kanal yok — bu bölüm sitede gizli.</div>')
+    + (r.channels||[]).map(function(c,j){
+        return '<div class="rowline">'
+          + '<input type="text" data-max="26" value="'+att(c)+'" placeholder="Kanal adı" oninput="'+P+'.channels['+j+']=this.value">'
+          + '<button class="mv" onclick="mv('+P+'.channels,'+j+',-1,yenile)">↑</button>'
+          + '<button class="mv" onclick="mv('+P+'.channels,'+j+',1,yenile)">↓</button>'
+          + '<button class="del" onclick="'+P+'.channels.splice('+j+',1);yenile()">Sil</button></div>';
+      }).join('')
+    + '<button class="add" onclick="ensureArr('+i+',\'channels\');'+P+'.channels.push(\'\');yenile()">+ Kanal Ekle</button>';
+
+  if(b.id==='sosyal'){
+    const so=r.social||{};
+    return baslik(b,'Radyonun sosyal medya hesapları ve iletişim bilgileri.')
+    + '<div class="grid2">'
+    +   alan('Instagram', urlInput(so.ig,P+'.social.ig','https://instagram.com/...','ensureObj('+i+',\'social\');'))
+    +   alan('X (Twitter)', urlInput(so.x,P+'.social.x','https://x.com/...','ensureObj('+i+',\'social\');'))
+    +   alan('YouTube', urlInput(so.yt,P+'.social.yt','https://youtube.com/...','ensureObj('+i+',\'social\');'))
+    +   alan('Facebook', urlInput(so.fb,P+'.social.fb','https://facebook.com/...','ensureObj('+i+',\'social\');'))
+    +   alan('TikTok', urlInput(so.tiktok,P+'.social.tiktok','https://tiktok.com/@...','ensureObj('+i+',\'social\');'))
+    +   alan('WhatsApp', txtInput(r.whatsapp,P+'.whatsapp',20,'+90 ...'), 20, r.whatsapp)
+    + '</div>'
+    + alan('Kurumsal / Şirket bilgisi', txtInput(r.company,P+'.company',90), 90, r.company);
+  }
+  return '';
+}
+
+/* ============================================================
+   ALAN YARDIMCILARI
+   ============================================================ */
+function alan(etiket, girdi, limit, deger, ipucu){
+  const lim = limit ? '<span class="lim">en fazla '+limit+' karakter</span><span class="say" data-say>'+(String(deger||'').length)+'/'+limit+'</span>' : '';
+  return '<div class="field"><label>'+etiket+lim+'</label>'+girdi+(ipucu?'<div class="hint">'+ipucu+'</div>':'')+'</div>';
+}
+function txtInput(v,yol,max,ph){
+  return '<input type="text" '+(max?'data-max="'+max+'" ':'')+'value="'+att(v)+'" '+(ph?'placeholder="'+att(ph)+'" ':'')+'oninput="'+yol+'=this.value">';
+}
+function urlInput(v,yol,ph,on){
+  return '<input type="url" value="'+att(v)+'" '+(ph?'placeholder="'+att(ph)+'" ':'')+'oninput="'+(on||'')+yol+'=this.value">';
+}
+function taInput(v,yol,max,ph){
+  return '<textarea '+(max?'data-max="'+max+'" ':'')+(ph?'placeholder="'+att(ph)+'" ':'')+'oninput="'+yol+'=this.value">'+att(v)+'</textarea>';
+}
+function selectInput(secenekler,secili,yol){
+  return '<select onchange="'+yol+'=this.value">'+secenekler.map(function(f){
+    return '<option '+(f===secili?'selected':'')+'>'+f+'</option>';}).join('')+'</select>';
+}
+function gorselAlani(etiket, deger, yol, yukleFn, oneri){
+  const inp = isUp(deger)
+    ? '<div class="chip">✓ Bilgisayardan yüklendi</div><button class="btn-x" onclick="'+yol+'=\'https://\';yenile()">Kaldır</button>'
+    : '<input type="text" value="'+att(deger)+'" placeholder="Görsel linki (URL) veya dosya yolu" oninput="'+yol+'=this.value;up_thumb2(this)">';
+  return '<div class="field"><label>'+etiket+'</label>'
+    + '<div class="uprow">'+inp+'<button class="btn-up" onclick="'+yukleFn+'">⬆ Bilgisayardan Yükle</button></div>'
+    + oneriKutu(oneri)
+    + '<img class="thumb" src="'+att(deger)+'" onerror="this.style.opacity=.2"></div>';
+}
+function logoAlani(r,i){
+  const logoUp=isUp(r.logo), isKnown=KNOWN_LOGOS.includes(r.logo), isCustom=!isKnown&&!logoUp;
+  let opts=KNOWN_LOGOS.map(function(l){return '<option value="'+l+'" '+(l===r.logo?'selected':'')+'>'+l.replace('logo/','')+'</option>';}).join('');
+  if(logoUp) opts='<option value="__uploaded" selected>✓ Yüklenen logo</option>'+opts+'<option value="__custom">Özel yol…</option>';
+  else opts+='<option value="__custom" '+(isCustom?'selected':'')+'>Özel yol…</option>';
+  return '<div class="field"><label>Logo</label>'
+    + '<div class="uprow"><select onchange="setRadioLogo('+i+',this.value)" style="flex:1">'+opts+'</select>'
+    + '<button class="btn-up" onclick="pickRadioLogo('+i+')">⬆ Yükle</button></div>'
+    + (isCustom?'<input type="text" value="'+att(r.logo)+'" placeholder="logo/ozel.png" oninput="D.radios['+i+'].logo=this.value" style="margin-top:8px">':'')
+    + oneriKutu(GORSEL.logo)
+    + '<img class="thumb logo" src="'+att(r.logo)+'" onerror="this.style.opacity=.2"></div>';
+}
+
+/* ==== KARAKTER SAYAÇLARI ==== */
+function sayaclariKur(){
+  document.querySelectorAll('#panel [data-max]').forEach(function(el){
+    const max=+el.getAttribute('data-max');
+    let s=null, satirIci=false;
+
+    /* 1) Etiketli tek alan (.field) ise sayaç etiketin sağında durur */
+    const f=el.closest('.field');
+    if(f && f.querySelectorAll('[data-max]').length===1) s=f.querySelector('label [data-say]');
+
+    /* 2) Satır içi alan (frekans/yayıncı/akış satırları): her girdiye KENDİ sayacı */
+    if(!s){
+      satirIci=true;
+      const yan=el.nextElementSibling;
+      if(yan && yan.hasAttribute && yan.hasAttribute('data-say')) s=yan;
+      else{
+        s=document.createElement('span'); s.className='say say-mini'; s.setAttribute('data-say','');
+        el.insertAdjacentElement('afterend', s);
+      }
+    }
+    if(!s) return;
+    el.setAttribute('title','En fazla '+max+' karakter önerilir');
+
+    const guncelle=function(){
+      const n=el.value.length, asti=n>max, yakin=!asti && n>max*0.9;
+      s.textContent=n+'/'+max;
+      s.classList.toggle('asti', asti);
+      s.classList.toggle('yakin', yakin);
+      el.classList.toggle('asti', asti);
+      /* satır içi sayaç sadece sınıra yaklaşınca görünür, satırı kalabalıklaştırmasın */
+      if(satirIci) s.style.opacity = (asti||yakin) ? '1' : '0';
+    };
+    el.addEventListener('input',guncelle); guncelle();
+  });
+}
+
+/* ==== ORTAK ==== */
+function mv(arr,i,dir,fn){const j=i+dir;if(j<0||j>=arr.length)return;const t=arr[i];arr[i]=arr[j];arr[j]=t;fn();}
+function att(s){return String(s==null?'':s).replace(/"/g,'&quot;');}
+function isUp(s){return typeof s==='string' && s.startsWith('data:');}
+function up_thumb(inp){const img=inp.closest('.item').querySelector('.thumb');if(img){img.src=inp.value;img.style.opacity=1;}}
+function up_thumb2(inp){const img=inp.closest('.field').querySelector('.thumb');if(img){img.src=inp.value;img.style.opacity=1;}}
+function ensureArr(i,key){ if(!Array.isArray(D.radios[i][key])) D.radios[i][key]=[]; }
+function ensureObj(i,key){ if(!D.radios[i][key] || typeof D.radios[i][key]!=='object') D.radios[i][key]={}; }
+
+function setRadioLogo(i,val){
+  if(val==='__uploaded')return;
+  if(val==='__custom'){D.radios[i].logo='logo/';yenile();return;}
+  D.radios[i].logo=val;yenile();
+}
+function pickRadioLogo(i){pickImage(function(u){D.radios[i].logo=u;yenile();},700,true);}
+function pickRadioImg(i){pickImage(function(u){D.radios[i].img=u;yenile();},1600,false);}
+function pickRadioHero(i){pickImage(function(u){D.radios[i].hero=u;yenile();},1900,false);}
+function pickSlide(i){pickImage(function(u){D.slides[i]=u;yenile();},1800,false);}
+function pickHostPhoto(i,j){pickImage(function(u){ensureArr(i,'hosts');D.radios[i].hosts[j].photo=u;D.radios[i].hosts[j].afis=false;yenile();},700,false);}
+
+function silRadyo(i){
+  if(!confirm('“'+(D.radios[i].name||'Radyo')+'” silinecek. Emin misin?'))return;
+  D.radios.splice(i,1);
+  if(st.varlik==='radyo' && st.radyo>=D.radios.length){ st.varlik='site'; st.bolum='radyolar'; }
+  yenile();
+}
+function addRadio(){
+  D.radios.push({
+    name:"Yeni Radyo", slug:"radyo-"+Date.now().toString(36),
+    logo:"logo/bayrakstar-beyaz.png", logoColor:"logo/bayrakstar-beyaz.png",
+    slogan:"Slogan", genre:"", freq:"", color:"#0081ba", accent:"#00bac5",
+    font:"Anton", bodyFont:"Roboto", ink:"#ffffff",
+    url:"https://", stream:"", about:"",
+    img:"https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1200&q=80", hero:"",
+    hosts:[], schedule:[], frequencies:[], channels:[], social:{}, weekendNote:""
+  });
+  gecVarlik('radyo', D.radios.length-1);
+}
+
+/* ==== GÖRSEL YÜKLE + OPTİMİZE ==== */
+function pickImage(cb,maxW,asPng){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=function(e){const f=e.target.files[0];if(!f)return;
+    if(!f.type.startsWith('image/')){alert('Lütfen bir görsel dosyası seç.');return;}
+    optimize(f,maxW||1600,asPng,cb);};
+  inp.click();
+}
+function optimize(file,maxW,asPng,cb){
+  const rd=new FileReader();
+  rd.onload=function(){const img=new Image();
+    img.onload=function(){
+      let w=img.width,h=img.height;
+      if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+      const c=document.createElement('canvas');c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      cb(asPng ? c.toDataURL('image/png') : c.toDataURL('image/jpeg',0.82));
+      toast('Görsel yüklendi ✓ ('+w+'×'+h+') — Kaydet ile uygula');
+    };
+    img.onerror=function(){alert('Görsel okunamadı.');};
+    img.src=rd.result;};
+  rd.readAsDataURL(file);
+}
+
+/* ==== KAYDET ==== */
+function collect(){}   /* tüm alanlar anlık bağlı — toplamaya gerek yok */
+function save(){
+  try{ localStorage.setItem('bayrakstar_data',JSON.stringify(D)); }catch(err){}
+  toast('Buluta gönderiliyor…');
+  return window.BULUT.yaz(D).then(function(){
+    toast('Buluta kaydedildi ✓ — site güncellendi'); return true;
+  }).catch(function(e){
+    alert('Buluta kaydedilemedi:\n\n'+e.message+'\n\nDeğişikliklerin kaybolmadı, bu tarayıcıda duruyor. '
+        + 'İnternetini kontrol edip tekrar "Kaydet" de.');
+    return false;
+  });
+}
+function saveAndPreview(){save().then(function(ok){if(ok)window.open('index.html','_blank');});}
+function toast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2400);}
+
+function resetAll(){
+  if(!confirm('Tüm değişiklikler silinip varsayılan içeriğe dönülecek — YAYINDAKİ site de sıfırlanır. Emin misin?'))return;
+  localStorage.removeItem('bayrakstar_data');
+  D=JSON.parse(JSON.stringify(window.DEFAULT_DATA));
+  st={varlik:'site',radyo:0,bolum:'hero'};
+  render();
+  window.BULUT.yaz({}).then(function(){ toast('Varsayılana sıfırlandı (bulut dahil)'); })
+  .catch(function(e){ alert('Bulut sıfırlanamadı: '+e.message); });
+}
+
+/* ==== JSON İNDİR / YÜKLE ==== */
+function exportJson(){
+  const content="/* Bu içeriği data.js dosyasındaki DEFAULT_DATA'nın yerine yapıştırarak yayına alabilirsin. */\nwindow.DEFAULT_DATA = "+JSON.stringify(D,null,2)+";";
+  const blob=new Blob([content],{type:'text/javascript'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='bayrakstar-icerik.js';a.click();
+  toast('İndirildi — yedek olarak sakla');
+}
+function importJson(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.js,.json,application/json,text/javascript';
+  inp.onchange=function(e){const f=e.target.files[0];if(!f)return;const rd=new FileReader();
+    rd.onload=function(){try{
+      const txt=rd.result;const m=txt.match(/\{[\s\S]*\}/);
+      D=JSON.parse(m?m[0]:txt);
+      st={varlik:'site',radyo:0,bolum:'hero'};
+      render();toast('Yüklendi — Kaydet ile uygula');
+    }catch(err){alert('Dosya okunamadı: '+err.message);}};
+    rd.readAsText(f);};
+  inp.click();
+}
+
+if(window.BULUT.girisliMi()){openPanel();}
+</script>
+</body>
+</html>

@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bayrakstar — colorful life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="data.js"></script>
+<script src="bulut.js"></script>
+<style>
+  :root{
+    --dark:#242424;
+    --anthracite:#4d4d4d;
+    --yellow:#ffca11;
+    --blue:#0081ba;
+    --red:#ff0007;
+    --teal:#00bac5;
+    --coral:#f75843;
+    --paper:#f6f5f2;
+    --ink:#1c1c1c;
+    /* radyo marka renkleri */
+    --fenomen:#ec1c24;
+    --fturk:#1e50c8;
+    --boombox:#f5a800;
+    --istanbul:#0081ba;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Open Sans',system-ui,sans-serif;background:var(--dark);color:#fff;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--coral);color:#fff}
+  img{display:block}
+
+  /* ============ HEADER ============ */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 5vw;transition:background .4s,padding .4s,backdrop-filter .4s;
+  }
+  header.scrolled{background:rgba(18,18,18,.82);backdrop-filter:blur(14px);padding:10px 5vw;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{height:38px;width:auto}
+  nav.menu{display:flex;gap:30px;font-size:13px;font-weight:700;letter-spacing:.08em}
+  nav.menu a{position:relative;opacity:.82;transition:opacity .25s;white-space:nowrap}
+  nav.menu a::after{content:"";position:absolute;left:0;bottom:-6px;height:2px;width:0;background:var(--coral);transition:width .3s}
+  nav.menu a:hover{opacity:1}
+  nav.menu a:hover::after{width:100%}
+  .burger{display:none;flex-direction:column;gap:5px;cursor:pointer}
+  .burger span{width:26px;height:3px;background:#fff;border-radius:3px;transition:.3s}
+
+  /* ============ SLIDER ============ */
+  .slider{position:relative;height:100vh;min-height:600px;overflow:hidden}
+  .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.4s ease;z-index:1}
+  .slide.active{opacity:1;z-index:2}
+  .slide img{width:100%;height:100%;object-fit:cover;transform:scale(1.12);animation:kb 8s ease-out forwards}
+  .slide.active img{animation:kb 8s ease-out forwards}
+  @keyframes kb{from{transform:scale(1.12)}to{transform:scale(1.24)}}
+  .slide::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 15%,rgba(20,20,20,.15),rgba(15,15,15,.82) 75%),linear-gradient(180deg,rgba(15,15,15,.4),rgba(15,15,15,.9))}
+  .slider-content{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 6vw 100px}
+  .eq-heart{width:132px;height:106px;margin-bottom:24px;filter:drop-shadow(0 10px 30px rgba(0,0,0,.5));overflow:visible}
+  .eq-heart rect{transform-box:fill-box;transform-origin:center}
+  /* hareketi azalt tercihi: sabit kalp, animasyon yok */
+  @media (prefers-reduced-motion:reduce){.eq-heart{animation:none!important}}
+  .kicker{font-size:12px;letter-spacing:.42em;text-transform:uppercase;font-weight:700;color:var(--yellow);margin-bottom:18px}
+  .slider-content h1{font-weight:800;line-height:.98;font-size:clamp(44px,8vw,110px);letter-spacing:-.02em}
+  .slider-content h1 .grad{background:linear-gradient(100deg,var(--coral),var(--yellow) 30%,var(--teal) 60%,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% auto;animation:flow 6s linear infinite}
+  @keyframes flow{to{background-position:200% center}}
+  .slogan{font-size:clamp(17px,2.2vw,24px);font-weight:400;opacity:.92;margin-top:20px;letter-spacing:.2em}
+  .slogan b{font-weight:700}
+  .slider-btns{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap;justify-content:center}
+  .btn{padding:15px 30px;border-radius:44px;font-weight:800;font-size:14px;letter-spacing:.03em;transition:transform .25s,box-shadow .25s;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:10px}
+  .btn-fill{background:#fff;color:var(--ink)}
+  .btn-fill:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(255,255,255,.22)}
+  .btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.35)}
+  .btn-ghost:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}
+  .dots{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:10px}
+  .dots button{width:34px;height:4px;border-radius:4px;border:none;background:rgba(255,255,255,.35);cursor:pointer;transition:.3s;padding:0}
+  .dots button.on{background:#fff;width:48px}
+
+  /* ============ RED SLOGAN BAND ============ */
+  .band{background:linear-gradient(90deg,var(--red),var(--coral));position:relative;z-index:10;overflow:hidden;height:66px;display:flex;align-items:center}
+  .band .rot{position:relative;width:100%;height:100%}
+  .band .sl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:16px;opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s;font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:clamp(15px,2.2vw,22px)}
+  .band .sl.on{opacity:1;transform:none}
+  .band .sl .star{width:9px;height:9px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+
+  /* ============ INTRO / TANITIM ============ */
+  .intro{background:var(--paper);color:var(--ink);padding:110px 6vw;text-align:center}
+  .intro .inner{max-width:900px;margin:0 auto}
+  .intro .tag{display:inline-block;font-size:12px;letter-spacing:.3em;text-transform:uppercase;font-weight:800;color:var(--red);margin-bottom:22px}
+  .intro h2{font-size:clamp(32px,4.8vw,58px);font-weight:800;line-height:1.06;letter-spacing:-.02em;margin-bottom:26px}
+  .intro h2 .c{color:var(--blue)}
+  .intro p{font-size:18px;line-height:1.8;color:#444;max-width:720px;margin:0 auto 18px}
+  .stats{display:flex;gap:50px;justify-content:center;margin-top:48px;flex-wrap:wrap}
+  .stat .num{font-size:48px;font-weight:800;line-height:1}
+  .stat .num.c1{color:var(--red)}.stat .num.c2{color:var(--teal)}.stat .num.c3{color:var(--blue)}.stat .num.c4{color:var(--yellow);-webkit-text-stroke:1px #e0a800}
+  .stat .lbl{font-size:13px;color:#666;margin-top:8px;letter-spacing:.05em}
+
+  /* ============ RADYOLAR ============ */
+  .radios{padding:100px 5vw 110px;background:var(--dark)}
+  .radios .head{text-align:center;max-width:640px;margin:0 auto 56px}
+  .radios .head h2{font-size:clamp(32px,4.6vw,54px);font-weight:800;letter-spacing:-.02em}
+  .radios .head p{opacity:.72;margin-top:14px;font-size:16px;line-height:1.7}
+  .radio-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+  .rcard{position:relative;border-radius:24px;overflow:hidden;height:320px;display:block;isolation:isolate;background:#111;transform:translateY(0);transition:transform .4s,box-shadow .4s}
+  .rcard:hover{transform:translateY(-8px);box-shadow:0 26px 50px rgba(0,0,0,.5)}
+  .rcard .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s;filter:saturate(.85) brightness(.75)}
+  .rcard:hover .bg{transform:scale(1.1);filter:saturate(1) brightness(.85)}
+  .rcard .tint{position:absolute;inset:0;mix-blend-mode:multiply;opacity:.72;transition:opacity .4s}
+  .rcard:hover .tint{opacity:.8}
+  .rcard .glow{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55))}
+  .rcard .inner{position:absolute;inset:0;z-index:3;padding:34px;display:flex;flex-direction:column;justify-content:space-between}
+  .rcard .top{display:flex;justify-content:space-between;align-items:flex-start}
+  .rcard .logo{height:58px;width:auto;max-width:62%;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4));object-fit:contain;object-position:left}
+  .rcard .freq{background:rgba(255,255,255,.18);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.25);padding:7px 14px;border-radius:30px;font-weight:800;font-size:13px;white-space:nowrap}
+  .rcard .bottom .sl{font-size:22px;font-weight:800;letter-spacing:.01em;margin-bottom:14px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .rcard .go{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#111;font-weight:800;font-size:14px;padding:12px 22px;border-radius:40px;transition:gap .25s,transform .25s}
+  .rcard:hover .go{gap:16px}
+  .rcard .go svg{width:16px;height:16px}
+  .rcard .live{position:absolute;top:34px;right:120px;display:none}
+  /* mini eq badge */
+  .rcard .eqbadge{display:inline-flex;align-items:flex-end;gap:3px;height:16px;margin-left:4px}
+  .rcard .eqbadge i{width:3px;background:#fff;border-radius:2px;animation:eq .9s ease-in-out infinite}
+  .rcard .eqbadge i:nth-child(2){animation-delay:.2s}.rcard .eqbadge i:nth-child(3){animation-delay:.35s}.rcard .eqbadge i:nth-child(4){animation-delay:.1s}
+  .rcard .eqbadge i:nth-child(1){height:40%}.rcard .eqbadge i:nth-child(2){height:90%}.rcard .eqbadge i:nth-child(3){height:60%}.rcard .eqbadge i:nth-child(4){height:100%}
+  @keyframes eq{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+
+  /* ============ FOOTER ============ */
+  footer{background:#161616;padding:70px 5vw 36px}
+  .foot-top{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:40px}
+  .foot-brand img{height:46px;margin-bottom:18px}
+  .foot-brand p{opacity:.6;line-height:1.7;font-size:14px;max-width:300px}
+  .foot-radios{display:flex;flex-direction:column;gap:12px}
+  .foot-radios h4{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--yellow);margin-bottom:8px;font-weight:800}
+  .foot-radios a{opacity:.72;font-size:14px;transition:opacity .2s,transform .2s}
+  .foot-radios a:hover{opacity:1;transform:translateX(4px)}
+  .socials{display:flex;gap:12px;margin-top:4px}
+  .socials a{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:.25s;font-weight:800;font-size:13px}
+  .socials a:hover{background:var(--coral);transform:translateY(-3px)}
+  .foot-bottom{max-width:1180px;margin:44px auto 0;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;opacity:.55}
+
+  /* ==== uçan kaçan: floating notes ==== */
+  .notes{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+  .notes span{position:absolute;bottom:-50px;color:rgba(255,255,255,.16);animation:floatUp linear infinite;will-change:transform}
+  @keyframes floatUp{0%{transform:translateY(0) rotate(0);opacity:0}12%{opacity:1}100%{transform:translateY(-118vh) rotate(360deg);opacity:0}}
+
+  /* ==== glow blobs behind radio grid ==== */
+  .radios{position:relative;overflow:hidden}
+  .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.45;z-index:0;animation:drift 16s ease-in-out infinite}
+  .b-red{width:360px;height:360px;background:#ec1c24;top:-90px;left:-70px}
+  .b-teal{width:320px;height:320px;background:#00bac5;bottom:-80px;right:-50px;animation-delay:-6s}
+  .b-blue{width:280px;height:280px;background:#0081ba;top:42%;left:52%;animation-delay:-3s}
+  @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(46px,-34px) scale(1.12)}66%{transform:translate(-32px,28px) scale(.94)}}
+  .radios .head,.radio-grid{position:relative;z-index:2}
+
+  /* ==== radio card 3D + play ==== */
+  .rcard{will-change:transform}
+  .rcard .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .rcard .listen{display:inline-flex;align-items:center;gap:9px;background:#fff;color:#111;font-weight:800;font-size:14px;padding:12px 20px;border-radius:40px;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s}
+  .rcard .listen:hover{transform:scale(1.05);box-shadow:0 10px 26px rgba(255,255,255,.28)}
+  .rcard .listen .pi{width:26px;height:26px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center}
+  .rcard .listen .pi svg{width:12px;height:12px;fill:#fff;margin-left:1px}
+  .rcard .site{display:inline-flex;align-items:center;gap:8px;color:#fff;font-weight:700;font-size:13px;padding:12px 16px;border-radius:40px;border:1.5px solid rgba(255,255,255,.4);transition:background .2s}
+  .rcard .site:hover{background:rgba(255,255,255,.16)}
+  .rcard .site svg{width:14px;height:14px}
+  .rcard.playing{outline:3px solid rgba(255,255,255,.8);outline-offset:-3px}
+  .rcard .onair{position:absolute;top:34px;right:34px;z-index:4;display:none;align-items:center;gap:7px;background:var(--red);padding:6px 12px;border-radius:30px;font-size:11px;font-weight:800;letter-spacing:.12em}
+  .rcard.playing .onair{display:flex}
+  .rcard.playing .freq{display:none}
+
+  /* ==== STICKY LIVE PLAYER ==== */
+  .player{position:fixed;left:0;right:0;bottom:0;z-index:120;transform:translateY(130%);transition:transform .5s cubic-bezier(.2,.85,.25,1)}
+  .player.show{transform:translateY(0)}
+  .pl-inner{margin:0 auto;max-width:1300px;background:rgba(20,20,20,.94);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.12);border-bottom:none;border-radius:20px 20px 0 0;padding:12px 20px;display:flex;align-items:center;gap:16px;box-shadow:0 -16px 44px rgba(0,0,0,.5)}
+  .pl-cover{width:54px;height:54px;border-radius:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+  .pl-cover img{max-width:78%;max-height:78%;object-fit:contain}
+  .pl-meta{min-width:0;width:150px}
+  .pl-name{font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pl-sub{font-size:11px;opacity:.6;margin-top:2px;display:flex;align-items:center;gap:6px}
+  .pl-sub .ld{width:7px;height:7px;border-radius:50%;background:var(--red);animation:live 1.5s infinite}
+  @keyframes live{0%{box-shadow:0 0 0 0 rgba(255,0,7,.6)}70%{box-shadow:0 0 0 8px rgba(255,0,7,0)}100%{box-shadow:0 0 0 0 rgba(255,0,7,0)}}
+  .pl-ctrls{display:flex;align-items:center;gap:8px;flex-shrink:0}
+  .pl-ctrls button{background:none;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s,opacity .2s;opacity:.85}
+  .pl-ctrls button:hover{opacity:1;transform:scale(1.12)}
+  .pl-ctrls .skip svg{width:22px;height:22px;fill:#fff}
+  .pl-play{width:52px;height:52px;border-radius:50%;background:#fff!important;color:#111!important;flex-shrink:0}
+  .pl-play svg{width:22px;height:22px;fill:#111}
+  .viz{flex:1;display:flex;align-items:center;gap:3px;height:38px;min-width:60px;overflow:hidden;opacity:.35;transition:opacity .3s}
+  .player.on .viz{opacity:1}
+  .viz i{flex:1;min-width:2px;background:linear-gradient(180deg,var(--teal),var(--blue));border-radius:2px;height:20%;transform-origin:bottom}
+  .player.on .viz i{animation:vz .8s ease-in-out infinite}
+  @keyframes vz{0%,100%{transform:scaleY(.22)}50%{transform:scaleY(1)}}
+  .pl-vol{display:flex;align-items:center;gap:8px;flex-shrink:0;width:120px}
+  .pl-vol svg{width:20px;height:20px;fill:rgba(255,255,255,.7);flex-shrink:0}
+  .pl-vol input{width:100%;accent-color:var(--coral);cursor:pointer}
+  .pl-close{background:none;border:none;color:#fff;opacity:.5;cursor:pointer;font-size:24px;line-height:1;flex-shrink:0}
+  .pl-close:hover{opacity:1}
+  @media(max-width:760px){.viz,.pl-vol,.pl-meta{display:none}.pl-inner{gap:10px;justify-content:space-between}}
+
+  /* ==== üst duyuru şeridi ==== */
+  .annbar{position:fixed;top:0;left:0;right:0;z-index:130;height:40px;display:flex;align-items:center;justify-content:center;gap:9px;
+    background:linear-gradient(90deg,#ff0007,#f75843 50%,#0081ba);color:#fff;font-weight:700;font-size:13px;letter-spacing:.01em;
+    text-align:center;padding:0 12px;transition:filter .2s}
+  .annbar:hover{filter:brightness(1.1)}
+  header{top:40px}
+  @media(max-width:600px){.annbar{font-size:11px}}
+
+  /* ==== çoklu radyo bandı ==== */
+  .pl-now{display:flex;align-items:center;gap:13px;flex-shrink:0}
+  .pl-strip{flex:1;display:flex;gap:8px;overflow-x:auto;padding:3px 2px;min-width:0;scrollbar-width:none}
+  .pl-strip::-webkit-scrollbar{height:0}
+  .pl-chip{flex-shrink:0;display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:40px;padding:5px 15px 5px 5px;cursor:pointer;transition:.2s;color:#fff}
+  .pl-chip:hover{background:rgba(255,255,255,.13)}
+  .pl-chip.active{border-color:#fff;background:rgba(255,255,255,.18)}
+  .pl-chip .cl{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+  .pl-chip .cl img{max-width:78%;max-height:78%;object-fit:contain}
+  .pl-chip .cn{font-size:12.5px;font-weight:700;white-space:nowrap}
+  .pl-chip .eqm{display:flex;align-items:flex-end;gap:2px;height:12px}
+  .pl-chip .eqm i{width:2px;background:#fff;border-radius:2px;height:40%}
+  .pl-chip.active .eqm i{animation:vz .7s ease-in-out infinite}
+  .pl-chip.active .eqm i:nth-child(2){animation-delay:.15s}.pl-chip.active .eqm i:nth-child(3){animation-delay:.3s}
+  @media(max-width:760px){.pl-now .pl-meta{display:none}}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:860px){
+    nav.menu{display:none}
+    .burger{display:flex}
+    .radio-grid{grid-template-columns:1fr}
+    .stats{gap:32px}
+    .rcard{height:300px}
+  }
+  @media(max-width:600px){
+    .rcard .logo{height:46px}
+    .foot-top{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+
+<!-- ÜST DUYURU ŞERİDİ -->
+<a class="annbar" href="websiteler.html">🌐 Radyoların resmî web sitesine gitmek için tıklayın →</a>
+
+<!-- HEADER -->
+<header id="hdr">
+  <a class="brand" href="#top"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"></a>
+  <nav class="menu" id="navMenu">
+    <a href="#radyolar">Radyolarımız</a>
+  </nav>
+  <div class="burger" onclick="location.href='#radyolar'"><span></span><span></span><span></span></div>
+</header>
+
+<!-- SLIDER -->
+<section class="slider" id="top">
+  <div id="slides"></div>
+  <div class="notes" id="notes"></div>
+  <div class="slider-content">
+    <svg class="eq-heart" id="eqHeart" viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bayrakstar"></svg>
+    <div class="kicker" id="hKicker"></div>
+    <h1 id="hTitle"></h1>
+    <div class="slogan" id="hSlogan"></div>
+    <div class="slider-btns">
+      <button class="btn btn-fill" onclick="playFirst()"><svg viewBox="0 0 24 24" width="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Canlı Dinle</button>
+      <a class="btn btn-ghost" href="#radyolar">Radyoları Keşfet</a>
+    </div>
+  </div>
+  <div class="dots" id="dots"></div>
+</section>
+
+<!-- RED SLOGAN BAND -->
+<div class="band">
+  <div class="rot" id="rot"></div>
+</div>
+
+<!-- INTRO / TANITIM -->
+<section class="intro" id="hakkimizda">
+  <div class="inner reveal">
+    <span class="tag" id="iTag"></span>
+    <h2 id="iHead"></h2>
+    <p id="iP1"></p>
+    <p id="iP2"></p>
+    <div class="stats" id="iStats"></div>
+  </div>
+</section>
+
+<!-- RADYOLAR -->
+<section class="radios" id="radyolar">
+  <div class="blob b-red"></div><div class="blob b-teal"></div><div class="blob b-blue"></div>
+  <div class="head reveal">
+    <h2>Radyolarımız</h2>
+    <p>Çatımız altındaki radyolar. Kartın üzerine tıkla, radyonun web sitesine git.</p>
+  </div>
+  <div class="radio-grid" id="grid"></div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-top">
+    <div class="foot-brand reveal">
+      <img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar">
+      <p id="fAbout"></p>
+      <div class="socials" style="margin-top:20px" id="fSocials"></div>
+    </div>
+    <div class="foot-radios reveal">
+      <h4>Radyolarımız</h4>
+      <div id="fRadios"></div>
+    </div>
+    <div class="foot-radios reveal">
+      <h4>Kurumsal</h4>
+      <a href="#hakkimizda">Hakkımızda</a>
+      <a href="#">Reklam & İş Birliği</a>
+      <a href="#">Basın</a>
+      <a href="#">İletişim</a>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <div>© 2026 Bayrakstar. Tüm hakları saklıdır.</div>
+    <div>colorful life</div>
+  </div>
+</footer>
+
+<!-- STICKY LIVE BAND (tüm radyolar) -->
+<div class="player" id="player">
+  <audio id="audio" preload="none"></audio>
+  <div class="pl-inner">
+    <div class="pl-now">
+      <div class="pl-cover" id="plCover"><img id="plLogo" src="logo/bayrakstar-beyaz.png" alt=""></div>
+      <div class="pl-meta">
+        <div class="pl-name" id="plName">Bir radyo seç</div>
+        <div class="pl-sub"><span class="ld"></span><span id="plSub">Canlı Yayın</span></div>
+      </div>
+      <button class="pl-play" id="plPlay" onclick="togglePlay()"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+    </div>
+    <div class="pl-strip" id="plStrip"></div>
+    <div class="pl-vol">
+      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02z"/></svg>
+      <input type="range" id="plVol" min="0" max="100" value="85">
+    </div>
+    <button class="pl-close" onclick="closePlayer()" title="Kapat">×</button>
+  </div>
+</div>
+
+<script>
+window.bulutHazir.then(function(){
+const D = window.getSiteData();
+const esc = s => (s==null?'':String(s));
+
+/* ---- HERO ---- */
+document.getElementById('hKicker').textContent = D.hero.kicker;
+document.getElementById('hTitle').innerHTML = esc(D.hero.title1)+'<span class="grad">'+esc(D.hero.accent)+'</span><br>'+esc(D.hero.title2);
+document.getElementById('hSlogan').innerHTML = D.hero.slogan;
+
+/* ---- HEADER nav (radyo isimleri) ---- */
+const nav=document.getElementById('navMenu');
+D.radios.forEach(r=>{const a=document.createElement('a');a.href=r.slug?('radyo.html?r='+r.slug):r.url;if(!r.slug){a.target='_blank';a.rel='noopener';}a.textContent=r.name;nav.appendChild(a);});
+
+/* ---- SLIDER ---- */
+const slidesWrap=document.getElementById('slides');
+D.slides.forEach((src,i)=>{const d=document.createElement('div');d.className='slide'+(i===0?' active':'');d.innerHTML='<img src="'+esc(src)+'" alt="">';slidesWrap.appendChild(d);});
+const slides=[...slidesWrap.children];
+const dotsWrap=document.getElementById('dots');
+let si=0;
+slides.forEach((_,i)=>{const b=document.createElement('button');if(i===0)b.className='on';b.onclick=()=>go(i);dotsWrap.appendChild(b);});
+const dots=[...dotsWrap.children];
+function go(i){slides[si].classList.remove('active');dots[si].classList.remove('on');si=i;slides[si].classList.add('active');dots[si].classList.add('on');
+  const im=slides[si].querySelector('img');im.style.animation='none';void im.offsetWidth;im.style.animation='';}
+if(slides.length>1) setInterval(()=>go((si+1)%slides.length),5500);
+
+/* ---- RED SLOGAN BAND ---- */
+const rot=document.getElementById('rot');
+D.slogans.forEach((s,i)=>{const d=document.createElement('div');d.className='sl'+(i===0?' on':'');d.innerHTML='<span class="star"></span> '+esc(s)+' <span class="star"></span>';rot.appendChild(d);});
+const sls=[...rot.children];let bi=0;
+if(sls.length>1) setInterval(()=>{sls[bi].classList.remove('on');bi=(bi+1)%sls.length;sls[bi].classList.add('on');},2600);
+
+/* ---- INTRO ---- */
+document.getElementById('iTag').textContent = D.intro.tag;
+document.getElementById('iHead').innerHTML = D.intro.headline;
+document.getElementById('iP1').innerHTML = D.intro.p1;
+document.getElementById('iP2').innerHTML = D.intro.p2;
+const iStats=document.getElementById('iStats');
+D.intro.stats.forEach(s=>{const el=document.createElement('div');el.className='stat';el.innerHTML='<div class="num" style="color:'+esc(s.color)+'">'+esc(s.num)+'</div><div class="lbl">'+esc(s.label)+'</div>';iStats.appendChild(el);});
+
+/* ---- RADYOLAR ---- */
+const grid=document.getElementById('grid');
+D.radios.forEach((r,idx)=>{
+  const a=document.createElement('a');
+  a.className='rcard reveal';a.href=r.slug?('radyo.html?r='+r.slug):r.url;a.dataset.idx=idx;
+  if(!r.slug){a.target='_blank';a.rel='noopener';}
+  const freqHtml = (r.freq && r.freq.trim()) ? esc(r.freq)+' <span style="opacity:.6;font-size:11px">MHz</span>' : 'CANLI';
+  const listenBtn = `<button class="listen" onclick="playRadio(${idx},event)"><span class="pi"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span> Canlı Dinle</button>`;
+  a.innerHTML=`
+    <img class="bg" src="${esc(r.img)}" alt="${esc(r.name)}">
+    <div class="tint" style="background:${esc(r.color)}"></div>
+    <div class="glow"></div>
+    <div class="onair"><span class="ld" style="width:7px;height:7px;border-radius:50%;background:#fff;display:block"></span> CANLI YAYINDA</div>
+    <div class="inner">
+      <div class="top">
+        <img class="logo" src="${esc(r.logo)}" alt="${esc(r.name)}">
+        <div class="freq">${freqHtml}</div>
+      </div>
+      <div class="bottom">
+        <div class="sl">${esc(r.slogan)}<span class="eqbadge"><i></i><i></i><i></i><i></i></span></div>
+        <div class="actions">
+          ${listenBtn}
+          <span class="site">Radyoyu Keşfet <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </div>
+    </div>`;
+  grid.appendChild(a);
+});
+
+/* ---- kart 3D tilt (uçan kaçan his) ---- */
+document.querySelectorAll('.rcard').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const b=card.getBoundingClientRect();
+    const x=(e.clientX-b.left)/b.width-.5, y=(e.clientY-b.top)/b.height-.5;
+    card.style.transform=`translateY(-8px) perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg)`;
+  });
+  card.addEventListener('mouseleave',()=>{card.style.transform='';});
+});
+
+/* ---- uçan müzik notaları ---- */
+(function(){
+  const wrap=document.getElementById('notes');const g=['♪','♫','♬','♩','◆','●'];
+  for(let i=0;i<16;i++){const s=document.createElement('span');
+    s.textContent=g[i%g.length];
+    s.style.left=Math.random()*100+'%';
+    s.style.fontSize=(16+Math.random()*30)+'px';
+    s.style.animationDuration=(9+Math.random()*11)+'s';
+    s.style.animationDelay=(-Math.random()*14)+'s';
+    wrap.appendChild(s);}
+})();
+
+/* ============ CANLI YAYIN BANDI (tüm radyolar) ============ */
+const audio=document.getElementById('audio');
+const player=document.getElementById('player');
+let curIdx=-1, isPlaying=false;
+
+// bant içindeki tüm radyo logoları
+const strip=document.getElementById('plStrip');
+D.radios.forEach((r,i)=>{
+  const b=document.createElement('button');
+  b.className='pl-chip';b.dataset.idx=i;
+  b.innerHTML='<span class="cl" style="background:'+esc(r.color)+'"><img src="'+esc(r.logo)+'" alt=""></span>'+
+              '<span class="cn">'+esc(r.name)+'</span>'+
+              '<span class="eqm"><i></i><i></i><i></i></span>';
+  b.onclick=()=>playRadio(i);
+  strip.appendChild(b);
+});
+
+function openSite(url,e){if(e){e.preventDefault();e.stopPropagation();}window.open(url,'_blank','noopener');}
+
+// "Canlı Dinle" → bandı aç; ilk yayınlı radyoyu başlat
+function openBand(){
+  player.classList.add('show');
+  if(curIdx<0){ const first=D.radios.findIndex(r=>r.stream&&r.stream.trim()); if(first>=0) playRadio(first); }
+}
+
+function playRadio(i,e){
+  if(e){e.preventDefault();e.stopPropagation();}
+  const r=D.radios[i];
+  player.classList.add('show');
+  document.getElementById('plName').textContent=r.name;
+  document.getElementById('plCover').style.background=r.color;
+  document.getElementById('plLogo').src=r.logo;
+  if(!r.stream||!r.stream.trim()){
+    curIdx=-1; isPlaying=false; markActive(-1); audio.pause();
+    document.getElementById('plSub').textContent='Canlı yayın linki yakında (panelden eklenecek)';
+    return;
+  }
+  if(curIdx===i && isPlaying){ togglePlay(); return; }
+  curIdx=i;
+  audio.src=r.stream;
+  document.getElementById('plSub').textContent='Bağlanıyor…';
+  audio.volume=document.getElementById('plVol').value/100;
+  audio.play().catch(()=>{document.getElementById('plSub').textContent='Yayına ulaşılamadı';});
+}
+function togglePlay(){
+  if(curIdx<0){ openBand(); return; }
+  if(isPlaying){audio.pause();}else{audio.play().catch(()=>{});}
+}
+function closePlayer(){audio.pause();audio.src='';player.classList.remove('show');markActive(-1);curIdx=-1;}
+function markActive(i){
+  document.querySelectorAll('.pl-chip').forEach(c=>c.classList.toggle('active',+c.dataset.idx===i && isPlaying));
+  document.querySelectorAll('.rcard').forEach(c=>c.classList.toggle('playing',+c.dataset.idx===i && isPlaying));
+}
+function setPlayIcon(p){document.getElementById('plPlay').innerHTML=p
+  ?'<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>'
+  :'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';}
+
+audio.addEventListener('playing',()=>{isPlaying=true;player.classList.add('on');setPlayIcon(true);document.getElementById('plSub').textContent='Canlı Yayın';markActive(curIdx);});
+audio.addEventListener('pause',()=>{isPlaying=false;player.classList.remove('on');setPlayIcon(false);markActive(-1);});
+audio.addEventListener('waiting',()=>{document.getElementById('plSub').textContent='Tamponlanıyor…';});
+audio.addEventListener('error',()=>{if(curIdx>=0)document.getElementById('plSub').textContent='Yayına ulaşılamadı';});
+document.getElementById('plVol').addEventListener('input',e=>{audio.volume=e.target.value/100;});
+
+// hero "Canlı Dinle" → bandı aç
+window.playFirst=openBand;
+
+/* ---- FOOTER ---- */
+document.getElementById('fAbout').innerHTML = D.footer.about;
+const fSoc=document.getElementById('fSocials');
+const socMap={ig:'IG',yt:'YT',x:'X',sp:'SP'};
+Object.keys(socMap).forEach(k=>{const url=D.footer.socials[k]||'#';const a=document.createElement('a');a.href=url;a.title=k;a.textContent=socMap[k];if(url!=='#'){a.target='_blank';a.rel='noopener';}fSoc.appendChild(a);});
+const fRad=document.getElementById('fRadios');
+D.radios.forEach(r=>{const a=document.createElement('a');a.href=r.slug?('radyo.html?r='+r.slug):r.url;if(!r.slug){a.target='_blank';a.rel='noopener';}a.style.display='block';a.style.marginBottom='12px';a.textContent=r.name+' →';fRad.appendChild(a);});
+
+/* ---- header scroll ---- */
+const hdr=document.getElementById('hdr');
+addEventListener('scroll',()=>hdr.classList.toggle('scrolled',scrollY>40));
+
+/* ---- reveal ---- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+/* satır içi onclick'ler için global yap (bulut sarmalayıcısı yüzünden gerekli) */
+window.togglePlay=togglePlay;window.closePlayer=closePlayer;window.playRadio=playRadio;
+window.openSite=openSite;window.openBand=openBand;window.go=go;
+});
+</script>
+<script>
+/* ============================================================
+   KALP ⇄ SES DALGASI animasyonu (hero amblemi)
+   Dikey barlar önce kalp siluetini doldurur, sonra ekolayzıra
+   dönüşüp dans eder, sonra tekrar kalbe döner. Sonsuz döngü.
+   ============================================================ */
+(function(){
+  var svg = document.getElementById('eqHeart');
+  if(!svg) return;
+
+  var N     = 15,          // bar sayısı
+      GEN   = 150,         // viewBox genişliği
+      YUK   = 120,         // viewBox yüksekliği
+      ADIM  = GEN/N,       // bar aralığı
+      KALIN = 7,           // bar kalınlığı
+      MERKEZ= (N-1)/2;
+
+  /* --- 1) Kalp siluetini sütunlara çevir --- */
+  var ust = new Array(N).fill(Infinity), alt = new Array(N).fill(-Infinity);
+  (function(){
+    var S=3.55, CX=GEN/2, CY=51;   // ölçek + konum (kalp 150x120'ye oturur)
+    for(var i=0;i<=6000;i++){
+      var t=i/6000*Math.PI*2, s=Math.sin(t);
+      var hx=16*s*s*s;
+      var hy=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
+      var X=CX+hx*S, Y=CY-hy*S;
+      var k=Math.floor(X/ADIM);
+      if(k<0||k>=N) continue;
+      if(Y<ust[k]) ust[k]=Y;
+      if(Y>alt[k]) alt[k]=Y;
+    }
+    for(var j=0;j<N;j++){                 // kalbin dışında kalan sütunlar
+      if(!isFinite(ust[j])){ ust[j]=CY-4; alt[j]=CY+4; }
+    }
+  })();
+
+  var kalpMerkez=[], kalpYuk=[];
+  for(var i=0;i<N;i++){
+    kalpYuk[i]    = Math.max(KALIN, alt[i]-ust[i]);
+    kalpMerkez[i] = (ust[i]+alt[i])/2;
+  }
+
+  /* --- 2) Barları oluştur (renkler merkeze göre simetrik) --- */
+  var RENK=['#ff0007','#f75843','#ffca11','#00bac5','#0081ba'];
+  var barlar=[];
+  for(var i=0;i<N;i++){
+    var r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    r.setAttribute('x', (i*ADIM + (ADIM-KALIN)/2).toFixed(2));
+    r.setAttribute('width', KALIN);
+    r.setAttribute('rx', KALIN/2);
+    r.setAttribute('fill', RENK[Math.round(Math.abs(i-MERKEZ)) % RENK.length]);
+    svg.appendChild(r);
+    barlar.push(r);
+  }
+
+  function ciz(merkez, yuk){
+    for(var i=0;i<N;i++){
+      var h=Math.max(KALIN, yuk[i]);
+      barlar[i].setAttribute('y', (merkez[i]-h/2).toFixed(2));
+      barlar[i].setAttribute('height', h.toFixed(2));
+    }
+  }
+
+  /* Hareket azaltma tercihi: sabit kalp çiz, bitir */
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    ciz(kalpMerkez, kalpYuk); return;
+  }
+
+  /* --- 3) Zaman çizelgesi (ms) --- */
+  var KALP_BEKLE=1900, DONUS=850, DALGA_SURE=3000, TUR=KALP_BEKLE+DONUS+DALGA_SURE+DONUS;
+
+  function yumusat(p){ return p<.5 ? 4*p*p*p : 1-Math.pow(-2*p+2,3)/2; }  // easeInOutCubic
+
+  /* dalga durumu: ortada hizalı, zamanla dans eden ekolayzır */
+  function dalga(t, i){
+    var f = i/(N-1)*Math.PI*2;
+    var a = Math.sin(t/260 + f*1.7)*0.5 + Math.sin(t/150 + f*2.9)*0.32 + Math.sin(t/95 + f*1.1)*0.18;
+    var kenar = 1 - Math.pow(Math.abs(i-MERKEZ)/MERKEZ, 2)*0.45;   // kenarlar biraz kısa
+    return (26 + a*30) * kenar;
+  }
+
+  var t0=null;
+  function kare(zaman){
+    if(t0===null) t0=zaman;
+    var t=(zaman-t0), p=t % TUR;
+
+    var karisim;            // 0 = tam kalp, 1 = tam dalga
+    var atis=0;             // kalp atışı (nabız)
+    if(p < KALP_BEKLE){
+      karisim=0;
+      var q=(p/KALP_BEKLE)*2*Math.PI;                       // lub-dub nabzı
+      atis=(Math.sin(q)*0.5+Math.sin(q*2)*0.28)*0.045;
+    } else if(p < KALP_BEKLE+DONUS){
+      karisim=yumusat((p-KALP_BEKLE)/DONUS);
+    } else if(p < KALP_BEKLE+DONUS+DALGA_SURE){
+      karisim=1;
+    } else {
+      karisim=1-yumusat((p-KALP_BEKLE-DONUS-DALGA_SURE)/DONUS);
+    }
+
+    var merkez=[], yuk=[];
+    for(var i=0;i<N;i++){
+      var dm=YUK/2, dy=dalga(t,i);
+      merkez[i]=kalpMerkez[i]+(dm-kalpMerkez[i])*karisim;
+      yuk[i]   =kalpYuk[i]  +(dy-kalpYuk[i])  *karisim;
+    }
+    ciz(merkez,yuk);
+    svg.style.transform='scale('+(1+atis*(1-karisim))+')';
+
+    requestAnimationFrame(kare);
+  }
+  ciz(kalpMerkez,kalpYuk);
+  requestAnimationFrame(kare);
+})();
+</script>
+<script src="site.js"></script>
+</body>
+</html>

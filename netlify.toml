@@ -1,0 +1,35 @@
+# Bayrakstar — Netlify yayın ayarları
+# Statik site; derleme (build) adımı yok, dosyalar olduğu gibi yayınlanır.
+
+[build]
+  publish = "."
+  command = ""
+
+# Yönetim paneli arama motorlarına kapalı
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+# Görseller uzun süre önbellekte kalsın (hızlı açılış)
+[[headers]]
+  for = "/logo/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/yayincilar/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# HTML her zaman taze gelsin (içerik güncellemesi anında görünsün)
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
