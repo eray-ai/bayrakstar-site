@@ -145,6 +145,9 @@
   #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(120%);background:#1d1d1d;color:#fff;padding:14px 24px;border-radius:12px;font-weight:700;font-size:14px;z-index:60;transition:transform .4s;box-shadow:0 14px 34px rgba(0,0,0,.35);display:flex;align-items:center;gap:10px}
   #toast.show{transform:translateX(-50%) translateY(0)}
   #toast .ok{width:9px;height:9px;border-radius:50%;background:#3ddc84}
+  #toastGeri{display:none;background:#3ddc84;color:#12331f;border:none;border-radius:8px;
+             padding:7px 13px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;margin-left:6px}
+  #toastGeri:hover{background:#54e695}
 
   .stat-row{display:grid;grid-template-columns:1fr 1.6fr auto auto;gap:10px;align-items:center;margin-bottom:10px}
   .bos{text-align:center;color:#a09c94;font-size:13px;padding:26px 10px;border:1px dashed var(--line);border-radius:12px;margin-bottom:14px}
@@ -212,7 +215,7 @@
   <main class="panel" id="panel"></main>
 </div>
 
-<div id="toast"><span class="ok"></span><span id="toastMsg">Kaydedildi</span></div>
+<div id="toast"><span class="ok"></span><span id="toastMsg">Kaydedildi</span><button id="toastGeri" onclick="geriAl()">↩ Geri al</button></div>
 
 <script>
 /* ==== GİRİŞ (Supabase Auth) ==== */
@@ -365,12 +368,12 @@ function panelSite(b){
     + D.slides.map(function(src,i){
         const up=isUp(src);
         const inp = up
-          ? '<div class="chip">✓ Bilgisayardan yüklendi</div><button class="btn-x" onclick="D.slides['+i+']=\'https://\';yenile()">Kaldır</button>'
+          ? '<div class="chip">✓ Bilgisayardan yüklendi</div><button class="btn-x" onclick="silDeger(\'D.slides['+i+']\',\'https://\',\'Görsel '+(i+1)+'\')">Kaldır</button>'
           : '<input type="text" value="'+att(src)+'" placeholder="Görsel linki (URL)" oninput="D.slides['+i+']=this.value;up_thumb(this)">';
         return '<div class="item"><div class="ihead"><span class="n">Görsel '+(i+1)+'</span><div class="ctrl">'
           + '<button class="mv" onclick="mv(D.slides,'+i+',-1,yenile)">↑</button>'
           + '<button class="mv" onclick="mv(D.slides,'+i+',1,yenile)">↓</button>'
-          + '<button class="del" onclick="D.slides.splice('+i+',1);yenile()">Sil</button></div></div>'
+          + '<button class="del" onclick="silOge(\'D.slides\','+i+',\'Görsel '+(i+1)+'\')">Sil</button></div></div>'
           + '<div class="uprow">'+inp+'<button class="btn-up" onclick="pickSlide('+i+')">⬆ Bilgisayardan Yükle</button></div>'
           + '<img class="thumb" src="'+att(src)+'" onerror="this.style.opacity=.2"></div>';
       }).join('')
@@ -385,7 +388,7 @@ function panelSite(b){
           + '<input type="text" data-max="38" value="'+att(s)+'" oninput="D.slogans['+i+']=this.value">'
           + '<button class="mv" onclick="mv(D.slogans,'+i+',-1,yenile)">↑</button>'
           + '<button class="mv" onclick="mv(D.slogans,'+i+',1,yenile)">↓</button>'
-          + '<button class="del" onclick="D.slogans.splice('+i+',1);yenile()">Sil</button></div>';
+          + '<button class="del" onclick="silOge(\'D.slogans\','+i+',this.closest(\'.sitem\').querySelector(\'input\').value)">Sil</button></div>';
       }).join('')
     + '</div><button class="add" onclick="D.slogans.push(\'Yeni slogan\');yenile()">+ Slogan Ekle</button>';
 
@@ -403,7 +406,7 @@ function panelSite(b){
           + '<input type="text" data-max="6" value="'+att(s.num)+'" placeholder="Sayı" oninput="D.intro.stats['+i+'].num=this.value">'
           + '<input type="text" data-max="18" value="'+att(s.label)+'" placeholder="Etiket" oninput="D.intro.stats['+i+'].label=this.value">'
           + '<input type="color" value="'+(s.color||'#ff0007')+'" oninput="D.intro.stats['+i+'].color=this.value" style="width:42px;height:38px;border:1px solid #e6e4df;border-radius:8px;padding:2px">'
-          + '<button class="del" onclick="D.intro.stats.splice('+i+',1);yenile()">Sil</button></div>';
+          + '<button class="del" onclick="silOge(\'D.intro.stats\','+i+',D.intro.stats['+i+'].label)">Sil</button></div>';
       }).join('')
     + '<button class="add" onclick="D.intro.stats.push({num:\'0\',label:\'Etiket\',color:\'#00bac5\'});yenile()">+ İstatistik Ekle</button>';
 
@@ -476,7 +479,7 @@ function panelRadyo(b,i){
           + '<input type="text" data-max="6" value="'+att(f.f)+'" placeholder="MHz" style="max-width:110px;flex:0 0 110px" oninput="'+P+'.frequencies['+j+'].f=this.value">'
           + '<button class="mv" onclick="mv('+P+'.frequencies,'+j+',-1,yenile)">↑</button>'
           + '<button class="mv" onclick="mv('+P+'.frequencies,'+j+',1,yenile)">↓</button>'
-          + '<button class="del" onclick="'+P+'.frequencies.splice('+j+',1);yenile()">Sil</button></div>';
+          + '<button class="del" onclick="silOge(\''+P+'.frequencies\','+j+',(('+P+'.frequencies['+j+']||{}).c||\'\')+\' \'+(('+P+'.frequencies['+j+']||{}).f||\'\'))">Sil</button></div>';
       }).join('')
     + '<button class="add" onclick="ensureArr('+i+',\'frequencies\');'+P+'.frequencies.push({c:\'\',f:\'\'});yenile()">+ Frekans Ekle</button>';
 
@@ -486,7 +489,7 @@ function panelRadyo(b,i){
     + ((r.hosts||[]).length?'':'<div class="bos">Yayıncı yok — bu bölüm sitede gizli.</div>')
     + (r.hosts||[]).map(function(h,j){
         const foto = isUp(h.photo)
-          ? '<div class="chip">✓ Foto yüklendi</div><button class="btn-x" onclick="'+P+'.hosts['+j+'].photo=\'\';yenile()">Kaldır</button>'
+          ? '<div class="chip">✓ Foto yüklendi</div><button class="btn-x" onclick="silDeger(\''+P+'.hosts['+j+'].photo\',\'\',\'Fotoğraf\')">Kaldır</button>'
           : '<input type="text" value="'+att(h.photo)+'" placeholder="Fotoğraf yolu veya URL" oninput="'+P+'.hosts['+j+'].photo=this.value;'+P+'.hosts['+j+'].afis=false">';
         return '<div class="subcard">'
           + '<div class="rowline">'
@@ -494,7 +497,7 @@ function panelRadyo(b,i){
           +   '<input type="text" data-max="32" value="'+att(h.show)+'" placeholder="Program" oninput="'+P+'.hosts['+j+'].show=this.value">'
           +   '<button class="mv" onclick="mv('+P+'.hosts,'+j+',-1,yenile)">↑</button>'
           +   '<button class="mv" onclick="mv('+P+'.hosts,'+j+',1,yenile)">↓</button>'
-          +   '<button class="del" onclick="'+P+'.hosts.splice('+j+',1);yenile()">Sil</button>'
+          +   '<button class="del" onclick="silOge(\''+P+'.hosts\','+j+',('+P+'.hosts['+j+']||{}).name)">Sil</button>'
           + '</div>'
           + '<textarea data-max="130" placeholder="Kısa tanıtım (bio)" oninput="'+P+'.hosts['+j+'].bio=this.value">'+att(h.bio)+'</textarea>'
           + (h.afis?'<div class="hint" style="margin-bottom:6px">✓ Resmî program afişi kullanılıyor — kartta rozet ve karartma kapalı. Kendi fotoğrafını koyarsan normale döner.</div>':'')
@@ -514,7 +517,7 @@ function panelRadyo(b,i){
           + '<input type="text" data-max="20" value="'+att(s.host)+'" placeholder="Sunucu (ops.)" style="max-width:140px;flex:0 0 140px" oninput="'+P+'.schedule['+j+'].host=this.value">'
           + '<button class="mv" onclick="mv('+P+'.schedule,'+j+',-1,yenile)">↑</button>'
           + '<button class="mv" onclick="mv('+P+'.schedule,'+j+',1,yenile)">↓</button>'
-          + '<button class="del" onclick="'+P+'.schedule.splice('+j+',1);yenile()">Sil</button></div>';
+          + '<button class="del" onclick="silOge(\''+P+'.schedule\','+j+',('+P+'.schedule['+j+']||{}).name)">Sil</button></div>';
       }).join('')
     + '<button class="add" onclick="ensureArr('+i+',\'schedule\');'+P+'.schedule.push({t:\'\',name:\'\',host:\'\'});yenile()">+ Program Ekle</button>'
     + '<div style="height:18px"></div>'
@@ -529,7 +532,7 @@ function panelRadyo(b,i){
           + '<input type="text" data-max="26" value="'+att(c)+'" placeholder="Kanal adı" oninput="'+P+'.channels['+j+']=this.value">'
           + '<button class="mv" onclick="mv('+P+'.channels,'+j+',-1,yenile)">↑</button>'
           + '<button class="mv" onclick="mv('+P+'.channels,'+j+',1,yenile)">↓</button>'
-          + '<button class="del" onclick="'+P+'.channels.splice('+j+',1);yenile()">Sil</button></div>';
+          + '<button class="del" onclick="silOge(\''+P+'.channels\','+j+','+P+'.channels['+j+'])">Sil</button></div>';
       }).join('')
     + '<button class="add" onclick="ensureArr('+i+',\'channels\');'+P+'.channels.push(\'\');yenile()">+ Kanal Ekle</button>';
 
@@ -716,7 +719,7 @@ function selectInput(secenekler,secili,yol){
 }
 function gorselAlani(etiket, deger, yol, yukleFn, oneri){
   const inp = isUp(deger)
-    ? '<div class="chip">✓ Bilgisayardan yüklendi</div><button class="btn-x" onclick="'+yol+'=\'https://\';yenile()">Kaldır</button>'
+    ? '<div class="chip">✓ Bilgisayardan yüklendi</div><button class="btn-x" onclick="silDeger(\''+yol+'\',\'https://\',\''+etiket.replace(/'/g,"")+'\')">Kaldır</button>'
     : '<input type="text" value="'+att(deger)+'" placeholder="Görsel linki (URL) veya dosya yolu" oninput="'+yol+'=this.value;up_thumb2(this)">';
   return '<div class="field"><label>'+etiket+'</label>'
     + '<div class="uprow">'+inp+'<button class="btn-up" onclick="'+yukleFn+'">⬆ Bilgisayardan Yükle</button></div>'
@@ -792,10 +795,18 @@ function pickSlide(i){pickImage(function(u){D.slides[i]=u;yenile();},1800,false)
 function pickHostPhoto(i,j){pickImage(function(u){ensureArr(i,'hosts');D.radios[i].hosts[j].photo=u;D.radios[i].hosts[j].afis=false;yenile();},700,false);}
 
 function silRadyo(i){
-  if(!confirm('“'+(D.radios[i].name||'Radyo')+'” silinecek. Emin misin?'))return;
+  const r=D.radios[i]; if(!r) return;
+  const ad='“'+(r.name||'Radyo')+'”';
+  const detay=[];
+  if((r.hosts||[]).length)      detay.push((r.hosts||[]).length+' yayıncı');
+  if((r.schedule||[]).length)   detay.push((r.schedule||[]).length+' program');
+  if((r.frequencies||[]).length)detay.push((r.frequencies||[]).length+' frekans');
+  if(!confirm(ad+' radyosu silinecek'+(detay.length?'\n(içindeki '+detay.join(', ')+' dahil)':'')+'.\n\nEmin misin?')) return;
+  _sonSilinen={ dizi:D.radios, index:i, oge:r, ad:ad };
   D.radios.splice(i,1);
   if(st.varlik==='radyo' && st.radyo>=D.radios.length){ st.varlik='site'; st.bolum='radyolar'; }
   yenile();
+  toastGeriAlli(ad+' silindi');
 }
 function addRadio(){
   D.radios.push({
@@ -848,10 +859,74 @@ function save(){
   });
 }
 function saveAndPreview(){save().then(function(ok){if(ok)window.open('index.html','_blank');});}
-function toast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2400);}
+let _toastZaman=null;
+function toast(msg,sure){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastGeri').style.display='none';
+  t.classList.add('show');
+  clearTimeout(_toastZaman);
+  _toastZaman=setTimeout(function(){t.classList.remove('show');},sure||2400);
+}
+
+/* ============================================================
+   SİLME KORUMASI
+   Her silmede önce onay sorulur; silinen öge saklanır ve
+   "↩ Geri al" ile aynı yerine geri konabilir.
+   ============================================================ */
+let _sonSilinen=null;
+
+function silOge(diziYolu, index, ad){
+  const dizi = new Function('D','return '+diziYolu)(D);
+  if(!Array.isArray(dizi) || !dizi[index]) return;
+  const etiket = (ad && String(ad).trim()) ? '“'+ad+'”' : 'Bu kayıt';
+  if(!confirm(etiket+' silinecek.\n\nEmin misin?')) return;
+  _sonSilinen = { dizi:dizi, index:index, oge:dizi[index], ad:etiket };
+  dizi.splice(index,1);
+  yenile();
+  toastGeriAlli(etiket+' silindi');
+}
+
+/* görsel/foto temizleme de geri alınabilir olsun */
+function silDeger(yol, bosDeger, ad){
+  const mevcut = new Function('D','return '+yol)(D);
+  if(!confirm((ad||'Görsel')+' kaldırılacak.\n\nEmin misin?')) return;
+  _sonSilinen = { yol:yol, eski:mevcut, ad:ad||'Görsel' };
+  try{ new Function('D','v', yol+'=v;')(D, bosDeger); }catch(e){}
+  yenile();
+  toastGeriAlli((ad||'Görsel')+' kaldırıldı');
+}
+
+function toastGeriAlli(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastGeri').style.display='inline-block';
+  t.classList.add('show');
+  clearTimeout(_toastZaman);
+  _toastZaman=setTimeout(function(){t.classList.remove('show');},9000);
+}
+
+function geriAl(){
+  if(!_sonSilinen){ toast('Geri alınacak bir şey yok'); return; }
+  const g=_sonSilinen; _sonSilinen=null;
+  if(g.dizi) g.dizi.splice(g.index, 0, g.oge);          /* listeden silinen */
+  else try{ new Function('D','v', g.yol+'=v;')(D, g.eski); }catch(e){}   /* temizlenen değer */
+  yenile();
+  toast(g.ad+' geri getirildi ✓');
+}
 
 function resetAll(){
-  if(!confirm('Tüm değişiklikler silinip varsayılan içeriğe dönülecek — YAYINDAKİ site de sıfırlanır. Emin misin?'))return;
+  /* En tehlikeli işlem: yayındaki siteyi de geri alır ve GERİ ALINAMAZ.
+     Bu yüzden çift onay + yazarak doğrulama istiyor. */
+  if(!confirm('DİKKAT — bu işlem geri alınamaz.\n\n'
+    + 'Panelde yaptığın TÜM düzenlemeler silinecek ve YAYINDAKİ site de\n'
+    + 'ilk haline dönecek (ziyaretçiler de eski içeriği görecek).\n\n'
+    + 'Devam etmek istiyor musun?')) return;
+  const cevap=prompt('Son adım: onaylamak için aşağıya SIFIRLA yaz.\n\n'
+    + 'İptal etmek için “İptal”e bas.\n'
+    + 'İpucu: önce “⬇ JSON İndir” ile yedek alabilirsin.');
+  if(cevap===null) return;
+  if(cevap.trim().toLocaleUpperCase('tr-TR')!=='SIFIRLA'){ alert('Yazdığın metin eşleşmedi — hiçbir şey silinmedi.'); return; }
   localStorage.removeItem('bayrakstar_data');
   D=JSON.parse(JSON.stringify(window.DEFAULT_DATA));
   st={varlik:'site',radyo:0,bolum:'hero'};
