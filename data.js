@@ -256,12 +256,14 @@ window.DEFAULT_DATA = {
         {
           "t": "07:00 – 10:00",
           "name": "Tansu Çağlayan’la Yeni Gün",
-          "host": "Tansu Çağlayan"
+          "host": "Tansu Çağlayan",
+          "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
         },
         {
           "t": "10:00 – 12:00",
           "name": "Doğanay’ın Dünyası",
-          "host": "Doğanay"
+          "host": "Doğanay",
+          "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
         },
         {
           "t": "12:00 – 13:00",
@@ -270,17 +272,20 @@ window.DEFAULT_DATA = {
         {
           "t": "13:00 – 15:00",
           "name": "Ömer Erişmen’le Extra",
-          "host": "Ömer Erişmen"
+          "host": "Ömer Erişmen",
+          "img": "yayincilar/fenomenturk-omer-erismen.jpg"
         },
         {
           "t": "15:00 – 18:00",
           "name": "Mert’le Perde Arkası",
-          "host": "Mert"
+          "host": "Mert",
+          "img": "yayincilar/fenomenturk-mert-uzulmez.jpg"
         },
         {
           "t": "18:00 – 20:00",
           "name": "Murat Özsoy’la Şarzzz",
-          "host": "Murat Özsoy"
+          "host": "Murat Özsoy",
+          "img": "yayincilar/fenomenturk-murat-ozsoy.jpg"
         },
         {
           "t": "20:00 – 00:00",
@@ -335,15 +340,18 @@ window.DEFAULT_DATA = {
       "schedule": [
         {
           "t": "00:00 – 10:00",
-          "name": "Freestyle"
+          "name": "Freestyle",
+          "img": "programlar/boombox-freestyle.jpg"
         },
         {
           "t": "10:00 – 16:00",
-          "name": "Acil İstek Hattı"
+          "name": "Acil İstek Hattı",
+          "img": "programlar/boombox-acil-istek-hatti.jpg"
         },
         {
           "t": "16:00 – 00:00",
-          "name": "Freestyle"
+          "name": "Freestyle",
+          "img": "programlar/boombox-freestyle.jpg"
         }
       ],
       "frequencies": [
@@ -392,29 +400,35 @@ window.DEFAULT_DATA = {
       "schedule": [
         {
           "t": "00:00 – 07:00",
-          "name": "Kesintisiz Müzik"
+          "name": "Kesintisiz Müzik",
+          "img": "programlar/istanbulfm-kesintisiz.jpg"
         },
         {
           "t": "07:00 – 10:00",
           "name": "Emre Mutlu Show",
-          "host": "Emre Mutlu"
+          "host": "Emre Mutlu",
+          "img": "yayincilar/istanbulfm-emre-mutlu.jpg"
         },
         {
           "t": "10:00 – 14:00",
-          "name": "İstanbul FM En İyiler"
+          "name": "İstanbul FM En İyiler",
+          "img": "programlar/istanbulfm-en-iyiler.jpg"
         },
         {
           "t": "14:00 – 16:00",
           "name": "Yalçın.Net",
-          "host": "Yalçın Alaca"
+          "host": "Yalçın Alaca",
+          "img": "yayincilar/istanbulfm-yalcin-alaca.jpg"
         },
         {
           "t": "16:00 – 17:00",
-          "name": "Nerede O Eski Şarkılar?"
+          "name": "Nerede O Eski Şarkılar?",
+          "img": "programlar/istanbulfm-nerede-o-eski-sarkilar.jpg"
         },
         {
           "t": "17:00 – 00:00",
-          "name": "İstanbul FM En İyiler"
+          "name": "İstanbul FM En İyiler",
+          "img": "programlar/istanbulfm-en-iyiler.jpg"
         }
       ],
       "channels": [
@@ -473,11 +487,34 @@ window.getSiteData = function () {
   out.slides  = (saved.slides  && saved.slides.length)  ? saved.slides  : def.slides;
   out.slogans = (saved.slogans && saved.slogans.length) ? saved.slogans : def.slogans;
 
+  /* Kayıtlı liste ile varsayılan listeyi öğe bazında birleştirir.
+     Kaydedilen değerler HER ZAMAN kazanır; ama data.js'e SONRADAN eklenen
+     yeni alanlar (örn. programların "img" görseli) kaybolmasın diye
+     varsayılandaki eşleşen öğeden tamamlanır. Kullanıcının sildiği öğeler
+     geri gelmez — sadece kayıtlı listede duranlar zenginleştirilir. */
+  function listeBirlestir(defListe, savedListe, anahtar) {
+    if (!Array.isArray(savedListe)) return defListe;
+    var defIndeks = {};
+    (defListe || []).forEach(function (x) {
+      if (x && typeof x === "object" && x[anahtar]) defIndeks[x[anahtar]] = x;
+    });
+    return savedListe.map(function (sv) {
+      if (!sv || typeof sv !== "object") return sv;
+      var dv = sv[anahtar] ? defIndeks[sv[anahtar]] : null;
+      return dv ? Object.assign({}, dv, sv) : sv;
+    });
+  }
+
   var savedBySlug = {};
   (saved.radios || []).forEach(function (r) { if (r && r.slug) savedBySlug[r.slug] = r; });
   out.radios = (def.radios || []).map(function (dr) {
     var sv = savedBySlug[dr.slug];
-    return sv ? Object.assign({}, dr, sv) : dr;
+    if (!sv) return dr;
+    var birlesik = Object.assign({}, dr, sv);
+    birlesik.schedule    = listeBirlestir(dr.schedule,    sv.schedule,    "name");
+    birlesik.hosts       = listeBirlestir(dr.hosts,       sv.hosts,       "name");
+    birlesik.frequencies = listeBirlestir(dr.frequencies, sv.frequencies, "c");
+    return birlesik;
   });
   (saved.radios || []).forEach(function (r) {
     if (r && r.slug && !(def.radios || []).some(function (d) { return d.slug === r.slug; })) out.radios.push(r);

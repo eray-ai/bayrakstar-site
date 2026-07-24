@@ -257,7 +257,8 @@ const GORSEL = {
   kart:    {ol:'1200 × 800 px',  tip:'JPG · yatay (3:2)',  not:'Ana sayfadaki radyo kartının arka planı. Üzerine logo ve yazı biner.'},
   kapak:   {ol:'1920 × 900 px',  tip:'JPG · geniş yatay',  not:'Radyo sayfasının tepesindeki kapak. Üstü koyu filtreyle kaplanır.'},
   logo:    {ol:'600 × 200 px',   tip:'şeffaf PNG',         not:'Koyu zemine bindiği için beyaz/açık renkli logo kullan.'},
-  yayinci: {ol:'600 × 600 px',   tip:'JPG · KARE (1:1)',   not:'Kart kare olduğu için kare olmayan görselin kenarları kırpılır.'}
+  yayinci: {ol:'600 × 600 px',   tip:'JPG · KARE (1:1)',   not:'Kart kare olduğu için kare olmayan görselin kenarları kırpılır.'},
+  program: {ol:'600 × 600 px',   tip:'JPG · KARE (1:1)',   not:'Akışta küçük kare olarak görünür, tıklanınca büyür. Boş bırakırsan radyonun logosu kullanılır.'}
 };
 function oneriKutu(g){
   return '<div class="oneri">🖼️ Önerilen: <b>'+g.ol+'</b> · '+g.tip+'</div><div class="hint">'+g.not+'</div>';
@@ -510,16 +511,27 @@ function panelRadyo(b,i){
   if(b.id==='akis') return baslik(b,'Gün içindeki program akışı. Sitede gün sekmeleriyle gösterilir, o an yayında olan program vurgulanır.')
     + '<div class="hint" style="margin-bottom:12px">Saat biçimi <b>08:00 – 10:00</b> · program adı en fazla <b>36</b>, sunucu <b>20</b> karakter.</div>'
     + ((r.schedule||[]).length?'':'<div class="bos">Henüz program eklenmemiş.</div>')
+    + oneriKutu(GORSEL.program)
+    + '<div style="height:14px"></div>'
     + (r.schedule||[]).map(function(s,j){
-        return '<div class="rowline">'
-          + '<input type="text" data-max="15" value="'+att(s.t)+'" placeholder="08:00 – 10:00" style="max-width:140px;flex:0 0 140px" oninput="'+P+'.schedule['+j+'].t=this.value">'
-          + '<input type="text" data-max="36" value="'+att(s.name)+'" placeholder="Program adı" oninput="'+P+'.schedule['+j+'].name=this.value">'
-          + '<input type="text" data-max="20" value="'+att(s.host)+'" placeholder="Sunucu (ops.)" style="max-width:140px;flex:0 0 140px" oninput="'+P+'.schedule['+j+'].host=this.value">'
-          + '<button class="mv" onclick="mv('+P+'.schedule,'+j+',-1,yenile)">↑</button>'
-          + '<button class="mv" onclick="mv('+P+'.schedule,'+j+',1,yenile)">↓</button>'
-          + '<button class="del" onclick="silOge(\''+P+'.schedule\','+j+',('+P+'.schedule['+j+']||{}).name)">Sil</button></div>';
+        var foto = isUp(s.img)
+          ? '<div class="chip">✓ Görsel yüklendi</div><button class="btn-x" onclick="silDeger(\''+P+'.schedule['+j+'].img\',\'\',\'Program görseli\')">Kaldır</button>'
+          : '<input type="text" value="'+att(s.img)+'" placeholder="Görsel yolu veya URL (boşsa radyo logosu görünür)" oninput="'+P+'.schedule['+j+'].img=this.value">';
+        return '<div class="subcard">'
+          + '<div class="rowline">'
+          +   '<input type="text" data-max="15" value="'+att(s.t)+'" placeholder="08:00 – 10:00" style="max-width:140px;flex:0 0 140px" oninput="'+P+'.schedule['+j+'].t=this.value">'
+          +   '<input type="text" data-max="36" value="'+att(s.name)+'" placeholder="Program adı" oninput="'+P+'.schedule['+j+'].name=this.value">'
+          +   '<input type="text" data-max="20" value="'+att(s.host)+'" placeholder="Sunucu (ops.)" style="max-width:140px;flex:0 0 140px" oninput="'+P+'.schedule['+j+'].host=this.value">'
+          +   '<button class="mv" onclick="mv('+P+'.schedule,'+j+',-1,yenile)">↑</button>'
+          +   '<button class="mv" onclick="mv('+P+'.schedule,'+j+',1,yenile)">↓</button>'
+          +   '<button class="del" onclick="silOge(\''+P+'.schedule\','+j+',('+P+'.schedule['+j+']||{}).name)">Sil</button>'
+          + '</div>'
+          + '<div class="uprow" style="margin-top:9px">'+foto
+          +   '<button class="btn-up" onclick="pickProgramImg('+i+','+j+')">⬆ Görsel Yükle</button></div>'
+          + (s.img?'<img class="thumb" style="height:72px;width:72px;object-fit:cover;border-radius:11px" src="'+att(s.img)+'" onerror="this.style.opacity=.2">':'')
+          + '</div>';
       }).join('')
-    + '<button class="add" onclick="ensureArr('+i+',\'schedule\');'+P+'.schedule.push({t:\'\',name:\'\',host:\'\'});yenile()">+ Program Ekle</button>'
+    + '<button class="add" onclick="ensureArr('+i+',\'schedule\');'+P+'.schedule.push({t:\'\',name:\'\',host:\'\',img:\'\'});yenile()">+ Program Ekle</button>'
     + '<div style="height:18px"></div>'
     + alan('Hafta sonu notu', txtInput(r.weekendNote,P+'.weekendNote',160,'Hafta sonu özel programları…'), 160, r.weekendNote,
            'Akışın altında küçük not olarak görünür.');
@@ -792,6 +804,7 @@ function pickRadioLogo(i){pickImage(function(u){D.radios[i].logo=u;yenile();},70
 function pickRadioImg(i){pickImage(function(u){D.radios[i].img=u;yenile();},1600,false);}
 function pickRadioHero(i){pickImage(function(u){D.radios[i].hero=u;yenile();},1900,false);}
 function pickSlide(i){pickImage(function(u){D.slides[i]=u;yenile();},1800,false);}
+function pickProgramImg(i,j){pickImage(function(u){ensureArr(i,'schedule');D.radios[i].schedule[j].img=u;yenile();},700,false);}
 function pickHostPhoto(i,j){pickImage(function(u){ensureArr(i,'hosts');D.radios[i].hosts[j].photo=u;D.radios[i].hosts[j].afis=false;yenile();},700,false);}
 
 function silRadyo(i){

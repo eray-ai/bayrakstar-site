@@ -141,6 +141,29 @@
   .tl:hover{background:rgba(255,255,255,.07)}
   .tl.live{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 14%,transparent)}
   .tl .tm{font-family:var(--head);font-size:16px;color:var(--brand);min-width:118px;letter-spacing:.02em}
+  /* program görseli — sabit kare, taşmaz, tıklayınca büyür */
+  .tl .pim{width:58px;height:58px;flex:0 0 58px;border-radius:11px;overflow:hidden;position:relative;
+           background:color-mix(in srgb,var(--brand) 22%,#1a1a1a);border:1px solid rgba(255,255,255,.12);
+           cursor:zoom-in;transition:transform .25s,border-color .25s}
+  .tl .pim:hover{transform:scale(1.07);border-color:var(--brand)}
+  .tl .pim img{width:100%;height:100%;object-fit:cover;display:block}
+  .tl .pim.bos{display:flex;align-items:center;justify-content:center;cursor:default}
+  .tl .pim.bos:hover{transform:none;border-color:rgba(255,255,255,.12)}
+  .tl .pim.bos img{width:76%;height:76%;object-fit:contain;opacity:.5}
+  /* büyütülmüş görsel katmanı */
+  #buyut{position:fixed;inset:0;z-index:200;background:rgba(8,8,8,.92);backdrop-filter:blur(6px);
+         display:none;align-items:center;justify-content:center;padding:26px;cursor:zoom-out}
+  #buyut.acik{display:flex;animation:byt .28s ease}
+  @keyframes byt{from{opacity:0}to{opacity:1}}
+  #buyut figure{max-width:min(560px,92vw);text-align:center;animation:bytIc .34s cubic-bezier(.2,.9,.3,1.2)}
+  @keyframes bytIc{from{transform:scale(.82);opacity:0}to{transform:none;opacity:1}}
+  #buyut img{width:100%;height:auto;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);display:block}
+  #buyut figcaption{margin-top:16px;font-weight:800;font-size:17px;letter-spacing:.02em}
+  #buyut .zaman{display:block;margin-top:5px;font-size:13px;font-weight:600;opacity:.65;letter-spacing:.06em}
+  #buyut .kapat{position:absolute;top:20px;right:24px;width:42px;height:42px;border-radius:50%;border:none;
+        background:rgba(255,255,255,.14);color:#fff;font-size:22px;cursor:pointer;line-height:1}
+  #buyut .kapat:hover{background:rgba(255,255,255,.26)}
+  @media(max-width:560px){ .tl .pim{width:46px;height:46px;flex:0 0 46px} }
   .tl .info{flex:1}
   .tl .pn{font-weight:800;font-size:16px}
   .tl .ph2{font-size:13px;opacity:.6;margin-top:2px}
@@ -344,9 +367,37 @@ document.getElementById('aboutText').textContent = R.about || '';
     document.getElementById('timeline').innerHTML = sched.map(function(s,i){
       var host = s.host?('<div class="ph2">'+esc(s.host)+'</div>'):'';
       var live = (i===liveIdx)?'<span class="now">● ŞİMDİ</span>':'';
-      return '<div class="tl'+(i===liveIdx?' live':'')+'"><div class="tm">'+esc(s.t)+'</div><div class="info"><div class="pn">'+esc(s.name)+'</div>'+host+'</div>'+live+'</div>';
+      /* görseli olan program tıklanabilir; olmayan radyo logosuyla dolar */
+      var gorsel = s.img
+        ? '<div class="pim" data-i="'+i+'" title="Büyütmek için tıkla"><img src="'+esc(s.img)+'" alt="'+esc(s.name)+'" loading="lazy" onerror="this.parentNode.classList.add(\'bos\');this.src=\''+esc(R.logo||'')+'\'"></div>'
+        : '<div class="pim bos"><img src="'+esc(R.logo||'')+'" alt="" loading="lazy" onerror="this.style.display=\'none\'"></div>';
+      return '<div class="tl'+(i===liveIdx?' live':'')+'">'+gorsel+'<div class="tm">'+esc(s.t)+'</div><div class="info"><div class="pn">'+esc(s.name)+'</div>'+host+'</div>'+live+'</div>';
     }).join('');
+
+    /* tıklayınca büyüt */
+    document.querySelectorAll('#timeline .pim:not(.bos)').forEach(function(k){
+      k.onclick=function(){ gorselBuyut(sched[+k.dataset.i]); };
+    });
   }
+  /* --- büyütülmüş program görseli --- */
+  var katman=document.createElement('div');
+  katman.id='buyut';
+  katman.innerHTML='<button class="kapat" aria-label="Kapat">×</button>'
+    + '<figure><img alt=""><figcaption><span class="ad"></span><span class="zaman"></span></figcaption></figure>';
+  document.body.appendChild(katman);
+  function gorselKapat(){ katman.classList.remove('acik'); }
+  katman.onclick=gorselKapat;
+  katman.querySelector('figure').onclick=function(e){ e.stopPropagation(); };
+  katman.querySelector('.kapat').onclick=gorselKapat;
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') gorselKapat(); });
+  window.gorselBuyut=function(s){
+    if(!s||!s.img) return;
+    katman.querySelector('img').src=s.img;
+    katman.querySelector('.ad').textContent=s.name||'';
+    katman.querySelector('.zaman').textContent=(s.t||'')+(s.host?' · '+s.host:'');
+    katman.classList.add('acik');
+  };
+
   render(jsDay);
   var wn=document.getElementById('wnote');
   if(R.weekendNote) wn.textContent='ℹ️ '+R.weekendNote;
