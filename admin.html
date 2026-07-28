@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bayrakstar — Yönetim Paneli</title>
 <meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="data.js"></script>
 <script src="bulut.js"></script>
@@ -36,6 +38,12 @@
   .btn-dark{background:#3a3a3a;color:#fff}
   .btn-ghost{background:transparent;color:#fff;border:1px solid #4a4a4a}
   .btn-sm{padding:7px 12px;font-size:12px;border-radius:7px}
+  /* içerik boyutu rozeti */
+  .rozet{display:inline-flex;align-items:center;padding:7px 12px;border-radius:7px;font-size:12px;
+         font-weight:700;letter-spacing:.01em;cursor:help;border:1px solid transparent;white-space:nowrap}
+  .rozet.iyi {background:rgba(45,190,110,.14);color:#5ede9c;border-color:rgba(45,190,110,.32)}
+  .rozet.orta{background:rgba(240,175,50,.16);color:#ffc75c;border-color:rgba(240,175,50,.36)}
+  .rozet.kotu{background:rgba(226,60,60,.18);color:#ff8080;border-color:rgba(226,60,60,.42)}
 
   /* ---- İKİ SÜTUNLU KABUK ---- */
   .shell{display:flex;align-items:flex-start;gap:24px;max-width:1260px;margin:0 auto;padding:22px 20px 120px}
@@ -183,6 +191,7 @@
     <div class="t">Yönetim Paneli<small>colorful life</small></div>
   </div>
   <div class="actions">
+    <span id="boyutRozet" class="rozet iyi">İçerik: —</span>
     <button class="btn btn-ghost btn-sm" onclick="resetAll()">↺ Sıfırla</button>
     <button class="btn btn-dark btn-sm" onclick="importJson()">⬆ JSON Yükle</button>
     <button class="btn btn-dark btn-sm" onclick="exportJson()">⬇ JSON İndir</button>
@@ -250,6 +259,39 @@ const KNOWN_LOGOS=[
   "logo/bayrakstar-beyaz.png"
 ];
 let D = JSON.parse(JSON.stringify(window.getSiteData()));
+
+/* ============================================================
+   YOL OKUYUCU / YAZICI
+   Panel içindeki alanlar "D.radios[0].hosts[2].photo" gibi metin
+   yollarla veriye bağlanır. Eskiden bu yollar new Function() ile
+   çalıştırılıyordu; güvenlik başlığı (CSP) kod üretimini yasakladığı
+   için aynı iş burada elle çözülüyor.
+   ============================================================ */
+function _yolParcala(yol){
+  return String(yol||'')
+    .replace(/^D\.?/, '')          // baştaki "D." at
+    .replace(/\[(\d+)\]/g, '.$1')  // [3] → .3
+    .split('.')
+    .filter(function(p){ return p !== ''; });
+}
+function yolOku(yol){
+  var o = D, p = _yolParcala(yol);
+  for (var i = 0; i < p.length; i++){
+    if (o == null) return undefined;
+    o = o[p[i]];
+  }
+  return o;
+}
+function yolYaz(yol, deger){
+  var p = _yolParcala(yol);
+  if (!p.length) return;
+  var o = D;
+  for (var i = 0; i < p.length - 1; i++){
+    if (o[p[i]] == null) o[p[i]] = /^\d+$/.test(p[i+1]) ? [] : {};
+    o = o[p[i]];
+  }
+  o[p[p.length - 1]] = deger;
+}
 
 /* ==== ÖNERİLEN GÖRSEL BOYUTLARI ==== */
 const GORSEL = {
@@ -330,7 +372,7 @@ function cizMenu(){
 }
 
 /* ==== ANA ÇİZİM ==== */
-function render(){ cizSecici(); cizMenu(); cizPanel(); sayaclariKur(); editorleriKur(); }
+function render(){ cizSecici(); cizMenu(); cizPanel(); sayaclariKur(); editorleriKur(); guncelleBoyutRozeti(); }
 function yenile(){ render(); }
 const renderRadios=yenile, renderSlides=yenile, renderSlogans=yenile, renderStats=yenile;
 
@@ -690,7 +732,7 @@ function seriHTML(kok){
 
 function yazDegisti(el){
   const v=seriHTML(el);
-  try{ new Function('D','v', el.getAttribute('data-yol')+'=v;')(D,v); }catch(e){}
+  try{ yolYaz(el.getAttribute('data-yol'), v); }catch(e){}
   const s=el.closest('.field').querySelector('[data-say]');
   const max=+el.getAttribute('data-max');
   if(s && max){
@@ -842,25 +884,79 @@ function pickImage(cb,maxW,asPng){
     optimize(f,maxW||1600,asPng,cb);};
   inp.click();
 }
-function optimize(file,maxW,asPng,cb){
+/* WebP desteği var mı? (Safari 14+, Chrome, Edge, Firefox — hepsinde var)
+   Desteklenmiyorsa toDataURL sessizce PNG döndürür, ondan anlıyoruz. */
+var _webpVar=null;
+function webpDestekli(){
+  if(_webpVar===null){
+    var t=document.createElement('canvas');t.width=t.height=1;
+    _webpVar = t.toDataURL('image/webp').indexOf('data:image/webp')===0;
+  }
+  return _webpVar;
+}
+/* Görseli hem WebP hem klasik formatta kaydedip KÜÇÜK OLANI seçer.
+   seffaf=true ise saydamlık korunur (logolar için). */
+function enKucukKodla(c,seffaf){
+  var klasik = seffaf ? c.toDataURL('image/png') : c.toDataURL('image/jpeg',0.82);
+  if(!webpDestekli()) return klasik;
+  var webp = c.toDataURL('image/webp',0.82);
+  return webp.length < klasik.length ? webp : klasik;
+}
+function optimize(file,maxW,seffaf,cb){
   const rd=new FileReader();
   rd.onload=function(){const img=new Image();
     img.onload=function(){
       let w=img.width,h=img.height;
       if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
       const c=document.createElement('canvas');c.width=w;c.height=h;
-      c.getContext('2d').drawImage(img,0,0,w,h);
-      cb(asPng ? c.toDataURL('image/png') : c.toDataURL('image/jpeg',0.82));
-      toast('Görsel yüklendi ✓ ('+w+'×'+h+') — Kaydet ile uygula');
+      const ctx=c.getContext('2d');
+      if(!seffaf){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);}  /* saydam PNG'ler siyah çıkmasın */
+      ctx.drawImage(img,0,0,w,h);
+      const url=enKucukKodla(c,seffaf);
+      cb(url);
+      toast('Görsel yüklendi ✓ '+w+'×'+h+' · '+bicimAdi(url)+' '+kbYazi(url.length)+' — Kaydet ile uygula');
+      guncelleBoyutRozeti();
     };
-    img.onerror=function(){alert('Görsel okunamadı.');};
+    img.onerror=function(){alert('Görsel okunamadı.\n\niPhone HEIC dosyaları Chrome\'da açılmaz — JPG olarak kaydedip tekrar dene.');};
     img.src=rd.result;};
   rd.readAsDataURL(file);
+}
+
+/* ==== BOYUT GÖSTERGESİ ====
+   İçeriğin tamamı tek bir JSON olarak Supabase'de duruyor ve siteyi açan
+   HERKES her ziyarette bu JSON'u baştan indiriyor. Bu yüzden şişmemesi
+   kritik. Ücretsiz plan (5 GB/ay) ile kaba karşılık:
+     100 KB → ~50.000 ziyaret ·  500 KB → ~10.000 ·  1 MB → ~5.000
+   Bütçe 500 KB kabul edildi; rozet doldukça sarı, sonra kırmızı yanar. */
+var BOYUT_BUTCE = 500*1024;
+function kbYazi(bayt){ return bayt<1024 ? bayt+' B'
+  : bayt<1048576 ? Math.round(bayt/1024)+' KB'
+  : (bayt/1048576).toFixed(1)+' MB'; }
+function bicimAdi(url){
+  var m=/^data:image\/(\w+)/.exec(url||''); return m ? m[1].toUpperCase() : 'bağlantı';
+}
+function icerikBoyutu(){ try{ return JSON.stringify(D).length; }catch(e){ return 0; } }
+function guncelleBoyutRozeti(){
+  var el=document.getElementById('boyutRozet'); if(!el) return;
+  var n=icerikBoyutu(), oran=n/BOYUT_BUTCE;
+  var durum = oran>1 ? 'kotu' : oran>0.6 ? 'orta' : 'iyi';
+  el.className='rozet '+durum;
+  el.textContent='İçerik: '+kbYazi(n)+' / '+kbYazi(BOYUT_BUTCE);
+  el.title = oran>1
+    ? 'Bütçe aşıldı! Panelden yüklenen görseller siteyi yavaşlatıyor ve aylık ziyaret kapasiteni düşürüyor. Büyük görselleri panel yerine logo/ klasörüne koyup git push yap.'
+    : 'Supabase\'e giden içeriğin toplam boyutu. Her ziyaretçi bunu indiriyor — 500 KB altında tut.';
 }
 
 /* ==== KAYDET ==== */
 function collect(){}   /* tüm alanlar anlık bağlı — toplamaya gerek yok */
 function save(){
+  var boyut=icerikBoyutu();
+  if(boyut>BOYUT_BUTCE && !confirm(
+      'Dikkat: içerik '+kbYazi(boyut)+' oldu (önerilen sınır '+kbYazi(BOYUT_BUTCE)+').\n\n'
+    + 'Siteyi açan herkes bu içeriği baştan indiriyor. Bu boyutta site yavaşlar ve\n'
+    + 'ücretsiz Supabase kotası ayda ~'+Math.round(5*1048576/(boyut/1024))+' ziyarette dolar.\n\n'
+    + 'Çözüm: büyük görselleri panelden değil, logo/ klasörüne koyup git push ile yayınla.\n\n'
+    + 'Yine de kaydedilsin mi?')) { return Promise.resolve(false); }
   try{ localStorage.setItem('bayrakstar_data',JSON.stringify(D)); }catch(err){}
   toast('Buluta gönderiliyor…');
   return window.BULUT.yaz(D).then(function(){
@@ -890,7 +986,7 @@ function toast(msg,sure){
 let _sonSilinen=null;
 
 function silOge(diziYolu, index, ad){
-  const dizi = new Function('D','return '+diziYolu)(D);
+  const dizi = yolOku(diziYolu);
   if(!Array.isArray(dizi) || !dizi[index]) return;
   const etiket = (ad && String(ad).trim()) ? '“'+ad+'”' : 'Bu kayıt';
   if(!confirm(etiket+' silinecek.\n\nEmin misin?')) return;
@@ -902,10 +998,10 @@ function silOge(diziYolu, index, ad){
 
 /* görsel/foto temizleme de geri alınabilir olsun */
 function silDeger(yol, bosDeger, ad){
-  const mevcut = new Function('D','return '+yol)(D);
+  const mevcut = yolOku(yol);
   if(!confirm((ad||'Görsel')+' kaldırılacak.\n\nEmin misin?')) return;
   _sonSilinen = { yol:yol, eski:mevcut, ad:ad||'Görsel' };
-  try{ new Function('D','v', yol+'=v;')(D, bosDeger); }catch(e){}
+  try{ yolYaz(yol, bosDeger); }catch(e){}
   yenile();
   toastGeriAlli((ad||'Görsel')+' kaldırıldı');
 }
@@ -923,7 +1019,7 @@ function geriAl(){
   if(!_sonSilinen){ toast('Geri alınacak bir şey yok'); return; }
   const g=_sonSilinen; _sonSilinen=null;
   if(g.dizi) g.dizi.splice(g.index, 0, g.oge);          /* listeden silinen */
-  else try{ new Function('D','v', g.yol+'=v;')(D, g.eski); }catch(e){}   /* temizlenen değer */
+  else try{ yolYaz(g.yol, g.eski); }catch(e){}   /* temizlenen değer */
   yenile();
   toast(g.ad+' geri getirildi ✓');
 }

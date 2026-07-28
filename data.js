@@ -11,10 +11,10 @@ window.DEFAULT_DATA = {
     "slogan": "colorful <b>life</b>"
   },
   "slides": [
-    "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=2000&q=80",
-    "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=2000&q=80",
-    "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=2000&q=80",
-    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=2000&q=80"
+    "gorseller/genis-1.jpg",
+    "gorseller/genis-2.jpg",
+    "gorseller/genis-3.jpg",
+    "gorseller/genis-4.jpg"
   ],
   "slogans": [
     "Maksimum Hit Müzik",
@@ -66,32 +66,28 @@ window.DEFAULT_DATA = {
       "ink": "#ffffff",
       "url": "https://www.radyofenomen.com",
       "stream": "https://live.radyofenomen.com/fenomen/128/icecast.audio",
-      "img": "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80",
-      "hero": "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=2000&q=80",
+      "img": "gorseller/kart-fenomen.jpg",
+      "hero": "gorseller/genis-1.jpg",
       "about": "Radyo Fenomen, Türkiye’nin en çok dinlenen yabancı müzik kanalıdır. “Maksimum Hit Müzik” mottosuyla dünyanın en yeni hitlerini ve en enerjik listelerini 7/24 yayınlar. Fenomen İlk 40 listesi, Clubbin’ elektronik setleri ve onlarca alt kanalıyla her zevke hitap eder.",
       "hosts": [
         {
           "name": "Serdar",
           "show": "Serdar’la Sabah Modu",
-          "photo": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&h=400&q=80",
           "bio": "Güne enerjik bir başlangıç; sabahın en keyifli müzikleri ve gündemi Serdar’la."
         },
         {
           "name": "Doğanay",
           "show": "Doğanay’ın Dünyası",
-          "photo": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&h=400&q=80",
           "bio": "Kuşağın en renkli saatleri; müzik, sohbet ve Doğanay’ın dünyasından kesitler."
         },
         {
           "name": "DJ K-Billy",
           "show": "DJ K-Billy’le Fenomen Hit Müzik",
-          "photo": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&h=400&q=80",
           "bio": "Öğleden sonra tempoyu yükselten, en taze hit müzik seti."
         },
         {
           "name": "Deniz Görkem",
           "show": "Deniz Görkem’le Update",
-          "photo": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&h=400&q=80",
           "bio": "Günün en yeni hitleri ve gündem, akşamüstü Deniz Görkem’le."
         }
       ],
@@ -208,8 +204,8 @@ window.DEFAULT_DATA = {
       "ink": "#ffffff",
       "url": "https://www.fenomenturk.com",
       "stream": "https://live.radyofenomen.com/fenomenturk/128/icecast.audio",
-      "img": "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=1200&q=80",
-      "hero": "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=2000&q=80",
+      "img": "gorseller/kart-fenomenturk.jpg",
+      "hero": "gorseller/genis-2.jpg",
       "about": "Fenomen Türk, en sevilen Türkçe şarkıları eğlenceyle harmanlayan radyodur. “Eğlence ve Müzik” anlayışıyla sevilen seslerin programlarıyla gününüze eşlik eder; sıcak, samimi ve keyifli bir yayın.",
       "hosts": [
         {
@@ -333,8 +329,8 @@ window.DEFAULT_DATA = {
       "ink": "#ffffff",
       "url": "https://www.radyoboombox.com.tr",
       "stream": "https://yayin.radyoboombox.com.tr/boombox/playlist.m3u8",
-      "img": "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?auto=format&fit=crop&w=1200&q=80",
-      "hero": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=2000&q=80",
+      "img": "gorseller/kart-boombox.jpg",
+      "hero": "gorseller/genis-4.jpg",
       "about": "Radyo BoomBox; Rap, Trap, R’n’B ve Hip-Hop’un adresidir. “Aç Sesini” diyerek sokağın enerjisini ve en taze beat’leri yayına taşır. EYPIO, LARK2020, ERAY067 ve daha nicesi BoomBox listelerinde. Rumeli Reklam ve Radyo Yayıncılık A.Ş. bünyesindedir.",
       "hosts": [],
       "schedule": [
@@ -378,8 +374,8 @@ window.DEFAULT_DATA = {
       "ink": "#ffffff",
       "url": "https://www.istanbulfm.com.tr",
       "stream": "https://yayin.istanbulfm.com.tr/istanbulfm/playlist.m3u8",
-      "img": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1200&q=80",
-      "hero": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=2000&q=80",
+      "img": "gorseller/kart-istanbulfm.jpg",
+      "hero": "gorseller/genis-5.jpg",
       "about": "İstanbul FM, Türkçe müziğin kalbidir. “Senin İçin” sloganıyla pop, slow, nostalji, akustik, fantezi ve alaturka kanallarında şehrin ritmini en güzel şarkılarla buluşturur. “İstanbul’u dinliyorum” diyen herkesin radyosu.",
       "hosts": [
         {
@@ -457,6 +453,38 @@ window.DEFAULT_DATA = {
       "social": {}
     }
   ],
+  "contact": {
+    "tag": "Bize Ulaşın",
+    "headline": "İletişim",
+    "text": "Reklam, iş birliği, basın talepleri ve genel sorular için aşağıdaki kanallardan bize yazabilirsiniz.",
+    "items": [
+      {
+        "icon": "✉️",
+        "label": "Genel İletişim",
+        "value": "info@bayrakstar.com",
+        "href": "mailto:info@bayrakstar.com"
+      },
+      {
+        "icon": "📢",
+        "label": "Reklam & İş Birliği",
+        "value": "reklam@bayrakstar.com",
+        "href": "mailto:reklam@bayrakstar.com"
+      },
+      {
+        "icon": "📰",
+        "label": "Basın",
+        "value": "basin@bayrakstar.com",
+        "href": "mailto:basin@bayrakstar.com"
+      },
+      {
+        "icon": "💬",
+        "label": "İstanbul FM İstek Hattı",
+        "value": "+90 544 886 18 86",
+        "href": "https://wa.me/905448861886"
+      }
+    ],
+    "note": "Radyolara doğrudan ulaşmak için ilgili radyonun sayfasındaki iletişim bilgilerini kullanabilirsiniz."
+  },
   "footer": {
     "about": "<b>Bayrakstar</b> — colorful life. Radyolarımızı tek çatı altında buluşturan yayın ağı.",
     "socials": {
@@ -481,9 +509,13 @@ window.getSiteData = function () {
   if (!saved || typeof saved !== "object") return def;
 
   var out = Object.assign({}, def, saved);
-  out.hero   = Object.assign({}, def.hero,   saved.hero   || {});
-  out.intro  = Object.assign({}, def.intro,  saved.intro  || {});
-  out.footer = Object.assign({}, def.footer, saved.footer || {});
+  out.hero    = Object.assign({}, def.hero,    saved.hero    || {});
+  out.intro   = Object.assign({}, def.intro,   saved.intro   || {});
+  out.footer  = Object.assign({}, def.footer,  saved.footer  || {});
+  out.contact = Object.assign({}, def.contact, saved.contact || {});
+  /* iletişim kartları: kayıtlı liste varsa o, yoksa varsayılan */
+  out.contact.items = (saved.contact && Array.isArray(saved.contact.items) && saved.contact.items.length)
+    ? saved.contact.items : (def.contact ? def.contact.items : []);
   out.slides  = (saved.slides  && saved.slides.length)  ? saved.slides  : def.slides;
   out.slogans = (saved.slogans && saved.slogans.length) ? saved.slogans : def.slogans;
 

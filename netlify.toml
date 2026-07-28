@@ -5,6 +5,26 @@
   publish = "."
   command = ""
 
+# ============================================================
+# GÜVENLİK BAŞLIKLARI (tüm sayfalar)
+# ------------------------------------------------------------
+# CSP notu — YENİ BİR RADYO/YAYIN EKLERSEN:
+#   Yeni yayın adresinin alan adını AŞAĞIDAKİ media-src VE connect-src
+#   listelerine eklemezsen o radyo çalmaz. (connect-src, HLS/.m3u8
+#   yayınlarının parça indirmesi için de şart.)
+# Site inline <script> ve <style> kullandığından 'unsafe-inline' zorunlu.
+# blob: → hls.js'in MediaSource nesnesi için gerekli.
+# ============================================================
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()"
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; connect-src 'self' https://bezwdlxombiirihxomnv.supabase.co https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests"
+
 # Yönetim paneli arama motorlarına kapalı
 [[headers]]
   for = "/admin.html"
@@ -22,14 +42,28 @@
   [headers.values]
     Cache-Control = "public, max-age=604800"
 
+[[headers]]
+  for = "/programlar/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/gorseller/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/og/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+
 # HTML her zaman taze gelsin (içerik güncellemesi anında görünsün)
 [[headers]]
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"

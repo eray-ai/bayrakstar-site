@@ -4,15 +4,41 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bayrakstar — colorful life</title>
+<meta name="description" content="Bayrakstar; Radyo Fenomen, Fenomen Türk, Radyo Boombox ve İstanbul FM'i tek çatı altında buluşturan radyo ağı. Tüm radyoları canlı dinle, yayın akışlarını ve frekansları keşfet.">
+<meta name="theme-color" content="#242424">
+<link rel="canonical" href="https://bespoke-banoffee-f756ac.netlify.app/">
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- Sosyal paylaşım -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bayrakstar">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:title" content="Bayrakstar — colorful life">
+<meta property="og:description" content="Radyo Fenomen, Fenomen Türk, Radyo Boombox ve İstanbul FM tek çatı altında. Canlı dinle, keşfet.">
+<meta property="og:url" content="https://bespoke-banoffee-f756ac.netlify.app/">
+<meta property="og:image" content="https://bespoke-banoffee-f756ac.netlify.app/og/bayrakstar.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bayrakstar logosu">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bayrakstar — colorful life">
+<meta name="twitter:description" content="Radyo Fenomen, Fenomen Türk, Radyo Boombox ve İstanbul FM tek çatı altında. Canlı dinle, keşfet.">
+<meta name="twitter:image" content="https://bespoke-banoffee-f756ac.netlify.app/og/bayrakstar.jpg">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="data.js"></script>
 <script src="bulut.js"></script>
+<script src="yayin.js"></script>
 <style>
   :root{
     --dark:#242424;
-    --anthracite:#4d4d4d;
     --yellow:#ffca11;
     --blue:#0081ba;
     --red:#ff0007;
@@ -20,11 +46,6 @@
     --coral:#f75843;
     --paper:#f6f5f2;
     --ink:#1c1c1c;
-    /* radyo marka renkleri */
-    --fenomen:#ec1c24;
-    --fturk:#1e50c8;
-    --boombox:#f5a800;
-    --istanbul:#0081ba;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -132,16 +153,34 @@
   .rcard .logo{height:58px;width:auto;max-width:62%;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4));object-fit:contain;object-position:left}
   .rcard .freq{background:rgba(255,255,255,.18);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.25);padding:7px 14px;border-radius:30px;font-weight:800;font-size:13px;white-space:nowrap}
   .rcard .bottom .sl{font-size:22px;font-weight:800;letter-spacing:.01em;margin-bottom:14px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
-  .rcard .go{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#111;font-weight:800;font-size:14px;padding:12px 22px;border-radius:40px;transition:gap .25s,transform .25s}
-  .rcard:hover .go{gap:16px}
-  .rcard .go svg{width:16px;height:16px}
-  .rcard .live{position:absolute;top:34px;right:120px;display:none}
   /* mini eq badge */
   .rcard .eqbadge{display:inline-flex;align-items:flex-end;gap:3px;height:16px;margin-left:4px}
   .rcard .eqbadge i{width:3px;background:#fff;border-radius:2px;animation:eq .9s ease-in-out infinite}
   .rcard .eqbadge i:nth-child(2){animation-delay:.2s}.rcard .eqbadge i:nth-child(3){animation-delay:.35s}.rcard .eqbadge i:nth-child(4){animation-delay:.1s}
   .rcard .eqbadge i:nth-child(1){height:40%}.rcard .eqbadge i:nth-child(2){height:90%}.rcard .eqbadge i:nth-child(3){height:60%}.rcard .eqbadge i:nth-child(4){height:100%}
   @keyframes eq{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+
+  /* ============ İLETİŞİM ============ */
+  .contact{background:#1b1b1b;padding:96px 5vw 100px;position:relative;overflow:hidden}
+  .contact::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;
+    background:linear-gradient(90deg,var(--red),var(--coral) 34%,var(--yellow) 55%,var(--teal) 78%,var(--blue))}
+  .contact .inner{max-width:1000px;margin:0 auto;text-align:center}
+  .contact .tag{display:inline-block;font-size:12px;letter-spacing:.3em;text-transform:uppercase;
+    font-weight:800;color:var(--yellow);margin-bottom:18px}
+  .contact h2{font-size:clamp(30px,4.4vw,50px);font-weight:800;letter-spacing:-.02em}
+  .contact .lead{opacity:.68;margin:16px auto 44px;font-size:16px;line-height:1.75;max-width:620px}
+  /* 4 kalem için 2×2 daha dengeli duruyor; dar ekranda tek sütuna iner */
+  .cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;
+    text-align:left;max-width:760px;margin:0 auto}
+  .ccard{display:flex;align-items:center;gap:15px;background:rgba(255,255,255,.045);
+    border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px 22px;
+    transition:transform .25s,border-color .25s,background .25s}
+  a.ccard:hover{transform:translateY(-5px);border-color:var(--coral);background:rgba(255,255,255,.075)}
+  .ccard .ic{font-size:22px;line-height:1;flex-shrink:0}
+  .ccard .tx{min-width:0}
+  .ccard .lb{font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.55;font-weight:700}
+  .ccard .vl{font-weight:800;font-size:14.5px;margin-top:5px;overflow-wrap:anywhere}
+  .contact .cnote{opacity:.45;font-size:13px;line-height:1.7;margin-top:30px}
 
   /* ============ FOOTER ============ */
   footer{background:#161616;padding:70px 5vw 36px}
@@ -197,10 +236,6 @@
   .pl-sub{font-size:11px;opacity:.6;margin-top:2px;display:flex;align-items:center;gap:6px}
   .pl-sub .ld{width:7px;height:7px;border-radius:50%;background:var(--red);animation:live 1.5s infinite}
   @keyframes live{0%{box-shadow:0 0 0 0 rgba(255,0,7,.6)}70%{box-shadow:0 0 0 8px rgba(255,0,7,0)}100%{box-shadow:0 0 0 0 rgba(255,0,7,0)}}
-  .pl-ctrls{display:flex;align-items:center;gap:8px;flex-shrink:0}
-  .pl-ctrls button{background:none;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s,opacity .2s;opacity:.85}
-  .pl-ctrls button:hover{opacity:1;transform:scale(1.12)}
-  .pl-ctrls .skip svg{width:22px;height:22px;fill:#fff}
   .pl-play{width:52px;height:52px;border-radius:50%;background:#fff!important;color:#111!important;flex-shrink:0}
   .pl-play svg{width:22px;height:22px;fill:#111}
   .viz{flex:1;display:flex;align-items:center;gap:3px;height:38px;min-width:60px;overflow:hidden;opacity:.35;transition:opacity .3s}
@@ -243,6 +278,36 @@
   .reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease}
   .reveal.in{opacity:1;transform:none}
 
+  /* ============ ERİŞİLEBİLİRLİK ============ */
+  /* klavyeyle gezerken odak nerede belli olsun (fareyle tıklayanı rahatsız etmez) */
+  a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visible{
+    outline:3px solid #fff;outline-offset:3px;border-radius:8px}
+  .intro a:focus-visible,.intro button:focus-visible{outline-color:var(--ink)}
+  .dots button:focus-visible{outline-offset:5px}
+
+  /* içeriğe atla bağlantısı — yalnız klavyeyle odaklanınca görünür */
+  .skip{position:absolute;left:-9999px;top:0;z-index:200;background:#fff;color:#111;
+    font-weight:800;padding:12px 20px;border-radius:0 0 12px 0}
+  .skip:focus{left:0}
+
+  /* slider duraklat/oynat düğmesi */
+  .slider-pause{position:absolute;bottom:20px;right:5vw;z-index:6;width:38px;height:38px;border-radius:50%;
+    background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.32);color:#fff;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:background .2s,opacity .2s;opacity:.65}
+  .slider-pause:hover{background:rgba(0,0,0,.65);opacity:1}
+  .slider-pause svg{width:15px;height:15px;fill:#fff}
+
+  /* Hareketi azalt tercihi: kendiliğinden dönen/uçuşan her şey durur. */
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{
+      animation-duration:.001ms!important;animation-iteration-count:1!important;
+      transition-duration:.001ms!important;scroll-behavior:auto!important}
+    .slide img{transform:none}
+    .reveal{opacity:1!important;transform:none!important}
+    .notes{display:none}
+  }
+
   @media(max-width:860px){
     nav.menu{display:none}
     .burger{display:flex}
@@ -258,6 +323,8 @@
 </head>
 <body>
 
+<a class="skip" href="#radyolar">İçeriğe atla</a>
+
 <!-- ÜST DUYURU ŞERİDİ -->
 <a class="annbar" href="websiteler.html">🌐 Radyoların resmî web sitesine gitmek için tıklayın →</a>
 
@@ -271,25 +338,26 @@
 </header>
 
 <!-- SLIDER -->
-<section class="slider" id="top">
+<section class="slider" id="top" aria-roledescription="galeri" aria-label="Bayrakstar tanıtım görselleri">
   <div id="slides"></div>
-  <div class="notes" id="notes"></div>
+  <div class="notes" id="notes" aria-hidden="true"></div>
   <div class="slider-content">
     <svg class="eq-heart" id="eqHeart" viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bayrakstar"></svg>
     <div class="kicker" id="hKicker"></div>
     <h1 id="hTitle"></h1>
     <div class="slogan" id="hSlogan"></div>
     <div class="slider-btns">
-      <button class="btn btn-fill" onclick="playFirst()"><svg viewBox="0 0 24 24" width="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Canlı Dinle</button>
+      <button class="btn btn-fill" onclick="playFirst()" aria-label="Canlı yayın çalarını aç"><svg viewBox="0 0 24 24" width="18" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> Canlı Dinle</button>
       <a class="btn btn-ghost" href="#radyolar">Radyoları Keşfet</a>
     </div>
   </div>
-  <div class="dots" id="dots"></div>
+  <div class="dots" id="dots" role="tablist" aria-label="Görsel seçimi"></div>
+  <button class="slider-pause" id="sliderPause" aria-label="Görsel geçişini duraklat"></button>
 </section>
 
 <!-- RED SLOGAN BAND -->
 <div class="band">
-  <div class="rot" id="rot"></div>
+  <div class="rot" id="rot" aria-live="off"></div>
 </div>
 
 <!-- INTRO / TANITIM -->
@@ -313,6 +381,17 @@
   <div class="radio-grid" id="grid"></div>
 </section>
 
+<!-- İLETİŞİM -->
+<section class="contact" id="iletisim">
+  <div class="inner reveal">
+    <span class="tag" id="cTag"></span>
+    <h2 id="cHead"></h2>
+    <p class="lead" id="cText"></p>
+    <div class="cgrid" id="cGrid"></div>
+    <p class="cnote" id="cNote"></p>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="foot-top">
@@ -328,9 +407,9 @@
     <div class="foot-radios reveal">
       <h4>Kurumsal</h4>
       <a href="#hakkimizda">Hakkımızda</a>
-      <a href="#">Reklam & İş Birliği</a>
-      <a href="#">Basın</a>
-      <a href="#">İletişim</a>
+      <a href="#iletisim">Reklam &amp; İş Birliği</a>
+      <a href="#iletisim">Basın</a>
+      <a href="#iletisim">İletişim</a>
     </div>
   </div>
   <div class="foot-bottom">
@@ -340,23 +419,23 @@
 </footer>
 
 <!-- STICKY LIVE BAND (tüm radyolar) -->
-<div class="player" id="player">
+<div class="player" id="player" role="region" aria-label="Canlı yayın çalar">
   <audio id="audio" preload="none"></audio>
   <div class="pl-inner">
     <div class="pl-now">
       <div class="pl-cover" id="plCover"><img id="plLogo" src="logo/bayrakstar-beyaz.png" alt=""></div>
       <div class="pl-meta">
         <div class="pl-name" id="plName">Bir radyo seç</div>
-        <div class="pl-sub"><span class="ld"></span><span id="plSub">Canlı Yayın</span></div>
+        <div class="pl-sub"><span class="ld" aria-hidden="true"></span><span id="plSub" role="status">Canlı Yayın</span></div>
       </div>
-      <button class="pl-play" id="plPlay" onclick="togglePlay()"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+      <button class="pl-play" id="plPlay" onclick="togglePlay()" aria-label="Çal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
     </div>
-    <div class="pl-strip" id="plStrip"></div>
+    <div class="pl-strip" id="plStrip" role="group" aria-label="Radyo seçimi"></div>
     <div class="pl-vol">
-      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02z"/></svg>
-      <input type="range" id="plVol" min="0" max="100" value="85">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02z"/></svg>
+      <input type="range" id="plVol" min="0" max="100" value="85" aria-label="Ses seviyesi" aria-valuetext="%85">
     </div>
-    <button class="pl-close" onclick="closePlayer()" title="Kapat">×</button>
+    <button class="pl-close" onclick="closePlayer()" title="Kapat" aria-label="Çaları kapat">×</button>
   </div>
 </div>
 
@@ -364,6 +443,8 @@
 window.bulutHazir.then(function(){
 const D = window.getSiteData();
 const esc = s => (s==null?'':String(s));
+/* kullanıcı "hareketi azalt" dediyse kendiliğinden dönen hiçbir şey başlamaz */
+const azHareket = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---- HERO ---- */
 document.getElementById('hKicker').textContent = D.hero.kicker;
@@ -376,15 +457,48 @@ D.radios.forEach(r=>{const a=document.createElement('a');a.href=r.slug?('radyo.h
 
 /* ---- SLIDER ---- */
 const slidesWrap=document.getElementById('slides');
-D.slides.forEach((src,i)=>{const d=document.createElement('div');d.className='slide'+(i===0?' active':'');d.innerHTML='<img src="'+esc(src)+'" alt="">';slidesWrap.appendChild(d);});
+/* İlk görsel hemen (LCP), sonrakiler tembel yüklenir — açılış hafiflesin. */
+D.slides.forEach((src,i)=>{const d=document.createElement('div');d.className='slide'+(i===0?' active':'');
+  d.innerHTML='<img src="'+esc(src)+'" alt="" decoding="async"'+
+              (i===0?' fetchpriority="high"':' loading="lazy"')+'>';
+  slidesWrap.appendChild(d);});
 const slides=[...slidesWrap.children];
 const dotsWrap=document.getElementById('dots');
 let si=0;
-slides.forEach((_,i)=>{const b=document.createElement('button');if(i===0)b.className='on';b.onclick=()=>go(i);dotsWrap.appendChild(b);});
+slides.forEach((_,i)=>{const b=document.createElement('button');if(i===0)b.className='on';
+  b.setAttribute('aria-label',(i+1)+'. görsele geç');
+  b.setAttribute('aria-current', i===0?'true':'false');
+  b.onclick=()=>go(i);dotsWrap.appendChild(b);});
 const dots=[...dotsWrap.children];
-function go(i){slides[si].classList.remove('active');dots[si].classList.remove('on');si=i;slides[si].classList.add('active');dots[si].classList.add('on');
+function go(i){slides[si].classList.remove('active');dots[si].classList.remove('on');dots[si].setAttribute('aria-current','false');
+  si=i;slides[si].classList.add('active');dots[si].classList.add('on');dots[si].setAttribute('aria-current','true');
   const im=slides[si].querySelector('img');im.style.animation='none';void im.offsetWidth;im.style.animation='';}
-if(slides.length>1) setInterval(()=>go((si+1)%slides.length),5500);
+
+/* --- otomatik geçiş + duraklat/oynat düğmesi --- */
+const OYNAT_IKON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+const DURAKLAT_IKON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+const durBtn=document.getElementById('sliderPause');
+let sliderZaman=null;
+function sliderBaslat(){
+  if(sliderZaman || slides.length<2) return;
+  sliderZaman=setInterval(()=>go((si+1)%slides.length),5500);
+  durBtn.innerHTML=DURAKLAT_IKON;
+  durBtn.setAttribute('aria-label','Görsel geçişini duraklat');
+  durBtn.setAttribute('aria-pressed','false');
+}
+function sliderDurdur(){
+  clearInterval(sliderZaman); sliderZaman=null;
+  durBtn.innerHTML=OYNAT_IKON;
+  durBtn.setAttribute('aria-label','Görsel geçişini başlat');
+  durBtn.setAttribute('aria-pressed','true');
+}
+if(slides.length>1){
+  durBtn.onclick=()=>{ sliderZaman ? sliderDurdur() : sliderBaslat(); };
+  /* hareketi azalt tercihinde kendiliğinden dönmesin, ama düğmeyle açılabilsin */
+  if(azHareket) sliderDurdur(); else sliderBaslat();
+}else{
+  durBtn.style.display='none';
+}
 
 /* ---- RED SLOGAN BAND ---- */
 const rot=document.getElementById('rot');
@@ -416,7 +530,9 @@ function bandRengiUygula(i){
 }
 bandRengiUygula(0);
 
-if(sls.length>1) setInterval(()=>{
+/* Slogan bandı da kendiliğinden döner — hareketi azalt tercihinde
+   ilk slogan sabit kalır (bant boş görünmesin diye .on zaten açık). */
+if(sls.length>1 && !azHareket) setInterval(()=>{
   sls[bi].classList.remove('on');
   bi=(bi+1)%sls.length;
   sls[bi].classList.add('on');
@@ -428,8 +544,32 @@ document.getElementById('iTag').textContent = D.intro.tag;
 document.getElementById('iHead').innerHTML = D.intro.headline;
 document.getElementById('iP1').innerHTML = D.intro.p1;
 document.getElementById('iP2').innerHTML = D.intro.p2;
+/* İstatistik rakamları AÇIK kağıt zemine (#f6f5f2) basılıyor; sarı (1.41:1) ve
+   turkuaz (2.18:1) orada okunmuyordu. Renk tonu korunup yalnız koyulaştırılarak
+   büyük yazı eşiği (3:1) sağlanıyor — zaten yeterli olanlara dokunulmuyor. */
+function _coz(h){h=String(h||'').replace('#','');
+  if(h.length===3)h=h.split('').map(c=>c+c).join('');
+  return /^[0-9a-fA-F]{6}$/.test(h)?[0,2,4].map(i=>parseInt(h.substr(i,2),16)):null;}
+function _dogrusal(c){c/=255;return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);}
+function _isik(d){return 0.2126*_dogrusal(d[0])+0.7152*_dogrusal(d[1])+0.0722*_dogrusal(d[2]);}
+function _oran(a,b){let l1=_isik(a),l2=_isik(b);if(l1<l2)[l1,l2]=[l2,l1];return (l1+0.05)/(l2+0.05);}
+function koyultKontrastIcin(renk,zeminHex,hedef){
+  const d=_coz(renk), z=_coz(zeminHex);
+  if(!d||!z) return renk;
+  if(_oran(d,z)>=hedef) return renk;
+  for(let k=0.04;k<=1.0001;k+=0.04){
+    const y=d.map(v=>v*(1-k));
+    if(_oran(y,z)>=hedef) return '#'+y.map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');
+  }
+  return '#1c1c1c';
+}
 const iStats=document.getElementById('iStats');
-D.intro.stats.forEach(s=>{const el=document.createElement('div');el.className='stat';el.innerHTML='<div class="num" style="color:'+esc(s.color)+'">'+esc(s.num)+'</div><div class="lbl">'+esc(s.label)+'</div>';iStats.appendChild(el);});
+D.intro.stats.forEach(s=>{
+  const renk = koyultKontrastIcin(s.color||'#1c1c1c','#f6f5f2',3);
+  const el=document.createElement('div');el.className='stat';
+  el.innerHTML='<div class="num" style="color:'+esc(renk)+'">'+esc(s.num)+'</div><div class="lbl">'+esc(s.label)+'</div>';
+  iStats.appendChild(el);
+});
 
 /* ---- RADYOLAR ---- */
 const grid=document.getElementById('grid');
@@ -438,19 +578,20 @@ D.radios.forEach((r,idx)=>{
   a.className='rcard reveal';a.href=r.slug?('radyo.html?r='+r.slug):r.url;a.dataset.idx=idx;
   if(!r.slug){a.target='_blank';a.rel='noopener';}
   const freqHtml = (r.freq && r.freq.trim()) ? esc(r.freq)+' <span style="opacity:.6;font-size:11px">MHz</span>' : 'CANLI';
-  const listenBtn = `<button class="listen" onclick="playRadio(${idx},event)"><span class="pi"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span> Canlı Dinle</button>`;
+  const listenBtn = `<button class="listen" onclick="playRadio(${idx},event)" aria-label="${esc(r.name)} canlı yayınını dinle"><span class="pi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span> Canlı Dinle</button>`;
+  a.setAttribute('aria-label', r.name + ' sayfasına git');
   a.innerHTML=`
-    <img class="bg" src="${esc(r.img)}" alt="${esc(r.name)}">
+    <img class="bg" src="${esc(r.img)}" alt="" aria-hidden="true">
     <div class="tint" style="background:${esc(r.color)}"></div>
     <div class="glow"></div>
     <div class="onair"><span class="ld" style="width:7px;height:7px;border-radius:50%;background:#fff;display:block"></span> CANLI YAYINDA</div>
     <div class="inner">
       <div class="top">
-        <img class="logo" src="${esc(r.logo)}" alt="${esc(r.name)}">
+        <img class="logo" src="${esc(r.logo)}" alt="${esc(r.name)} logosu">
         <div class="freq">${freqHtml}</div>
       </div>
       <div class="bottom">
-        <div class="sl">${esc(r.slogan)}<span class="eqbadge"><i></i><i></i><i></i><i></i></span></div>
+        <div class="sl">${esc(r.slogan)}<span class="eqbadge" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>
         <div class="actions">
           ${listenBtn}
           <span class="site">Radyoyu Keşfet <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
@@ -460,8 +601,8 @@ D.radios.forEach((r,idx)=>{
   grid.appendChild(a);
 });
 
-/* ---- kart 3D tilt (uçan kaçan his) ---- */
-document.querySelectorAll('.rcard').forEach(card=>{
+/* ---- kart 3D tilt (uçan kaçan his) — hareketi azalt tercihinde kapalı ---- */
+if(!azHareket) document.querySelectorAll('.rcard').forEach(card=>{
   card.addEventListener('mousemove',e=>{
     const b=card.getBoundingClientRect();
     const x=(e.clientX-b.left)/b.width-.5, y=(e.clientY-b.top)/b.height-.5;
@@ -470,8 +611,8 @@ document.querySelectorAll('.rcard').forEach(card=>{
   card.addEventListener('mouseleave',()=>{card.style.transform='';});
 });
 
-/* ---- uçan müzik notaları ---- */
-(function(){
+/* ---- uçan müzik notaları (hareketi azalt tercihinde hiç üretilmez) ---- */
+if(!azHareket) (function(){
   const wrap=document.getElementById('notes');const g=['♪','♫','♬','♩','◆','●'];
   for(let i=0;i<16;i++){const s=document.createElement('span');
     s.textContent=g[i%g.length];
@@ -492,14 +633,14 @@ const strip=document.getElementById('plStrip');
 D.radios.forEach((r,i)=>{
   const b=document.createElement('button');
   b.className='pl-chip';b.dataset.idx=i;
-  b.innerHTML='<span class="cl" style="background:'+esc(r.color)+'"><img src="'+esc(r.logo)+'" alt=""></span>'+
+  b.setAttribute('aria-label',r.name+' yayınını çal');
+  b.setAttribute('aria-pressed','false');
+  b.innerHTML='<span class="cl" style="background:'+esc(r.color)+'"><img src="'+esc(r.logo)+'" alt="" aria-hidden="true"></span>'+
               '<span class="cn">'+esc(r.name)+'</span>'+
-              '<span class="eqm"><i></i><i></i><i></i></span>';
+              '<span class="eqm" aria-hidden="true"><i></i><i></i><i></i></span>';
   b.onclick=()=>playRadio(i);
   strip.appendChild(b);
 });
-
-function openSite(url,e){if(e){e.preventDefault();e.stopPropagation();}window.open(url,'_blank','noopener');}
 
 // "Canlı Dinle" → bandı aç; ilk yayınlı radyoyu başlat
 function openBand(){
@@ -521,38 +662,99 @@ function playRadio(i,e){
   }
   if(curIdx===i && isPlaying){ togglePlay(); return; }
   curIdx=i;
-  audio.src=r.stream;
-  document.getElementById('plSub').textContent='Bağlanıyor…';
+  const sub=document.getElementById('plSub');
+  sub.textContent='Bağlanıyor…';
   audio.volume=document.getElementById('plVol').value/100;
-  audio.play().catch(()=>{document.getElementById('plSub').textContent='Yayına ulaşılamadı';});
+  /* .m3u8 (HLS) yayınlar hls.js üzerinden, diğerleri doğrudan çalar */
+  yayinBaslat(audio, r.stream, {
+    durum: t=>{ if(curIdx===i) sub.textContent=t; },
+    hata:  m=>{ if(curIdx===i) sub.textContent=m; }
+  });
 }
 function togglePlay(){
   if(curIdx<0){ openBand(); return; }
-  if(isPlaying){audio.pause();}else{audio.play().catch(()=>{});}
+  if(isPlaying){ audio.pause(); return; }
+  /* sürdürülemezse (HLS'te uzun duraklamadan sonra tampon geçersiz kalır)
+     yayına baştan bağlan */
+  audio.play().catch(()=>{ playRadio(curIdx); });
 }
-function closePlayer(){audio.pause();audio.src='';player.classList.remove('show');markActive(-1);curIdx=-1;}
+function closePlayer(){yayinDurdur(audio);player.classList.remove('show');markActive(-1);curIdx=-1;}
 function markActive(i){
-  document.querySelectorAll('.pl-chip').forEach(c=>c.classList.toggle('active',+c.dataset.idx===i && isPlaying));
+  document.querySelectorAll('.pl-chip').forEach(c=>{
+    const acik = (+c.dataset.idx===i && isPlaying);
+    c.classList.toggle('active',acik);
+    c.setAttribute('aria-pressed', acik?'true':'false');
+  });
   document.querySelectorAll('.rcard').forEach(c=>c.classList.toggle('playing',+c.dataset.idx===i && isPlaying));
 }
-function setPlayIcon(p){document.getElementById('plPlay').innerHTML=p
-  ?'<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>'
-  :'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';}
+function setPlayIcon(p){const b=document.getElementById('plPlay');
+  b.innerHTML=p
+  ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>'
+  :'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+  b.setAttribute('aria-label', p?'Duraklat':'Çal');}
 
 audio.addEventListener('playing',()=>{isPlaying=true;player.classList.add('on');setPlayIcon(true);document.getElementById('plSub').textContent='Canlı Yayın';markActive(curIdx);});
 audio.addEventListener('pause',()=>{isPlaying=false;player.classList.remove('on');setPlayIcon(false);markActive(-1);});
 audio.addEventListener('waiting',()=>{document.getElementById('plSub').textContent='Tamponlanıyor…';});
-audio.addEventListener('error',()=>{if(curIdx>=0)document.getElementById('plSub').textContent='Yayına ulaşılamadı';});
-document.getElementById('plVol').addEventListener('input',e=>{audio.volume=e.target.value/100;});
+/* hls.js bağlıyken hata yönetimi yayin.js'te — buradaki genel dinleyici karışmasın */
+audio.addEventListener('error',()=>{
+  if(curIdx>=0 && !audio._hls) document.getElementById('plSub').textContent='Yayına ulaşılamadı';
+});
+document.getElementById('plVol').addEventListener('input',e=>{
+  audio.volume=e.target.value/100;
+  e.target.setAttribute('aria-valuetext','%'+e.target.value);
+});
 
 // hero "Canlı Dinle" → bandı aç
 window.playFirst=openBand;
 
+/* ---- İLETİŞİM ---- */
+(function(){
+  const C = D.contact || {};
+  document.getElementById('cTag').textContent  = C.tag || 'Bize Ulaşın';
+  document.getElementById('cHead').textContent = C.headline || 'İletişim';
+  document.getElementById('cText').textContent = C.text || '';
+  const cn=document.getElementById('cNote');
+  if(C.note) cn.textContent = C.note; else cn.style.display='none';
+
+  const cg=document.getElementById('cGrid');
+  (C.items||[]).forEach(function(it){
+    if(!it || !(it.value||'').trim()) return;
+    /* href varsa tıklanabilir kart, yoksa düz bilgi kartı */
+    const hedef = (it.href||'').trim();
+    const el = document.createElement(hedef ? 'a' : 'div');
+    el.className='ccard';
+    if(hedef){
+      el.href=hedef;
+      if(/^https?:/.test(hedef)){ el.target='_blank'; el.rel='noopener'; }
+      el.setAttribute('aria-label', (it.label||'')+': '+it.value);
+    }
+    el.innerHTML='<span class="ic" aria-hidden="true">'+esc(it.icon||'•')+'</span>'+
+                 '<span class="tx"><span class="lb">'+esc(it.label||'')+'</span>'+
+                 '<span class="vl" style="display:block">'+esc(it.value)+'</span></span>';
+    cg.appendChild(el);
+  });
+  /* hiç iletişim kalemi yoksa bölümü hiç gösterme */
+  if(!cg.children.length) document.getElementById('iletisim').style.display='none';
+})();
+
 /* ---- FOOTER ---- */
 document.getElementById('fAbout').innerHTML = D.footer.about;
 const fSoc=document.getElementById('fSocials');
-const socMap={ig:'IG',yt:'YT',x:'X',sp:'SP'};
-Object.keys(socMap).forEach(k=>{const url=D.footer.socials[k]||'#';const a=document.createElement('a');a.href=url;a.title=k;a.textContent=socMap[k];if(url!=='#'){a.target='_blank';a.rel='noopener';}fSoc.appendChild(a);});
+const socMap={ig:'Instagram',yt:'YouTube',x:'X',sp:'Spotify'};
+const socKisa={ig:'IG',yt:'YT',x:'X',sp:'SP'};
+/* Gerçek hesap girilmemiş ("#" veya boş) ikonlar hiç basılmaz —
+   tıklanamaz ölü ikon görünmesin. Panelden link girilince kendiliğinden çıkar. */
+Object.keys(socMap).forEach(k=>{
+  const url=(D.footer.socials && D.footer.socials[k]||'').trim();
+  if(!url || url==='#') return;
+  const a=document.createElement('a');
+  a.href=url; a.title=socMap[k]; a.setAttribute('aria-label',socMap[k]+' sayfamız');
+  a.textContent=socKisa[k];
+  a.target='_blank'; a.rel='noopener';
+  fSoc.appendChild(a);
+});
+if(!fSoc.children.length) fSoc.style.display='none';
 const fRad=document.getElementById('fRadios');
 D.radios.forEach(r=>{const a=document.createElement('a');a.href=r.slug?('radyo.html?r='+r.slug):r.url;if(!r.slug){a.target='_blank';a.rel='noopener';}a.style.display='block';a.style.marginBottom='12px';a.textContent=r.name+' →';fRad.appendChild(a);});
 
@@ -565,7 +767,6 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.targ
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 /* satır içi onclick'ler için global yap (bulut sarmalayıcısı yüzünden gerekli) */
 window.togglePlay=togglePlay;window.closePlayer=closePlayer;window.playRadio=playRadio;
-window.openSite=openSite;window.openBand=openBand;window.go=go;
 });
 </script>
 <script>

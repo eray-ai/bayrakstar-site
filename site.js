@@ -41,6 +41,17 @@
     .pagecurtain .cload i:nth-child(2){animation-delay:.12s}.pagecurtain .cload i:nth-child(3){animation-delay:.24s}
     .pagecurtain .cload i:nth-child(4){animation-delay:.36s}.pagecurtain .cload i:nth-child(5){animation-delay:.48s}
     @keyframes cl{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+
+    /* klavye odağı menüde de görünsün */
+    .navburger:focus-visible,.navovl a:focus-visible,.navovl .x:focus-visible{
+      outline:3px solid #fff;outline-offset:4px;border-radius:8px}
+
+    /* hareketi azalt: perde ve menü animasyonları anında olsun */
+    @media (prefers-reduced-motion:reduce){
+      .pagecurtain{transition-duration:.001ms}
+      .pagecurtain .cload i{animation:none}
+      .navovl,.navovl a{transition-duration:.001ms}
+    }
   `;
   document.head.appendChild(css);
 
@@ -104,8 +115,12 @@
     return '<a data-nav href="'+href+'"'+(r.slug?'':' target="_blank" rel="noopener"')+'>'+
            '<span class="dot" style="background:'+(r.color||'#fff')+'"></span>'+r.name+(active?' •':'')+'</a>';
   }).join('');
+  ovl.setAttribute('role','dialog');
+  ovl.setAttribute('aria-modal','true');
+  ovl.setAttribute('aria-label','Menü');
+  ovl.setAttribute('aria-hidden','true');
   ovl.innerHTML =
-    '<div class="top"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"><button class="x" aria-label="Kapat">×</button></div>'+
+    '<div class="top"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"><button class="x" aria-label="Menüyü kapat">×</button></div>'+
     '<a data-nav href="index.html">Ana Sayfa</a>'+
     '<div class="lbl">Radyolarımız</div>'+
     radioLinks +
@@ -115,25 +130,50 @@
     '<a data-nav class="small" href="index.html#iletisim">İletişim</a>';
   document.body.appendChild(ovl);
 
-  function openMenu(){ ovl.classList.add('open'); document.body.style.overflow='hidden'; }
-  function closeMenu(){ ovl.classList.remove('open'); document.body.style.overflow=''; }
+  var burger = null;
+  function openMenu(){
+    ovl.classList.add('open'); document.body.style.overflow='hidden';
+    ovl.setAttribute('aria-hidden','false');
+    if(burger) burger.setAttribute('aria-expanded','true');
+    var ilk = ovl.querySelector('a'); if(ilk) ilk.focus();
+  }
+  function closeMenu(){
+    var aciktiMi = ovl.classList.contains('open');
+    ovl.classList.remove('open'); document.body.style.overflow='';
+    ovl.setAttribute('aria-hidden','true');
+    if(burger){ burger.setAttribute('aria-expanded','false'); if(aciktiMi) burger.focus(); }
+  }
   ovl.querySelector('.x').addEventListener('click', closeMenu);
   ovl.addEventListener('click', function(e){ if(e.target===ovl) closeMenu(); });
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape' && ovl.classList.contains('open')) closeMenu();
+  });
 
   /* ---- burger butonu (yoksa header'a ekle) ---- */
   var header = document.querySelector('header');
-  var burger = document.querySelector('.burger') || document.querySelector('.navburger');
+  burger = document.querySelector('.burger') || document.querySelector('.navburger');
   if(!burger && header){
     burger = document.createElement('button');
     burger.className = 'navburger';
-    burger.setAttribute('aria-label','Menü');
     burger.innerHTML = '<span></span><span></span><span></span>';
     header.appendChild(burger);
   } else if(burger){
     burger.classList.add('navburger');
     burger.onclick = null; // eski davranışı kaldır
+    /* index.html'deki burger bir <div> — klavyeyle de çalışsın */
+    if(burger.tagName !== 'BUTTON'){
+      burger.setAttribute('role','button');
+      burger.setAttribute('tabindex','0');
+      burger.addEventListener('keydown', function(e){
+        if(e.key==='Enter' || e.key===' '){ e.preventDefault(); openMenu(); }
+      });
+    }
   }
-  if(burger) burger.addEventListener('click', openMenu);
+  if(burger){
+    burger.setAttribute('aria-label','Menüyü aç');
+    burger.setAttribute('aria-expanded','false');
+    burger.addEventListener('click', openMenu);
+  }
 
   /* ---- tüm iç .html linklerinde yumuşak geçiş ---- */
   document.addEventListener('click', function(e){
