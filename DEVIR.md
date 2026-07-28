@@ -79,6 +79,22 @@ yenisini ezmez. Yine de aynı anda iki kişinin kaydetmemesi iyi olur.
 Boombox ve İstanbul FM `.m3u8` (HLS) yayınladığı için bu kütüphane şart —
 Chrome/Firefox HLS'i tek başına çalamıyor. Yılda bir güncellenmesi yeterli.
 
+### 3.6 Alan adı değişirse
+Paylaşım (OG) etiketleri, canonical adresler, `sitemap.xml` ve `robots.txt`
+site adresini **sabit yazılı** tutar — sosyal medya ön izleme botları
+JavaScript çalıştırmadığı için adresi tarayıcıdan öğrenemiyoruz.
+
+Kendi alan adınıza geçince toplu güncelleme için:
+
+```bash
+python3 araclar/alan-adi-degistir.py https://www.ornek.com          # ön izleme
+python3 araclar/alan-adi-degistir.py https://www.ornek.com --uygula # uygula
+git add -A && git commit -m "Alan adı güncellendi" && git push
+```
+
+Sonra Netlify → Domain management'tan alan adını ekleyin ve Google Search
+Console'a yeni adresi + `sitemap.xml`'i tanıtın.
+
 ---
 
 ## 4. İçerik yanlış kaydedilirse nasıl geri alınır?
