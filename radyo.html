@@ -362,9 +362,24 @@ const D = window.getSiteData();
 const esc = s => (s==null?'':String(s));
 function q(k){return new URLSearchParams(location.search).get(k);}
 
-let slug = q('r') || (D.radios[0] && D.radios[0].slug);
-let R = D.radios.find(r=>r.slug===slug) || D.radios[0];
-if(!R){document.body.innerHTML='<p style="padding:40px">Radyo bulunamadı.</p>';throw 0;}
+/* Adreste ?r= YOKSA ilk radyoya düş; VARSA ama tutmuyorsa sessizce başka bir
+   radyoyu göstermek yerine dürüstçe "bulunamadı" de (yanlış adres yanlış
+   radyoyu açıyordu; arama motorlarında da çift içerik oluşuyordu). */
+const istenen = q('r');
+let R = istenen ? D.radios.find(r=>r.slug===istenen) : D.radios[0];
+if(!R){
+  document.title='Radyo bulunamadı — Bayrakstar';
+  document.body.innerHTML =
+    '<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;'
+    + 'justify-content:center;text-align:center;padding:80px 8vw;gap:16px;font-family:\'Open Sans\',system-ui,sans-serif">'
+    + '<img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar" style="height:52px;margin-bottom:10px">'
+    + '<h1 style="font-size:clamp(26px,5vw,44px);font-weight:800">Radyo bulunamadı</h1>'
+    + '<p style="opacity:.65;max-width:480px;line-height:1.7">Aradığın radyo sayfası kaldırılmış '
+    + 'ya da adres yanlış olabilir.</p>'
+    + '<a href="index.html" style="margin-top:12px;background:#fff;color:#111;font-weight:800;'
+    + 'padding:14px 26px;border-radius:40px;text-decoration:none">Ana sayfaya dön</a></div>';
+  throw 0;
+}
 
 /* tema */
 const rs=document.documentElement.style;
@@ -508,7 +523,29 @@ document.getElementById('aboutText').textContent = R.about || '';
 (function(){
   if(!R.schedule || !R.schedule.length) return;
   var days=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
-  var jsDay=(new Date().getDay()+6)%7; // 0=Pzt
+
+  /* Yayın akışı TÜRKİYE saatine göre sabittir; ama hesap ziyaretçinin
+     cihaz saatiyle yapılıyordu. Yurt dışındaki (ya da saati yanlış olan)
+     bir ziyaretçi "● ŞİMDİ" rozetini yanlış programda görüyordu.
+     Artık saat de gün de Europe/Istanbul'dan okunuyor. */
+  function istanbulSimdi(){
+    try{
+      var p = new Intl.DateTimeFormat('en-GB',{
+        timeZone:'Europe/Istanbul', weekday:'short',
+        hour:'2-digit', minute:'2-digit', hourCycle:'h23'
+      }).formatToParts(new Date());
+      var o={}; p.forEach(function(x){ o[x.type]=x.value; });
+      var gunler={Mon:0,Tue:1,Wed:2,Thu:3,Fri:4,Sat:5,Sun:6};
+      var g=gunler[o.weekday];
+      if(g===undefined || isNaN(+o.hour)) throw 0;
+      return { saat:(+o.hour)+(+o.minute)/60, gun:g };
+    }catch(e){
+      /* Intl yoksa/bozuksa cihaz saatine düş — eski davranış */
+      var d=new Date();
+      return { saat:d.getHours()+d.getMinutes()/60, gun:(d.getDay()+6)%7 };
+    }
+  }
+  var jsDay=istanbulSimdi().gun; // 0=Pzt
   var daysEl=document.getElementById('days');
   var tamGun=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
   daysEl.setAttribute('role','group');
@@ -523,8 +560,9 @@ document.getElementById('aboutText').textContent = R.about || '';
 
   function startHour(t){var m=(t||'').match(/(\d{2}):(\d{2})/);return m?(+m[1]+ (+m[2])/60):-1;}
   function render(dayIdx){
-    var now=new Date();var curH=now.getHours()+now.getMinutes()/60;
-    var isToday=(dayIdx===jsDay);
+    var simdi=istanbulSimdi();
+    var curH=simdi.saat;
+    var isToday=(dayIdx===simdi.gun);
     var sched=R.schedule;
     // şimdi yayında olanı bul
     var liveIdx=-1;

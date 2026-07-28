@@ -579,16 +579,34 @@ window.getSiteData = function () {
      yeni alanlar (örn. programların "img" görseli) kaybolmasın diye
      varsayılandaki eşleşen öğeden tamamlanır. Kullanıcının sildiği öğeler
      geri gelmez — sadece kayıtlı listede duranlar zenginleştirilir. */
-  function listeBirlestir(defListe, savedListe, anahtar) {
+  /* anahtarlar: SIRAYLA denenir. Tek bir alana (örn. "name") bağlı kalmak
+     kırılgandı — panelden bir programın ya da yayıncının ADI değiştirilince
+     varsayılandaki eşleşme kopuyor ve o kaydın görseli gibi alanlar
+     kayboluyordu. Artık önce kalıcı alan (slug / saat) denenir, tutmazsa ada
+     düşülür. */
+  function listeBirlestir(defListe, savedListe, anahtarlar) {
     if (!Array.isArray(savedListe)) return defListe;
-    var defIndeks = {};
-    (defListe || []).forEach(function (x) {
-      if (x && typeof x === "object" && x[anahtar]) defIndeks[x[anahtar]] = x;
+    if (!Array.isArray(anahtarlar)) anahtarlar = [anahtarlar];
+
+    var indeksler = anahtarlar.map(function (a) {
+      var ix = {};
+      (defListe || []).forEach(function (x) {
+        if (x && typeof x === "object" && x[a] != null && x[a] !== "") {
+          if (ix[x[a]] === undefined) ix[x[a]] = x;   // ilk eşleşme kazanır
+        }
+      });
+      return ix;
     });
+
     return savedListe.map(function (sv) {
       if (!sv || typeof sv !== "object") return sv;
-      var dv = sv[anahtar] ? defIndeks[sv[anahtar]] : null;
-      return dv ? Object.assign({}, dv, sv) : sv;
+      for (var i = 0; i < anahtarlar.length; i++) {
+        var deger = sv[anahtarlar[i]];
+        if (deger == null || deger === "") continue;
+        var dv = indeksler[i][deger];
+        if (dv) return Object.assign({}, dv, sv);
+      }
+      return sv;
     });
   }
 
@@ -598,9 +616,10 @@ window.getSiteData = function () {
     var sv = savedBySlug[dr.slug];
     if (!sv) return dr;
     var birlesik = Object.assign({}, dr, sv);
-    birlesik.schedule    = listeBirlestir(dr.schedule,    sv.schedule,    "name");
-    birlesik.hosts       = listeBirlestir(dr.hosts,       sv.hosts,       "name");
-    birlesik.frequencies = listeBirlestir(dr.frequencies, sv.frequencies, "c");
+    /* önce kalıcı alan, tutmazsa ad: adı değiştirilen kaydın görseli kaybolmasın */
+    birlesik.schedule    = listeBirlestir(dr.schedule,    sv.schedule,    ["t", "name"]);
+    birlesik.hosts       = listeBirlestir(dr.hosts,       sv.hosts,       ["slug", "name"]);
+    birlesik.frequencies = listeBirlestir(dr.frequencies, sv.frequencies, ["c"]);
     return birlesik;
   });
   (saved.radios || []).forEach(function (r) {

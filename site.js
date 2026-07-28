@@ -100,7 +100,21 @@
     if(mr && mr.color) mevcutRenk = mr.color;
   }
   perdeyiBoya(mevcutRenk);
-  requestAnimationFrame(function(){ curtain.classList.add('out'); });
+  /* Perde, içerik çizilene kadar durur — bulut yavaşsa ziyaretçi beyaz ekran
+     yerine marka renkli yükleme ekranı görür. Bulut hiç cevap vermezse
+     bulutHazir yine de çözülür; yine de takılı kalmasın diye üst sınır var. */
+  (function(){
+    var acildi = false;
+    function ac(){ if(acildi) return; acildi = true;
+      requestAnimationFrame(function(){ curtain.classList.add('out'); }); }
+    setTimeout(ac, 3000);                       // emniyet: ne olursa olsun aç
+    if (window.bulutHazir && window.bulutHazir.then){
+      window.bulutHazir.then(function(){
+        /* sayfanın çizim kodu da bulutHazir.then ile bağlı; bir kare sonra aç */
+        requestAnimationFrame(function(){ requestAnimationFrame(ac); });
+      }, ac);
+    } else { ac(); }
+  })();
 
   function goTo(href){
     perdeyiBoya(hedefRengi(href));      /* GİDİLEN sayfanın rengiyle kapan */
@@ -193,6 +207,12 @@
     goTo(href);
   });
 
-  // geri/ileri ile gelince perde takılı kalmasın
-  window.addEventListener('pageshow', function(){ curtain.classList.remove('in'); curtain.classList.add('out'); });
+  /* Geri/ileri ile (bfcache'ten) dönünce perde takılı kalmasın.
+     DİKKAT: pageshow ilk açılışta da tetikleniyor; koşulsuz bırakılırsa
+     perdeyi içerik gelmeden açıp beyaz ekran gösteriyordu. Bu yüzden
+     yalnızca bfcache dönüşünde (e.persisted) çalışır. */
+  window.addEventListener('pageshow', function(e){
+    if(!e.persisted) return;
+    curtain.classList.remove('in'); curtain.classList.add('out');
+  });
 })();

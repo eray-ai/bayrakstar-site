@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sayfa bulunamadı — Bayrakstar</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#242424">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--dark:#242424;--yellow:#ffca11;--blue:#0081ba;--red:#ff0007;--teal:#00bac5;--coral:#f75843}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Open Sans',system-ui,sans-serif;background:var(--dark);color:#fff;
+       min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  img{display:block}
+
+  /* marka şeridi — sitenin diğer sayfalarındaki renk dili */
+  .serit{height:4px;background:linear-gradient(90deg,var(--red),var(--coral) 34%,
+         var(--yellow) 55%,var(--teal) 78%,var(--blue))}
+
+  header{padding:18px 6vw}
+  header img{height:34px}
+
+  .kutu{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        text-align:center;padding:60px 6vw 90px;gap:14px}
+  .kod{font-size:clamp(78px,17vw,168px);font-weight:800;line-height:.9;letter-spacing:-.04em;
+       background:linear-gradient(100deg,var(--coral),var(--yellow) 30%,var(--teal) 60%,var(--blue));
+       -webkit-background-clip:text;background-clip:text;color:transparent}
+  h1{font-size:clamp(22px,4vw,36px);font-weight:800;margin-top:6px}
+  p{opacity:.66;line-height:1.75;max-width:470px;font-size:15.5px}
+  .btnler{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:22px}
+  .btn{padding:14px 26px;border-radius:40px;font-weight:800;font-size:14px;
+       display:inline-flex;align-items:center;gap:9px;transition:transform .2s,background .2s}
+  .btn-fill{background:#fff;color:#111}
+  .btn-fill:hover{transform:translateY(-3px)}
+  .btn-ghost{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.35);color:#fff}
+  .btn-ghost:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}
+
+  .radyolar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:34px}
+  .radyolar a{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.05);
+        border:1px solid rgba(255,255,255,.12);border-radius:40px;padding:8px 16px 8px 8px;
+        font-size:13px;font-weight:700;transition:.2s}
+  .radyolar a:hover{background:rgba(255,255,255,.12);transform:translateY(-3px)}
+  .radyolar .nokta{width:26px;height:26px;border-radius:50%;flex-shrink:0}
+
+  footer{text-align:center;padding:24px;opacity:.45;font-size:13px}
+
+  a:focus-visible{outline:3px solid #fff;outline-offset:3px;border-radius:8px}
+  @media (prefers-reduced-motion:reduce){*{transition-duration:.001ms!important}}
+</style>
+</head>
+<body>
+<div class="serit"></div>
+<header><a href="/"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"></a></header>
+
+<main class="kutu">
+  <div class="kod">404</div>
+  <h1>Bu sayfa yayında değil</h1>
+  <p>Aradığın sayfa kaldırılmış, adı değişmiş ya da adres yanlış yazılmış olabilir.
+     Aşağıdan devam edebilirsin.</p>
+  <div class="btnler">
+    <a class="btn btn-fill" href="/">Ana sayfaya dön</a>
+    <a class="btn btn-ghost" href="/websiteler.html">Radyo web siteleri</a>
+  </div>
+  <div class="radyolar" id="radyolar"></div>
+</main>
+
+<footer>© 2026 Bayrakstar — colorful life</footer>
+
+<script src="data.js"></script>
+<script>
+/* Radyo kısayolları data.js'ten çizilir. 404 sayfası bilerek buluta BAĞLANMAZ:
+   hata sayfasının, hatalı olabilecek bir servisi beklemesi anlamsız. */
+(function(){
+  try{
+    var D = window.DEFAULT_DATA || {radios:[]};
+    var k = document.getElementById('radyolar');
+    (D.radios||[]).forEach(function(r){
+      if(!r.slug) return;
+      var a=document.createElement('a');
+      a.href='radyo.html?r='+encodeURIComponent(r.slug);
+      a.innerHTML='<span class="nokta" style="background:'+(r.color||'#fff')+'"></span>'+r.name;
+      k.appendChild(a);
+    });
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

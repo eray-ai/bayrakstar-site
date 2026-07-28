@@ -17,7 +17,11 @@
   var ONBELLEK   = "bayrakstar_data";      // data.js'in okuduğu anahtar
   var OTURUM     = "bayrakstar_token";     // yönetici erişim jetonu
   var EPOSTA     = "yonetim@bayrakstar.com";
-  var ZAMAN_ASIMI = 5000;                  // ms — bulut yanıt vermezse siteyi bekletme
+  /* Bulut YAVAŞ olduğunda (kapalı değil — yavaş) sayfa bu süre kadar boş kalır.
+     Ölçüldü: 5000 ms'de ziyaretçi 6,4 sn beyaz ekran görüyordu. Ücretsiz
+     Supabase projesi hareketsizlikten sonra duraklıyor ve uyanırken tam olarak
+     "yavaş ama ayakta" oluyor, yani bu istisnai değil normal bir durum. */
+  var ZAMAN_ASIMI = 2500;
 
   function basliklar(jeton) {
     var h = { "apikey": KEY, "Content-Type": "application/json" };
@@ -94,12 +98,37 @@
     });
   }
 
-  /* ---- Sayfalar bunu bekler: bulut gelene kadar çizim yapılmaz ---- */
-  var hazir = bulutOku().catch(function (e) {
-    // Bulut erişilemezse site yine de açılır (ön bellek / data.js varsayılanı ile)
-    console.warn("[bulut] " + e.message + " — yerel içerikle devam ediliyor.");
-    return null;
-  });
+  function onbellekVar() {
+    try { return !!localStorage.getItem(ONBELLEK); } catch (e) { return false; }
+  }
+
+  /* ------------------------------------------------------------
+     Sayfalar bunu bekler.
+
+     ÖNBELLEK VARSA (tekrar gelen ziyaretçi): hiç bekletmeden çiz,
+     bulutu arka planda tazele. Tazelenen içerik bir sonraki açılışta
+     geçerli olur — "önce göster, sonra güncelle" yaklaşımı.
+
+     ÖNBELLEK YOKSA (ilk ziyaret): bulut beklenir, ama en fazla
+     ZAMAN_ASIMI kadar; sonra data.js varsayılanlarıyla açılır.
+
+     YÖNETİM PANELİ İSTİSNASI: admin.html bayat kopya üzerinde
+     düzenleme yapıp yeni içeriği ezmesin diye HER ZAMAN taze okur.
+     (admin.html, bulut.js'ten önce window.BULUT_TAZE_SART = true der.)
+     ------------------------------------------------------------ */
+  var hazir;
+  if (onbellekVar() && !window.BULUT_TAZE_SART) {
+    bulutOku().catch(function (e) {
+      console.warn("[bulut] arka plan tazeleme başarısız: " + e.message);
+    });
+    hazir = Promise.resolve(null);
+  } else {
+    hazir = bulutOku().catch(function (e) {
+      // Bulut erişilemezse site yine de açılır (ön bellek / data.js varsayılanı ile)
+      console.warn("[bulut] " + e.message + " — yerel içerikle devam ediliyor.");
+      return null;
+    });
+  }
 
   window.BULUT = {
     oku: bulutOku,
