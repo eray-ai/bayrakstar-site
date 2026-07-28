@@ -72,21 +72,41 @@ window.DEFAULT_DATA = {
       "hosts": [
         {
           "name": "Serdar",
+          "slug": "serdar",
+          "about": "Serdar, Radyo Fenomen ekibinin mikrofon arkasındaki isimlerinden. Ayrıntılı tanıtım yazısı yakında bu bölümde olacak.",
+          "program": "Programın ayrıntılı tanıtımı yakında bu bölümde olacak.",
+          "cover": "",
+          "gallery": [],
           "show": "Serdar’la Sabah Modu",
           "bio": "Güne enerjik bir başlangıç; sabahın en keyifli müzikleri ve gündemi Serdar’la."
         },
         {
           "name": "Doğanay",
+          "slug": "doganay",
+          "about": "Doğanay, Radyo Fenomen ekibinin mikrofon arkasındaki isimlerinden. Ayrıntılı tanıtım yazısı yakında bu bölümde olacak.",
+          "program": "Programın ayrıntılı tanıtımı yakında bu bölümde olacak.",
+          "cover": "",
+          "gallery": [],
           "show": "Doğanay’ın Dünyası",
           "bio": "Kuşağın en renkli saatleri; müzik, sohbet ve Doğanay’ın dünyasından kesitler."
         },
         {
           "name": "DJ K-Billy",
+          "slug": "dj-k-billy",
+          "about": "DJ K-Billy, Radyo Fenomen ekibinin mikrofon arkasındaki isimlerinden. Ayrıntılı tanıtım yazısı yakında bu bölümde olacak.",
+          "program": "Programın ayrıntılı tanıtımı yakında bu bölümde olacak.",
+          "cover": "",
+          "gallery": [],
           "show": "DJ K-Billy’le Fenomen Hit Müzik",
           "bio": "Öğleden sonra tempoyu yükselten, en taze hit müzik seti."
         },
         {
           "name": "Deniz Görkem",
+          "slug": "deniz-gorkem",
+          "about": "Deniz Görkem, Radyo Fenomen ekibinin mikrofon arkasındaki isimlerinden. Ayrıntılı tanıtım yazısı yakında bu bölümde olacak.",
+          "program": "Programın ayrıntılı tanıtımı yakında bu bölümde olacak.",
+          "cover": "",
+          "gallery": [],
           "show": "Deniz Görkem’le Update",
           "bio": "Günün en yeni hitleri ve gündem, akşamüstü Deniz Görkem’le."
         }
@@ -210,6 +230,11 @@ window.DEFAULT_DATA = {
       "hosts": [
         {
           "name": "Tansu Çağlayan",
+          "slug": "tansu-caglayan",
+          "about": "Tansu Çağlayan, Fenomen Türk ekibinin mikrofon arkasındaki isimlerinden. Ayrıntılı tanıtım yazısı yakında bu bölümde olacak.",
+          "program": "Programın ayrıntılı tanıtımı yakında bu bölümde olacak.",
+          "cover": "",
+          "gallery": [],
           "show": "Tansu Çağlayan’la Yeni Gün",
           "photo": "yayincilar/fenomenturk-tansu-caglayan.jpg",
           "bio": "Güne Türkçe müziğin en güzel şarkıları ve pozitif enerjiyle başla.",
@@ -217,6 +242,11 @@ window.DEFAULT_DATA = {
         },
         {
           "name": "Doğanay Cireli",
+          "slug": "doganay-cireli",
+          "about": "Doğanay Cireli, Fenomen Türk ekibinin mikrofon arkasındaki isimlerinden. Ayrıntılı tanıtım yazısı yakında bu bölümde olacak.",
+          "program": "Programın ayrıntılı tanıtımı yakında bu bölümde olacak.",
+          "cover": "",
+          "gallery": [],
           "show": "Doğanay’ın Dünyası",
           "photo": "yayincilar/fenomenturk-doganay-cireli.jpg",
           "bio": "Kuşağın en renkli saatleri; müzik ve sohbet Doğanay’la.",
@@ -224,6 +254,11 @@ window.DEFAULT_DATA = {
         },
         {
           "name": "Ömer Erişmen",
+          "slug": "omer-erismen",
+          "about": "Ömer Erişmen, Fenomen Türk ekibinin mikrofon arkasındaki isimlerinden. Ayrıntılı tanıtım yazısı yakında bu bölümde olacak.",
+          "program": "Programın ayrıntılı tanıtımı yakında bu bölümde olacak.",
+          "cover": "",
+          "gallery": [],
           "show": "Ömer Erişmen’le Extra",
           "photo": "yayincilar/fenomenturk-omer-erismen.jpg",
           "bio": "Öğleden sonraya keyif katan sohbet ve müzik.",
@@ -231,6 +266,11 @@ window.DEFAULT_DATA = {
         },
         {
           "name": "Mert Üzülmez",
+          "slug": "mert-uzulmez",
+          "about": "Mert Üzülmez, Fenomen Türk ekibinin mikrofon arkasındaki isimlerinden. Ayrıntılı tanıtım yazısı yakında bu bölümde olacak.",
+          "program": "Programın ayrıntılı tanıtımı yakında bu bölümde olacak.",
+          "cover": "",
+          "gallery": [],
           "show": "Mert’le Perde Arkası",
           "photo": "yayincilar/fenomenturk-mert-uzulmez.jpg",
           "bio": "Magazinin ve müziğin perde arkası Mert’le.",
@@ -238,6 +278,11 @@ window.DEFAULT_DATA = {
         },
         {
           "name": "Murat Özsoy",
+          "slug": "murat-ozsoy",
+          "about": "Murat Özsoy, Fenomen Türk ekibinin mikrofon arkasındaki isimlerinden. Ayrıntılı tanıtım yazısı yakında bu bölümde olacak.",
+          "program": "Programın ayrıntılı tanıtımı yakında bu bölümde olacak.",
+          "cover": "",
+          "gallery": [],
           "show": "Murat Özsoy’la Şarzzz",
           "photo": "yayincilar/fenomenturk-murat-ozsoy.jpg",
           "bio": "Akşama girerken enerjini şarj eden program.",
@@ -380,6 +425,11 @@ window.DEFAULT_DATA = {
       "hosts": [
         {
           "name": "Emre Mutlu",
+          "slug": "emre-mutlu",
+          "about": "Emre Mutlu, İstanbul FM ekibinin mikrofon arkasındaki isimlerinden. Ayrıntılı tanıtım yazısı yakında bu bölümde olacak.",
+          "program": "Programın ayrıntılı tanıtımı yakında bu bölümde olacak.",
+          "cover": "",
+          "gallery": [],
           "show": "Emre Mutlu Show",
           "photo": "yayincilar/istanbulfm-emre-mutlu.jpg",
           "bio": "Sabahları İstanbul’a keyifli bir başlangıç; müzik ve sohbet Emre Mutlu’yla.",
@@ -387,6 +437,11 @@ window.DEFAULT_DATA = {
         },
         {
           "name": "Yalçın Alaca",
+          "slug": "yalcin-alaca",
+          "about": "Yalçın Alaca, İstanbul FM ekibinin mikrofon arkasındaki isimlerinden. Ayrıntılı tanıtım yazısı yakında bu bölümde olacak.",
+          "program": "Programın ayrıntılı tanıtımı yakında bu bölümde olacak.",
+          "cover": "",
+          "gallery": [],
           "show": "Yalçın.Net",
           "photo": "yayincilar/istanbulfm-yalcin-alaca.jpg",
           "bio": "Öğleden sonra Türkçe pop’un en iyileri Yalçın Alaca’yla.",

@@ -526,29 +526,57 @@ function panelRadyo(b,i){
       }).join('')
     + '<button class="add" onclick="ensureArr('+i+',\'frequencies\');'+P+'.frequencies.push({c:\'\',f:\'\'});yenile()">+ Frekans Ekle</button>';
 
-  if(b.id==='yayinci') return baslik(b,'Radyo sayfasındaki yayıncı kartları. Boş bırakırsan bölüm sitede hiç görünmez.')
+  if(b.id==='yayinci') return baslik(b,'Radyo sayfasındaki yayıncı kartları. Boş bırakırsan bölüm sitede hiç görünmez. Sayfa adresi olan yayıncının kartı tıklanınca kendi detay sayfası açılır.')
     + oneriKutu(GORSEL.yayinci)
-    + '<div class="hint" style="margin:10px 0 16px">İsim en fazla <b>24</b>, program adı <b>32</b>, tanıtım <b>130</b> karakter.</div>'
+    + '<div class="hint" style="margin:10px 0 16px">İsim en fazla <b>24</b>, program adı <b>32</b>, kısa tanıtım <b>130</b> karakter. Uzun yazılar (hakkında / programı) yalnız detay sayfasında görünür.</div>'
     + ((r.hosts||[]).length?'':'<div class="bos">Yayıncı yok — bu bölüm sitede gizli.</div>')
     + (r.hosts||[]).map(function(h,j){
+        const Y = P+'.hosts['+j+']';
         const foto = isUp(h.photo)
-          ? '<div class="chip">✓ Foto yüklendi</div><button class="btn-x" onclick="silDeger(\''+P+'.hosts['+j+'].photo\',\'\',\'Fotoğraf\')">Kaldır</button>'
-          : '<input type="text" value="'+att(h.photo)+'" placeholder="Fotoğraf yolu veya URL" oninput="'+P+'.hosts['+j+'].photo=this.value;'+P+'.hosts['+j+'].afis=false">';
+          ? '<div class="chip">✓ Foto yüklendi</div><button class="btn-x" onclick="silDeger(\''+Y+'.photo\',\'\',\'Fotoğraf\')">Kaldır</button>'
+          : '<input type="text" value="'+att(h.photo)+'" placeholder="Fotoğraf yolu veya URL" oninput="'+Y+'.photo=this.value;'+Y+'.afis=false">';
+        const kapak = isUp(h.cover)
+          ? '<div class="chip">✓ Kapak yüklendi</div><button class="btn-x" onclick="silDeger(\''+Y+'.cover\',\'\',\'Kapak görseli\')">Kaldır</button>'
+          : '<input type="text" value="'+att(h.cover)+'" placeholder="Program/afiş görseli — boş bırakılabilir" oninput="'+Y+'.cover=this.value">';
+        const galeri = (Array.isArray(h.gallery)?h.gallery:[]).map(function(g,k){
+          return '<div class="rowline">'
+            + '<input type="text" value="'+att(g)+'" placeholder="Görsel yolu veya URL" oninput="'+Y+'.gallery['+k+']=this.value">'
+            + '<button class="btn-up" onclick="pickHostGaleri('+i+','+j+','+k+')">⬆</button>'
+            + '<button class="del" onclick="silOge(\''+Y+'.gallery\','+k+',\'Görsel '+(k+1)+'\')">Sil</button></div>';
+        }).join('');
         return '<div class="subcard">'
           + '<div class="rowline">'
-          +   '<input type="text" data-max="24" value="'+att(h.name)+'" placeholder="İsim" oninput="'+P+'.hosts['+j+'].name=this.value">'
-          +   '<input type="text" data-max="32" value="'+att(h.show)+'" placeholder="Program" oninput="'+P+'.hosts['+j+'].show=this.value">'
+          +   '<input type="text" data-max="24" value="'+att(h.name)+'" placeholder="İsim" oninput="hostAdDegisti('+i+','+j+',this.value)">'
+          +   '<input type="text" data-max="32" value="'+att(h.show)+'" placeholder="Program" oninput="'+Y+'.show=this.value">'
           +   '<button class="mv" onclick="mv('+P+'.hosts,'+j+',-1,yenile)">↑</button>'
           +   '<button class="mv" onclick="mv('+P+'.hosts,'+j+',1,yenile)">↓</button>'
-          +   '<button class="del" onclick="silOge(\''+P+'.hosts\','+j+',('+P+'.hosts['+j+']||{}).name)">Sil</button>'
+          +   '<button class="del" onclick="silOge(\''+P+'.hosts\','+j+',('+Y+'||{}).name)">Sil</button>'
           + '</div>'
-          + '<textarea data-max="130" placeholder="Kısa tanıtım (bio)" oninput="'+P+'.hosts['+j+'].bio=this.value">'+att(h.bio)+'</textarea>'
+          + '<textarea data-max="130" placeholder="Kısa tanıtım (bio) — kartta görünür" oninput="'+Y+'.bio=this.value">'+att(h.bio)+'</textarea>'
           + (h.afis?'<div class="hint" style="margin-bottom:6px">✓ Resmî program afişi kullanılıyor — kartta rozet ve karartma kapalı. Kendi fotoğrafını koyarsan normale döner.</div>':'')
           + '<div class="uprow">'+foto+'<button class="btn-up" onclick="pickHostPhoto('+i+','+j+')">⬆ Foto Yükle</button></div>'
           + '<img class="thumb" style="height:78px;width:78px;object-fit:cover;border-radius:12px" src="'+att(h.photo)+'" onerror="this.style.opacity=.2">'
+
+          /* ---- detay sayfası alanları ---- */
+          + '<div class="hint" style="margin:16px 0 8px;font-weight:800;opacity:.85">🔗 Detay sayfası</div>'
+          + '<div class="rowline">'
+          +   '<input type="text" value="'+att(h.slug)+'" placeholder="Sayfa adresi (örn. tansu-caglayan)" oninput="'+Y+'.slug=temizSlug(this.value)">'
+          +   (h.slug
+                ? '<a class="btn-up" style="text-decoration:none" target="_blank" rel="noopener" '
+                  + 'href="yayinci.html?r='+encodeURIComponent(r.slug||'')+'&h='+encodeURIComponent(h.slug)+'">↗ Aç</a>'
+                : '')
+          + '</div>'
+          + '<div class="hint" style="margin:-2px 0 10px">Boş bırakırsan kart tıklanamaz olur, detay sayfası açılmaz. İsmi yazınca kendiliğinden doldurulur.</div>'
+          + '<textarea data-max="900" placeholder="Hakkında — yayıncıyı anlatan uzun yazı (detay sayfasında)" oninput="'+Y+'.about=this.value">'+att(h.about)+'</textarea>'
+          + '<textarea data-max="600" placeholder="Programı — program hakkında yazı (detay sayfasında)" oninput="'+Y+'.program=this.value">'+att(h.program)+'</textarea>'
+          + '<div class="uprow">'+kapak+'<button class="btn-up" onclick="pickHostCover('+i+','+j+')">⬆ Kapak Yükle</button></div>'
+          + (h.cover?'<img class="thumb" style="height:84px;width:auto;max-width:150px;object-fit:cover;border-radius:11px" src="'+att(h.cover)+'" onerror="this.style.opacity=.2">':'')
+          + '<div class="hint" style="margin:14px 0 6px">Kareler (galeri) — detay sayfasında ızgara olarak dizilir, tıklanınca büyür.</div>'
+          + galeri
+          + '<button class="add" style="margin-top:6px" onclick="hostGaleriEkle('+i+','+j+')">+ Görsel Ekle</button>'
           + '</div>';
       }).join('')
-    + '<button class="add" onclick="ensureArr('+i+',\'hosts\');'+P+'.hosts.push({name:\'\',show:\'\',bio:\'\',photo:\'\'});yenile()">+ Yayıncı Ekle</button>';
+    + '<button class="add" onclick="ensureArr('+i+',\'hosts\');'+P+'.hosts.push({name:\'\',slug:\'\',show:\'\',bio:\'\',photo:\'\',about:\'\',program:\'\',cover:\'\',gallery:[]});yenile()">+ Yayıncı Ekle</button>';
 
   if(b.id==='akis') return baslik(b,'Gün içindeki program akışı. Sitede gün sekmeleriyle gösterilir, o an yayında olan program vurgulanır.')
     + '<div class="hint" style="margin-bottom:12px">Saat biçimi <b>08:00 – 10:00</b> · program adı en fazla <b>36</b>, sunucu <b>20</b> karakter.</div>'
@@ -848,6 +876,41 @@ function pickRadioHero(i){pickImage(function(u){D.radios[i].hero=u;yenile();},19
 function pickSlide(i){pickImage(function(u){D.slides[i]=u;yenile();},1800,false);}
 function pickProgramImg(i,j){pickImage(function(u){ensureArr(i,'schedule');D.radios[i].schedule[j].img=u;yenile();},700,false);}
 function pickHostPhoto(i,j){pickImage(function(u){ensureArr(i,'hosts');D.radios[i].hosts[j].photo=u;D.radios[i].hosts[j].afis=false;yenile();},700,false);}
+
+/* ============================================================
+   YAYINCI DETAY SAYFASI ALANLARI
+   Her yayıncının kendi sayfası var: yayinci.html?r=<radyo>&h=<slug>
+   ============================================================ */
+/* Türkçe harfleri sadeleştirip adres dostu hâle getirir */
+function temizSlug(metin){
+  var tr={'ı':'i','İ':'i','ş':'s','Ş':'s','ğ':'g','Ğ':'g','ü':'u','Ü':'u','ö':'o','Ö':'o','ç':'c','Ç':'c','â':'a','î':'i','û':'u'};
+  return String(metin||'')
+    .replace(/[ıİşŞğĞüÜöÖçÇâîû]/g, function(c){ return tr[c] || c; })
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/^-+|-+$/g,'')
+    .slice(0,40);
+}
+/* İsim yazılırken sayfa adresi de otomatik türetilir — ama kullanıcı
+   adresi elle değiştirdiyse ona dokunulmaz. */
+function hostAdDegisti(i,j,yeniAd){
+  var h=D.radios[i].hosts[j];
+  var eskidenTuretilen = temizSlug(h.name);
+  h.name = yeniAd;
+  if(!h.slug || h.slug === eskidenTuretilen) h.slug = temizSlug(yeniAd);
+}
+function pickHostCover(i,j){
+  pickImage(function(u){ ensureArr(i,'hosts'); D.radios[i].hosts[j].cover=u; yenile(); },1400,false);
+}
+function ensureGaleri(i,j){
+  var h=D.radios[i].hosts[j];
+  if(!Array.isArray(h.gallery)) h.gallery=[];
+  return h.gallery;
+}
+function hostGaleriEkle(i,j){ ensureGaleri(i,j).push(''); yenile(); }
+function pickHostGaleri(i,j,k){
+  pickImage(function(u){ var g=ensureGaleri(i,j); g[k]=u; yenile(); },1400,false);
+}
 
 function silRadyo(i){
   const r=D.radios[i]; if(!r) return;

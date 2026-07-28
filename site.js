@@ -79,9 +79,11 @@
     }
   }
 
-  /* href'ten hedef radyonun rengini bul */
+  /* href'ten hedef radyonun rengini bul.
+     Hem radyo.html?r=<slug> hem yayinci.html?r=<slug>&h=<host> tanınır —
+     yayıncı sayfası da o radyonun temasını kullanıyor. */
   function hedefRengi(href){
-    var m=/radyo\.html\?r=([^&#]+)/.exec(href||'');
+    var m=/(?:radyo|yayinci)\.html\?r=([^&#]+)/.exec(href||'');
     if(!m) return null;
     var slug=decodeURIComponent(m[1]);
     var r=(D.radios||[]).find(function(x){ return x.slug===slug; });

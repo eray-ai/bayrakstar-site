@@ -143,8 +143,13 @@
 
   /* yayıncı kartları */
   .host-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
-  .host{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;transition:transform .3s,border-color .3s}
+  .host{display:block;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;transition:transform .3s,border-color .3s}
   .host:hover{transform:translateY(-6px);border-color:var(--brand)}
+  /* detay sayfası olan kart tıklanabilir — küçük bir ok ipucu belirir */
+  a.host .in{position:relative}
+  a.host .in::after{content:"→";position:absolute;right:20px;bottom:20px;font-weight:800;font-size:17px;
+    color:var(--brand-yazi);opacity:0;transform:translateX(-6px);transition:opacity .25s,transform .25s}
+  a.host:hover .in::after,a.host:focus-visible .in::after{opacity:1;transform:none}
   .host .ph{position:relative;aspect-ratio:1/1;overflow:hidden}
   .host .ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s;filter:saturate(.95)}
   .host:hover .ph img{transform:scale(1.07)}
@@ -484,9 +489,17 @@ document.getElementById('aboutText').textContent = R.about || '';
       : '<div class="ph fotosuz"><img src="'+esc(R.logo||'')+'" alt="" aria-hidden="true" '+
         'onerror="this.style.display=\'none\'"></div>';
     /* h.afis = resmî program afişi: kendi yazısı var, rozet+karartma bindirme */
-    return '<div class="host'+(h.afis&&foto?' afisli':'')+'">'+gorselBlok+
+    var sinif = 'host'+(h.afis&&foto?' afisli':'');
+    var ic = gorselBlok +
       '<div class="in"><div class="hn">'+esc(h.name)+'</div>'+(h.show?'<div class="hs">'+esc(h.show)+'</div>':'')+
-      (h.bio?'<div class="hb">'+esc(h.bio)+'</div>':'')+'</div></div>';
+      (h.bio?'<div class="hb">'+esc(h.bio)+'</div>':'')+'</div>';
+    /* slug'ı olan yayıncı kendi detay sayfasına bağlanır; olmayan düz kart kalır.
+       site.js iç .html linklerinde geçiş perdesini kendiliğinden uyguluyor. */
+    if(h.slug){
+      return '<a class="'+sinif+'" href="yayinci.html?r='+encodeURIComponent(R.slug)+
+             '&h='+encodeURIComponent(h.slug)+'" aria-label="'+esc(h.name)+' sayfasına git">'+ic+'</a>';
+    }
+    return '<div class="'+sinif+'">'+ic+'</div>';
   }).join('');
   document.getElementById('secHosts').style.display='';
 })();
