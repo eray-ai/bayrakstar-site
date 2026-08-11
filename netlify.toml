@@ -62,6 +62,12 @@
   [headers.values]
     Cache-Control = "public, max-age=2592000, immutable"
 
+# Marka yazıyüzleri — değişmez dosyalar, uzun süre önbellekte kalsın
+[[headers]]
+  for = "/fontlar/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+
 # HTML her zaman taze gelsin (içerik güncellemesi anında görünsün)
 [[headers]]
   for = "/*.html"
