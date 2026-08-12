@@ -567,6 +567,12 @@ window.DEFAULT_DATA = {
     ],
     "note": "Radyolara doğrudan ulaşmak için ilgili radyonun sayfasındaki iletişim bilgilerini kullanabilirsiniz."
   },
+  "grafik": {
+    "zeminler": true,
+    "bilesenler": true,
+    "kartlar": true,
+    "yogunluk": 15
+  },
   "footer": {
     "about": "<b>Bayrakstar</b> — colorful life. Radyolarımızı tek çatı altında buluşturan yayın ağı.",
     "socials": {
@@ -595,6 +601,9 @@ window.getSiteData = function () {
   out.intro   = Object.assign({}, def.intro,   saved.intro   || {});
   out.footer  = Object.assign({}, def.footer,  saved.footer  || {});
   out.contact = Object.assign({}, def.contact, saved.contact || {});
+  /* grafik elementleri ayarı — panelden gelir; yeni alan eklenirse
+     kayıtlı kopya onu gölgelemesin diye alan bazında birleştirilir */
+  out.grafik  = Object.assign({}, def.grafik,  saved.grafik  || {});
   /* iletişim kartları: kayıtlı liste varsa o, yoksa varsayılan */
   out.contact.items = (saved.contact && Array.isArray(saved.contact.items) && saved.contact.items.length)
     ? saved.contact.items : (def.contact ? def.contact.items : []);

@@ -327,6 +327,7 @@ const B_SITE=[
   {id:'tanitim', ad:'Tanıtım & İstatistik',ikon:'¶',renk:'#0081ba'},
   {id:'radyolar',ad:'Radyo Listesi',     ikon:'♫', renk:'#ffca11', say:()=>D.radios.length},
   {id:'iletisim',ad:'İletişim',          ikon:'✉', renk:'#00bac5', say:()=>((D.contact&&D.contact.items)||[]).length},
+  {id:'grafik',  ad:'Grafik Elementleri',ikon:'◈', renk:'#f75843'},
   {id:'footer',  ad:'Alt Bilgi',         ikon:'☰', renk:'#4d4d4d'},
   {id:'gecmis',  ad:'Sürüm Geçmişi',     ikon:'↺', renk:'#989a9d'},
   {id:'ziyaret', ad:'Ziyaretler',        ikon:'📈', renk:'#00bac5'}
@@ -397,6 +398,26 @@ function cizMenu(){
 function render(){ cizSecici(); cizMenu(); cizPanel(); sayaclariKur(); editorleriKur(); guncelleBoyutRozeti(); }
 function yenile(){ render(); }
 const renderRadios=yenile, renderSlides=yenile, renderSlogans=yenile, renderStats=yenile;
+
+/* ---- Grafik Elementleri bölümünün yardımcıları ---- */
+function gAyar(){
+  if(!D.grafik || typeof D.grafik!=='object') D.grafik={};
+  var g=D.grafik;
+  if(g.zeminler===undefined)   g.zeminler=true;
+  if(g.bilesenler===undefined) g.bilesenler=true;
+  if(g.kartlar===undefined)    g.kartlar=true;
+  if(g.yogunluk===undefined || isNaN(parseFloat(g.yogunluk))) g.yogunluk=15;
+  return g;
+}
+function gAnahtar(anahtar, ad, aciklama){
+  var acik = gAyar()[anahtar] !== false;
+  return '<label class="item" style="display:flex;gap:12px;align-items:flex-start;cursor:pointer;margin-bottom:10px">'
+    + '<input type="checkbox" '+(acik?'checked':'')+' '
+    +   'oninput="D.grafik.'+anahtar+'=this.checked" '
+    +   'style="margin-top:3px;width:18px;height:18px;accent-color:#ff0007;cursor:pointer;flex-shrink:0">'
+    + '<span><b style="display:block;font-size:15px">'+ad+'</b>'
+    + '<span style="display:block;opacity:.62;font-size:13px;line-height:1.5;margin-top:3px">'+aciklama+'</span></span></label>';
+}
 
 function baslik(b,aciklama){
   return '<h2><span class="ico" style="background:'+b.renk+'">'+b.ikon+'</span> '+b.ad+'</h2>'
@@ -490,6 +511,25 @@ function panelSite(b){
           + '<div class="hint">'+att(r.slogan||'')+' · radyo.html?r='+att(r.slug||'')+'</div></div>';
       }).join('')
     + '<button class="add" onclick="addRadio()">+ Radyo Ekle</button>';
+
+
+  if(b.id==='grafik') return baslik(b,'Radyoların kurumsal kimlik rehberlerinden gelen arka plan desenleri ve marka elementleri. Beğenmezsen buradan kapatabilirsin — yayın gerekmez, kaydedince anında etkili olur.')
+    + '<div class="hint" style="margin-bottom:16px">Bu ayarlar <b>tüm siteyi</b> etkiler. Her radyo kendi rehberindeki elementleri kullanır: Fenomen ve Fenomen Türk dev logo silueti, Boombox fırça darbesi ve grafiti, İstanbul FM çeyrek daire mozaik.</div>'
+    + gAnahtar('zeminler',  'Marka zeminleri',
+        'Radyo sayfalarının arka planındaki desenler — dev logo silueti, fırça darbesi, mozaik, karalamalar.')
+    + gAnahtar('bilesenler','Marka bileşenleri',
+        'Resmî CANLI rozeti, yayın akışındaki siyah saat etiketleri, marka renginde bölüm etiketleri, başlık vurguları.')
+    + gAnahtar('kartlar',   'Kurumsal radyo kartları',
+        'Ana sayfadaki 4 radyo kartı, stok fotoğraf yerine kendi marka grafiğini gösterir.')
+    + '<label style="margin-top:24px">Desen yoğunluğu</label>'
+    + '<div class="hint" style="margin-bottom:12px">Desenlerin ne kadar belirgin olacağı. <b>%0</b> tamamen görünmez, <b>%15</b> önerilen (hafif doku), <b>%50 ve üzeri</b> kimlik şablonlarındaki cesur hâl.</div>'
+    + '<div style="display:flex;align-items:center;gap:14px">'
+    +   '<input type="range" min="0" max="100" step="5" value="'+(gAyar().yogunluk)+'" '
+    +     'oninput="D.grafik.yogunluk=+this.value;this.nextElementSibling.textContent=\'%\'+this.value" '
+    +     'style="flex:1;accent-color:#ff0007;cursor:pointer">'
+    +   '<b style="min-width:52px;text-align:right;font-size:15px">%'+(gAyar().yogunluk)+'</b>'
+    + '</div>'
+    + '<div class="hint" style="margin-top:18px">Değişikliği görmek için kaydettikten sonra “↗ Siteyi Aç” ile siteyi yenile.</div>';
 
   if(b.id==='footer') return baslik(b,'Sayfaların en altındaki bilgi ve sosyal medya bağlantıları.')
     + zenginAlan('z_footer','Hakkında metni', D.footer.about, 'D.footer.about', 180, ['renk','kalin','temiz'], true)
