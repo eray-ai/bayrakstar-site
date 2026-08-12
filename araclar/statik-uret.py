@@ -196,8 +196,11 @@ def uret(D, kok):
             hbaslik = h["name"] + (" — " + h["show"] if h.get("show") else "") + " | " + r["name"]
             haciklama = duz(h.get("about") or h.get("bio")) or duz(
                 "%s, %s yayıncısı." % (h["name"], r["name"]))
-            hgorsel = kok + "/" + (h.get("photo") or "").strip() if (h.get("photo") or "").strip() \
-                else gorsel
+            # Panelden yüklenen görsel base64 olarak gömülü olabilir. Onu
+            # og:image yapmak adresi bozar (https://site/data:image/...) ve
+            # sayfayı yüz kilobaytlarca şişirir → radyonun kartına düşülür.
+            hfoto = (h.get("photo") or "").strip()
+            hgorsel = kok + "/" + hfoto if hfoto and not hfoto.startswith("data:") else gorsel
             ciktilar["y/%s-%s/index.html" % (slug, hslug)] = sayfa_uret(
                 yayinci_sablon, 2,
                 "window.ON_SLUG=%s;window.ON_HOST=%s;" % (

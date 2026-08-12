@@ -97,7 +97,9 @@ window.DEFAULT_DATA = {
           "cover": "",
           "gallery": [],
           "show": "Serdar’la Sabah Modu",
-          "bio": "Güne enerjik bir başlangıç; sabahın en keyifli müzikleri ve gündemi Serdar’la."
+          "bio": "Güne enerjik bir başlangıç; sabahın en keyifli müzikleri ve gündemi Serdar’la.",
+          "photo": "yayincilar/fenomen-serdar.jpg",
+          "afis": true
         },
         {
           "name": "Doğanay",
@@ -107,7 +109,9 @@ window.DEFAULT_DATA = {
           "cover": "",
           "gallery": [],
           "show": "Doğanay’ın Dünyası",
-          "bio": "Kuşağın en renkli saatleri; müzik, sohbet ve Doğanay’ın dünyasından kesitler."
+          "bio": "Kuşağın en renkli saatleri; müzik, sohbet ve Doğanay’ın dünyasından kesitler.",
+          "photo": "yayincilar/fenomen-doganay.jpg",
+          "afis": true
         },
         {
           "name": "DJ K-Billy",
@@ -117,7 +121,9 @@ window.DEFAULT_DATA = {
           "cover": "",
           "gallery": [],
           "show": "DJ K-Billy’le Fenomen Hit Müzik",
-          "bio": "Öğleden sonra tempoyu yükselten, en taze hit müzik seti."
+          "bio": "Öğleden sonra tempoyu yükselten, en taze hit müzik seti.",
+          "photo": "yayincilar/fenomen-dj-k-billy.jpg",
+          "afis": true
         },
         {
           "name": "Deniz Görkem",
@@ -127,7 +133,9 @@ window.DEFAULT_DATA = {
           "cover": "",
           "gallery": [],
           "show": "Deniz Görkem’le Update",
-          "bio": "Günün en yeni hitleri ve gündem, akşamüstü Deniz Görkem’le."
+          "bio": "Günün en yeni hitleri ve gündem, akşamüstü Deniz Görkem’le.",
+          "photo": "yayincilar/fenomen-deniz-gorkem.jpg",
+          "afis": true
         }
       ],
       "schedule": [
