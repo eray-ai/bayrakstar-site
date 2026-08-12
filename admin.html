@@ -175,6 +175,16 @@
     .side-body.acik{display:block}
   }
   @media(max-width:640px){.grid2{grid-template-columns:1fr}.stat-row{grid-template-columns:1fr 1fr}}
+  /* ---- yayın akışı gün seçici ---- */
+  .gunsec{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 16px}
+  .gunsec .gs{background:#f2f0ec;border:1px solid #e0ddd6;color:#2a2a2a;font-weight:700;
+    font-size:13px;padding:8px 13px;border-radius:9px;cursor:pointer;position:relative;line-height:1.2}
+  .gunsec .gs small{display:block;font-size:10px;font-weight:600;opacity:.55;letter-spacing:.02em}
+  .gunsec .gs:hover{background:#e9e6e0}
+  .gunsec .gs.on{background:#1d1d1d;border-color:#1d1d1d;color:#fff}
+  .gunsec .gs.on small{opacity:.65}
+  .gunsec .gs.ozel::after{content:"";position:absolute;top:5px;right:6px;width:6px;height:6px;
+    border-radius:50%;background:#ff0007}
 </style>
 </head>
 <body>
@@ -350,7 +360,7 @@ const B_RADYO=[
    Alan adı değişince araclar/alan-adi-degistir.py burayı da günceller. */
 const SITE_KOK = 'https://eray-ai.github.io/bayrakstar-site';
 
-let st = { varlik:'site', radyo:0, bolum:'hero' };
+let st = { varlik:'site', radyo:0, bolum:'hero', gun:null };  /* gun: null = varsayılan akış, 0..6 = o güne özel */
 
 function bolumler(){ return st.varlik==='site' ? B_SITE : B_RADYO; }
 
@@ -826,33 +836,78 @@ function panelRadyo(b,i){
       }).join('')
     + '<button class="add" onclick="ensureArr('+i+',\'hosts\');'+P+'.hosts.push({name:\'\',slug:\'\',show:\'\',bio:\'\',photo:\'\',about:\'\',program:\'\',cover:\'\',gallery:[]});yenile()">+ Yayıncı Ekle</button>';
 
-  if(b.id==='akis') return baslik(b,'Gün içindeki program akışı. Sitede gün sekmeleriyle gösterilir, o an yayında olan program vurgulanır.')
-    + '<div class="hint" style="margin-bottom:12px">Saat biçimi <b>08:00 – 10:00</b> · program adı en fazla <b>36</b>, sunucu <b>20</b> karakter.</div>'
-    + ((r.schedule||[]).length?'':'<div class="bos">Henüz program eklenmemiş.</div>')
-    + oneriKutu(GORSEL.program)
-    + '<div style="height:14px"></div>'
-    + (r.schedule||[]).map(function(s,j){
-        var foto = isUp(s.img)
-          ? '<div class="chip">✓ Görsel yüklendi</div><button class="btn-x" onclick="silDeger(\''+P+'.schedule['+j+'].img\',\'\',\'Program görseli\')">Kaldır</button>'
-          : '<input type="text" value="'+att(s.img)+'" placeholder="Görsel yolu veya URL (boşsa radyo logosu görünür)" oninput="'+P+'.schedule['+j+'].img=this.value">';
-        return '<div class="subcard">'
-          + '<div class="rowline">'
-          +   '<input type="text" data-max="15" value="'+att(s.t)+'" placeholder="08:00 – 10:00" style="max-width:140px;flex:0 0 140px" oninput="'+P+'.schedule['+j+'].t=this.value">'
-          +   '<input type="text" data-max="36" value="'+att(s.name)+'" placeholder="Program adı" oninput="'+P+'.schedule['+j+'].name=this.value">'
-          +   '<input type="text" data-max="20" value="'+att(s.host)+'" placeholder="Sunucu (ops.)" style="max-width:140px;flex:0 0 140px" oninput="'+P+'.schedule['+j+'].host=this.value">'
-          +   '<button class="mv" onclick="mv('+P+'.schedule,'+j+',-1,yenile)">↑</button>'
-          +   '<button class="mv" onclick="mv('+P+'.schedule,'+j+',1,yenile)">↓</button>'
-          +   '<button class="del" onclick="silOge(\''+P+'.schedule\','+j+',('+P+'.schedule['+j+']||{}).name)">Sil</button>'
-          + '</div>'
-          + '<div class="uprow" style="margin-top:9px">'+foto
-          +   '<button class="btn-up" onclick="pickProgramImg('+i+','+j+')">⬆ Görsel Yükle</button></div>'
-          + (s.img?'<img class="thumb" style="height:72px;width:72px;object-fit:cover;border-radius:11px" src="'+att(s.img)+'" onerror="this.style.opacity=.2">':'')
-          + '</div>';
-      }).join('')
-    + '<button class="add" onclick="ensureArr('+i+',\'schedule\');'+P+'.schedule.push({t:\'\',name:\'\',host:\'\',img:\'\'});yenile()">+ Program Ekle</button>'
-    + '<div style="height:18px"></div>'
-    + alan('Hafta sonu notu', txtInput(r.weekendNote,P+'.weekendNote',160,'Hafta sonu özel programları…'), 160, r.weekendNote,
-           'Akışın altında küçük not olarak görünür.');
+  if(b.id==='akis'){
+    var g   = st.gun;                       /* null = varsayılan akış */
+    var A   = akisYolu(i,g);                /* düzenlenen dizinin yolu */
+    var ozel= (g===null) || akisOzelMi(r,g);/* bu ekran düzenlenebilir mi */
+    var L   = akisGoster(r,g);
+
+    /* --- gün seçici --- */
+    var secici = '<div class="gunsec">'
+      + '<button type="button" class="gs'+(g===null?' on':'')+'" onclick="gunSec(null)">'
+      +   'Varsayılan <small>her gün</small></button>'
+      + GUN_KISA.map(function(gk,gi){
+          return '<button type="button" class="gs'+(g===gi?' on':'')+(akisOzelMi(r,gi)?' ozel':'')+'"'
+            + ' title="'+GUN_TAM[gi]+(akisOzelMi(r,gi)?' — bu güne özel akış var':' — varsayılan akışı gösteriyor')+'"'
+            + ' onclick="gunSec('+gi+')">'+gk+'</button>';
+        }).join('')
+      + '</div>';
+
+    var durum;
+    if(g===null){
+      durum='<div class="hint" style="margin-bottom:14px">Bu <b>varsayılan akış</b>. '
+        + 'Kendine özel akışı olmayan <b>tüm günler</b> bunu gösterir. '
+        + 'Bir günü ayrı düzenlemek istersen yukarıdan o günü seç.</div>';
+    } else if(ozel){
+      durum='<div class="hint" style="margin-bottom:14px;border-left:3px solid #ff0007;padding-left:10px">'
+        + '<b>'+GUN_TAM[g]+'</b> gününe özel akışı düzenliyorsun. Değişiklikler yalnız bu günü etkiler.'
+        + ' <button class="btn-x" style="margin-left:8px" onclick="gunOzelSil('+i+','+g+')">Özel akışı sil, varsayılana dön</button></div>';
+    } else {
+      durum='<div class="hint" style="margin-bottom:14px;border-left:3px solid #989a9d;padding-left:10px">'
+        + '<b>'+GUN_TAM[g]+'</b> şu an <b>varsayılan akışı</b> gösteriyor (aşağıdaki liste). '
+        + 'Bu günü ayrı düzenlemek istersen önce özel akış oluştur — varsayılanın bir kopyası alınır.'
+        + ' <button class="add" style="margin:8px 0 0" onclick="gunOzelYap('+i+','+g+')">'
+        + 'Bu güne özel akış oluştur</button></div>';
+    }
+
+    /* --- program satırları --- */
+    var satirlar = L.map(function(sp,j){
+      if(!ozel){   /* salt görüntü: bu gün varsayılanı yansıtıyor */
+        return '<div class="subcard" style="opacity:.62">'
+          + '<div class="rowline"><b style="flex:0 0 140px">'+att(sp.t)+'</b>'
+          + '<span style="flex:1">'+att(sp.name)+'</span>'
+          + '<span style="opacity:.7">'+att(sp.host||'')+'</span></div></div>';
+      }
+      var foto = isUp(sp.img)
+        ? '<div class="chip">✓ Görsel yüklendi</div><button class="btn-x" onclick="silDeger(\'' + A + '[' + j + '].img\',\'\',\'Program görseli\')">Kaldır</button>'
+        : '<input type="text" value="'+att(sp.img)+'" placeholder="Görsel yolu veya URL (boşsa radyo logosu görünür)" oninput="'+A+'['+j+'].img=this.value">';
+      return '<div class="subcard">'
+        + '<div class="rowline">'
+        +   '<input type="text" data-max="15" value="'+att(sp.t)+'" placeholder="08:00 – 10:00" style="max-width:140px;flex:0 0 140px" oninput="'+A+'['+j+'].t=this.value">'
+        +   '<input type="text" data-max="36" value="'+att(sp.name)+'" placeholder="Program adı" oninput="'+A+'['+j+'].name=this.value">'
+        +   '<input type="text" data-max="20" value="'+att(sp.host)+'" placeholder="Sunucu (ops.)" style="max-width:140px;flex:0 0 140px" oninput="'+A+'['+j+'].host=this.value">'
+        +   '<button class="mv" onclick="mv('+A+','+j+',-1,yenile)">↑</button>'
+        +   '<button class="mv" onclick="mv('+A+','+j+',1,yenile)">↓</button>'
+        +   '<button class="del" onclick="silOge(\''+A+'\','+j+',('+A+'['+j+']||{}).name)">Sil</button>'
+        + '</div>'
+        + '<div class="uprow" style="margin-top:9px">'+foto
+        +   '<button class="btn-up" onclick="pickProgramImg('+i+','+j+','+(g===null?'null':g)+')">⬆ Görsel Yükle</button></div>'
+        + (sp.img?'<img class="thumb" style="height:72px;width:72px;object-fit:cover;border-radius:11px" src="'+att(sp.img)+'" onerror="this.style.opacity=.2">':'')
+        + '</div>';
+    }).join('');
+
+    return baslik(b,'Gün içindeki program akışı. Sitede gün sekmeleriyle gösterilir, o an yayında olan program vurgulanır.')
+      + secici
+      + durum
+      + '<div class="hint" style="margin-bottom:12px">Saat biçimi <b>08:00 – 10:00</b> · program adı en fazla <b>36</b>, sunucu <b>20</b> karakter.</div>'
+      + (L.length?'':'<div class="bos">Henüz program eklenmemiş.</div>')
+      + (ozel?oneriKutu(GORSEL.program)+'<div style="height:14px"></div>':'')
+      + satirlar
+      + (ozel?'<button class="add" onclick="akisDizisi('+i+','+(g===null?'null':g)+').push({t:\'\',name:\'\',host:\'\',img:\'\'});yenile()">+ Program Ekle</button>':'')
+      + '<div style="height:18px"></div>'
+      + alan('Hafta sonu notu', txtInput(r.weekendNote,P+'.weekendNote',160,'Hafta sonu özel programları…'), 160, r.weekendNote,
+             'Akışın altında küçük not olarak görünür. Artık günlere özel akış tanımlayabildiğin için çoğu durumda gerekmez.');
+  }
 
   if(b.id==='kanal') return baslik(b,'Radyonun alt kanalları (örn. Fenomen Pop, Fenomen Dans). Etiket olarak dizilir.')
     + '<div class="hint" style="margin-bottom:12px">Kanal adı en fazla <b>26</b> karakter.</div>'
@@ -1116,6 +1171,45 @@ function isUp(s){return typeof s==='string' && s.startsWith('data:');}
 function up_thumb(inp){const img=inp.closest('.item').querySelector('.thumb');if(img){img.src=inp.value;img.style.opacity=1;}}
 function up_thumb2(inp){const img=inp.closest('.field').querySelector('.thumb');if(img){img.src=inp.value;img.style.opacity=1;}}
 function ensureArr(i,key){ if(!Array.isArray(D.radios[i][key])) D.radios[i][key]=[]; }
+/* ---- YAYIN AKIŞI: gün yardımcıları ----
+   Radyoların çoğunda hafta içi akış aynı, hafta sonu farklıdır. Bu yüzden
+   'schedule' VARSAYILAN akıştır; yalnız farklı olan günler 'scheduleGun'
+   içinde tutulur. Özel akışı olmayan gün varsayılanı gösterir. */
+const GUN_KISA=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+const GUN_TAM =['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
+function akisOzelMi(r,g){ var o=r && r.scheduleGun && r.scheduleGun[g]; return !!(o && o.length); }
+function akisYolu(i,g){
+  return (g===null||g===undefined) ? 'D.radios['+i+'].schedule'
+                                   : 'D.radios['+i+'].scheduleGun['+g+']';
+}
+/* düzenlenmek üzere gerçek diziyi döndürür (yoksa oluşturur) */
+function akisDizisi(i,g){
+  var r=D.radios[i];
+  if(g===null||g===undefined){ if(!Array.isArray(r.schedule)) r.schedule=[]; return r.schedule; }
+  if(!r.scheduleGun || typeof r.scheduleGun!=='object') r.scheduleGun={};
+  if(!Array.isArray(r.scheduleGun[g])) r.scheduleGun[g]=[];
+  return r.scheduleGun[g];
+}
+/* ekranda GÖSTERİLEN liste (özel yoksa varsayılan) */
+function akisGoster(r,g){
+  if(g===null||g===undefined) return r.schedule||[];
+  return akisOzelMi(r,g) ? r.scheduleGun[g] : (r.schedule||[]);
+}
+function gunSec(g){ st.gun=g; render(); }
+function gunOzelYap(i,g){
+  var r=D.radios[i];
+  if(!r.scheduleGun || typeof r.scheduleGun!=='object') r.scheduleGun={};
+  r.scheduleGun[g]=JSON.parse(JSON.stringify(r.schedule||[]));
+  toast(GUN_TAM[g]+' için özel akış oluşturuldu — artık bu günü ayrı düzenleyebilirsin');
+  render();
+}
+function gunOzelSil(i,g){
+  if(!confirm(GUN_TAM[g]+' gününe özel akış SİLİNECEK.\n\nBu gün yeniden varsayılan akışı gösterecek. Emin misin?')) return;
+  if(D.radios[i].scheduleGun) delete D.radios[i].scheduleGun[g];
+  toast(GUN_TAM[g]+' varsayılan akışa döndü');
+  render();
+}
+
 function ensureObj(i,key){ if(!D.radios[i][key] || typeof D.radios[i][key]!=='object') D.radios[i][key]={}; }
 
 function setRadioLogo(i,val){
@@ -1127,7 +1221,7 @@ function pickRadioLogo(i){pickImage(function(u){D.radios[i].logo=u;yenile();},70
 function pickRadioImg(i){pickImage(function(u){D.radios[i].img=u;yenile();},1600,false);}
 function pickRadioHero(i){pickImage(function(u){D.radios[i].hero=u;yenile();},1900,false);}
 function pickSlide(i){pickImage(function(u){D.slides[i]=u;yenile();},1800,false);}
-function pickProgramImg(i,j){pickImage(function(u){ensureArr(i,'schedule');D.radios[i].schedule[j].img=u;yenile();},700,false);}
+function pickProgramImg(i,j,g){pickImage(function(u){var L=akisDizisi(i,g);if(L[j]){L[j].img=u;yenile();}},700,false);}
 function pickHostPhoto(i,j){pickImage(function(u){ensureArr(i,'hosts');D.radios[i].hosts[j].photo=u;D.radios[i].hosts[j].afis=false;yenile();},700,false);}
 
 /* ============================================================

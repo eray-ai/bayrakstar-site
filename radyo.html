@@ -198,6 +198,11 @@
   .days{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
   .days button{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;font-weight:700;font-size:13px;padding:9px 16px;border-radius:30px;cursor:pointer;transition:.2s}
   .days button.on{background:var(--brand);border-color:var(--brand);color:var(--onbrand)}
+  /* bu güne ÖZEL akış varsa küçük bir nokta — hafta sonu farkı gözden kaçmasın */
+  .days button.ozel{position:relative}
+  .days button.ozel::after{content:"";position:absolute;top:5px;right:7px;width:5px;height:5px;
+    border-radius:50%;background:var(--accent-yazi);opacity:.9}
+  .days button.ozel.on::after{background:var(--onbrand)}
   .timeline{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
   .tl{display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 20px;transition:background .2s,border-color .2s}
   .tl:hover{background:rgba(255,255,255,.07)}
@@ -553,7 +558,22 @@ document.getElementById('aboutText').textContent = R.about || '';
 
 /* --- YAYIN AKIŞI (gün sekmeli + şimdi yayında) --- */
 (function(){
-  if(!R.schedule || !R.schedule.length) return;
+  /* Güne özel akış: R.scheduleGun[gun] varsa O gösterilir, yoksa R.schedule
+     (varsayılan akış) gösterilir. Radyoların çoğunda hafta içi aynı, hafta
+     sonu farklıdır — bu yüzden yalnız FARKLI günler ayrıca tutulur. */
+  function gununAkisi(g){
+    var oz = R.scheduleGun && R.scheduleGun[g];
+    if(!oz && R.scheduleGun) oz = R.scheduleGun[String(g)];
+    return (oz && oz.length) ? oz : (R.schedule || []);
+  }
+  function ozelMi(g){
+    var oz = (R.scheduleGun && (R.scheduleGun[g] || R.scheduleGun[String(g)]));
+    return !!(oz && oz.length);
+  }
+  var varMi = (R.schedule && R.schedule.length) ||
+              (R.scheduleGun && Object.keys(R.scheduleGun).some(function(k){
+                 return R.scheduleGun[k] && R.scheduleGun[k].length; }));
+  if(!varMi) return;
   var days=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
 
   /* Yayın akışı TÜRKİYE saatine göre sabittir; ama hesap ziyaretçinin
@@ -583,8 +603,10 @@ document.getElementById('aboutText').textContent = R.about || '';
   daysEl.setAttribute('role','group');
   daysEl.setAttribute('aria-label','Yayın akışı günü');
   daysEl.innerHTML = days.map(function(d,i){
-    return '<button data-d="'+i+'"'+(i===jsDay?' class="on"':'')+
-           ' aria-label="'+tamGun[i]+' yayın akışı" aria-pressed="'+(i===jsDay)+'">'+d+'</button>';
+    var sinif=[]; if(i===jsDay) sinif.push('on'); if(ozelMi(i)) sinif.push('ozel');
+    return '<button data-d="'+i+'"'+(sinif.length?' class="'+sinif.join(' ')+'"':'')+
+           ' aria-label="'+tamGun[i]+' yayın akışı'+(ozelMi(i)?' (bu güne özel)':'')+'"'+
+           ' aria-pressed="'+(i===jsDay)+'">'+d+'</button>';
   }).join('');
   daysEl.querySelectorAll('button').forEach(function(b){b.onclick=function(){
     daysEl.querySelectorAll('button').forEach(function(x){x.classList.remove('on');x.setAttribute('aria-pressed','false');});
@@ -595,7 +617,7 @@ document.getElementById('aboutText').textContent = R.about || '';
     var simdi=istanbulSimdi();
     var curH=simdi.saat;
     var isToday=(dayIdx===simdi.gun);
-    var sched=R.schedule;
+    var sched=gununAkisi(dayIdx);
     // şimdi yayında olanı bul
     var liveIdx=-1;
     if(isToday){ for(var i=0;i<sched.length;i++){var s=startHour(sched[i].t);var e=(i+1<sched.length)?startHour(sched[i+1].t):24;if(e<=s)e=24;if(curH>=s&&curH<e){liveIdx=i;break;}} }

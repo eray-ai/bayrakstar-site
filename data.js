@@ -146,21 +146,18 @@ window.DEFAULT_DATA = {
         {
           "t": "07:00 – 10:00",
           "name": "Serdar’la Sabah Modu",
-          "host": "Serdar"
+          "host": "Serdar Koçak",
+          "img": "yayincilar/fenomen-serdar.jpg"
         },
         {
-          "t": "10:00 – 12:00",
-          "name": "Doğanay’ın Dünyası",
-          "host": "Doğanay"
-        },
-        {
-          "t": "12:00 – 13:00",
+          "t": "10:00 – 13:00",
           "name": "Maksimum Hit Müzik"
         },
         {
           "t": "13:00 – 16:00",
           "name": "DJ K-Billy’le Fenomen Hit Müzik",
-          "host": "DJ K-Billy"
+          "host": "Onur Kaymak",
+          "img": "yayincilar/fenomen-dj-k-billy.jpg"
         },
         {
           "t": "16:00 – 17:00",
@@ -169,7 +166,8 @@ window.DEFAULT_DATA = {
         {
           "t": "17:00 – 20:00",
           "name": "Deniz Görkem’le Update",
-          "host": "Deniz Görkem"
+          "host": "Deniz Görkem Kaya",
+          "img": "yayincilar/fenomen-deniz-gorkem.jpg"
         },
         {
           "t": "20:00 – 00:00",
@@ -234,6 +232,169 @@ window.DEFAULT_DATA = {
         "yt": "https://youtube.com/radyofenomen",
         "tiktok": "https://tiktok.com/@radyofenomen",
         "fb": "https://facebook.com/radyofenomen"
+      },
+      "scheduleGun": {
+        "4": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Serdar’la Sabah Modu",
+            "host": "Serdar Koçak",
+            "img": "yayincilar/fenomen-serdar.jpg"
+          },
+          {
+            "t": "10:00 – 13:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "13:00 – 16:00",
+            "name": "DJ K-Billy’le Fenomen Hit Müzik",
+            "host": "Onur Kaymak",
+            "img": "yayincilar/fenomen-dj-k-billy.jpg"
+          },
+          {
+            "t": "16:00 – 17:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "17:00 – 20:00",
+            "name": "Deniz Görkem’le Update",
+            "host": "Deniz Görkem Kaya",
+            "img": "yayincilar/fenomen-deniz-gorkem.jpg"
+          },
+          {
+            "t": "20:00 – 21:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "21:00 – 22:00",
+            "name": "Underground Boutique",
+            "host": "Yunus Özyavuz"
+          },
+          {
+            "t": "22:00 – 23:00",
+            "name": "Underground Boutique",
+            "host": "DJ U.F.U.K"
+          },
+          {
+            "t": "23:00 – 00:00",
+            "name": "Underground Boutique",
+            "host": "Ahmet Şendil"
+          }
+        ],
+        "5": [
+          {
+            "t": "00:00 – 01:00",
+            "name": "Fenomen Clubbin’",
+            "host": "DJ K-Billy",
+            "img": "yayincilar/fenomen-dj-k-billy.jpg"
+          },
+          {
+            "t": "01:00 – 02:00",
+            "name": "La Casa Del Ritmo",
+            "host": "Fattish"
+          },
+          {
+            "t": "02:00 – 03:00",
+            "name": "Flow",
+            "host": "Fatih Doğan"
+          },
+          {
+            "t": "03:00 – 10:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "10:00 – 11:00",
+            "name": "Serdar’la Fenomen 2010’lar",
+            "host": "Serdar Koçak",
+            "img": "yayincilar/fenomen-serdar.jpg"
+          },
+          {
+            "t": "11:00 – 13:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "13:00 – 14:00",
+            "name": "Serdar’la Fenomen Cafe",
+            "host": "Serdar Koçak",
+            "img": "yayincilar/fenomen-serdar.jpg"
+          },
+          {
+            "t": "14:00 – 15:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "15:00 – 17:00",
+            "name": "Fenomen İlk 40"
+          },
+          {
+            "t": "17:00 – 21:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "21:00 – 22:00",
+            "name": "No Room",
+            "host": "VES & NES"
+          },
+          {
+            "t": "22:00 – 23:00",
+            "name": "The Vibe",
+            "host": "Tuba Lüleci Alaçam"
+          },
+          {
+            "t": "23:00 – 00:00",
+            "name": "Back To The Future",
+            "host": "İlkay Şencan"
+          }
+        ],
+        "6": [
+          {
+            "t": "00:00 – 01:00",
+            "name": "Sound Pool",
+            "host": "Serhan Sabanlar"
+          },
+          {
+            "t": "01:00 – 02:00",
+            "name": "Panorama",
+            "host": "Tan Atalar"
+          },
+          {
+            "t": "02:00 – 03:00",
+            "name": "Global Mix",
+            "host": "Bilgehan Başkan"
+          },
+          {
+            "t": "03:00 – 10:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "10:00 – 11:00",
+            "name": "Serdar’la Fenomen 2010’lar",
+            "host": "Serdar Koçak",
+            "img": "yayincilar/fenomen-serdar.jpg"
+          },
+          {
+            "t": "11:00 – 12:00",
+            "name": "Serdar’la Fenomen Cafe",
+            "host": "Serdar Koçak",
+            "img": "yayincilar/fenomen-serdar.jpg"
+          },
+          {
+            "t": "12:00 – 13:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "13:00 – 15:00",
+            "name": "Fenomen İlk 40"
+          },
+          {
+            "t": "15:00 – 00:00",
+            "name": "Maksimum Hit Müzik"
+          }
+        ]
       }
     },
     {
@@ -330,7 +491,7 @@ window.DEFAULT_DATA = {
         {
           "t": "10:00 – 12:00",
           "name": "Doğanay’ın Dünyası",
-          "host": "Doğanay",
+          "host": "Doğanay Cireli",
           "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
         },
         {
@@ -346,7 +507,7 @@ window.DEFAULT_DATA = {
         {
           "t": "15:00 – 18:00",
           "name": "Mert’le Perde Arkası",
-          "host": "Mert",
+          "host": "Mert Üzülmez",
           "img": "yayincilar/fenomenturk-mert-uzulmez.jpg"
         },
         {
@@ -383,6 +544,114 @@ window.DEFAULT_DATA = {
         "ig": "https://instagram.com/radyofenomenturk",
         "x": "https://twitter.com/fenomen_turk",
         "fb": "https://facebook.com/fenomenturk"
+      },
+      "scheduleGun": {
+        "4": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Tansu Çağlayan’la Yeni Gün",
+            "host": "Tansu Çağlayan",
+            "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
+          },
+          {
+            "t": "10:00 – 12:00",
+            "name": "Doğanay’ın Dünyası",
+            "host": "Doğanay Cireli",
+            "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+          },
+          {
+            "t": "12:00 – 13:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "13:00 – 15:00",
+            "name": "Ömer Erişmen’le Extra",
+            "host": "Ömer Erişmen",
+            "img": "yayincilar/fenomenturk-omer-erismen.jpg"
+          },
+          {
+            "t": "15:00 – 18:00",
+            "name": "Mert’le Perde Arkası",
+            "host": "Mert Üzülmez",
+            "img": "yayincilar/fenomenturk-mert-uzulmez.jpg"
+          },
+          {
+            "t": "18:00 – 20:00",
+            "name": "Murat Özsoy’la Şarzzz",
+            "host": "Murat Özsoy",
+            "img": "yayincilar/fenomenturk-murat-ozsoy.jpg"
+          },
+          {
+            "t": "20:00 – 21:00",
+            "name": "Deniz Görkem’le Sahnedekiler",
+            "host": "Deniz Görkem Kaya",
+            "img": "yayincilar/fenomenturk-deniz-gorkem-kaya.jpg"
+          },
+          {
+            "t": "21:00 – 23:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "23:00 – 00:00",
+            "name": "Retro Hit (Tansu Çağlayan DJ Set)",
+            "host": "Tansu Çağlayan",
+            "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
+          }
+        ],
+        "5": [
+          {
+            "t": "00:00 – 11:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "11:00 – 13:00",
+            "name": "Doğanay’ın Dünyası",
+            "host": "Doğanay Cireli",
+            "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+          },
+          {
+            "t": "13:00 – 16:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "16:00 – 17:00",
+            "name": "Fenomen Türk İlk 20"
+          },
+          {
+            "t": "17:00 – 23:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "23:00 – 00:00",
+            "name": "Retro Hit (Tansu Çağlayan DJ Set)",
+            "host": "Tansu Çağlayan",
+            "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
+          }
+        ],
+        "6": [
+          {
+            "t": "00:00 – 12:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "12:00 – 15:00",
+            "name": "Mert’le Perde Arkası",
+            "host": "Mert Üzülmez",
+            "img": "yayincilar/fenomenturk-mert-uzulmez.jpg"
+          },
+          {
+            "t": "15:00 – 16:00",
+            "name": "Fenomen Türk İlk 20"
+          },
+          {
+            "t": "16:00 – 00:00",
+            "name": "Eğlence ve Müzik"
+          }
+        ]
       }
     },
     {
@@ -429,7 +698,8 @@ window.DEFAULT_DATA = {
         }
       ],
       "company": "Rumeli Reklam ve Radyo Yayıncılık A.Ş.",
-      "social": {}
+      "social": {},
+      "scheduleGun": {}
     },
     {
       "name": "İstanbul FM",
@@ -532,7 +802,8 @@ window.DEFAULT_DATA = {
       ],
       "company": "İstanbul FM Radyo Televizyon ve Uydu Yayıncılığı A.Ş.",
       "whatsapp": "+90 544 886 18 86",
-      "social": {}
+      "social": {},
+      "scheduleGun": {}
     }
   ],
   "contact": {
@@ -654,6 +925,18 @@ window.getSiteData = function () {
     var birlesik = Object.assign({}, dr, sv);
     /* önce kalıcı alan, tutmazsa ad: adı değiştirilen kaydın görseli kaybolmasın */
     birlesik.schedule    = listeBirlestir(dr.schedule,    sv.schedule,    ["t", "name"]);
+    /* güne özel akışlar: her gün kendi içinde birleştirilir. Kayıtlı kopyada
+       olmayan bir gün varsayılandan gelir; kaydedilen gün her zaman kazanır. */
+    (function () {
+      var dg = dr.scheduleGun || {}, sg = sv.scheduleGun;
+      if (!sg) { birlesik.scheduleGun = dg; return; }
+      var cikti = {};
+      Object.keys(dg).forEach(function (g) { cikti[g] = dg[g]; });
+      Object.keys(sg).forEach(function (g) {
+        cikti[g] = listeBirlestir(dg[g], sg[g], ["t", "name"]);
+      });
+      birlesik.scheduleGun = cikti;
+    })();
     birlesik.hosts       = listeBirlestir(dr.hosts,       sv.hosts,       ["slug", "name"]);
     birlesik.frequencies = listeBirlestir(dr.frequencies, sv.frequencies, ["c"]);
     return birlesik;

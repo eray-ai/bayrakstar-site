@@ -2,3 +2,4 @@
 *.bak
 node_modules/
 saglik-raporu.txt
+__pycache__/
