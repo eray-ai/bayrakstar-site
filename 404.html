@@ -2,13 +2,18 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
+<!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
+     kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
+     yayın adresini media-src VE connect-src listelerine ekle. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; connect-src 'self' https://bezwdlxombiirihxomnv.supabase.co https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; worker-src 'self' blob:; manifest-src 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="https://eray-ai.github.io/bayrakstar-site/">
 <title>Sayfa bulunamadı — Bayrakstar</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#242424">
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -57,7 +62,7 @@
 </head>
 <body>
 <div class="serit"></div>
-<header><a href="/"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"></a></header>
+<header><a href=""><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"></a></header>
 
 <main class="kutu">
   <div class="kod">404</div>
@@ -65,8 +70,8 @@
   <p>Aradığın sayfa kaldırılmış, adı değişmiş ya da adres yanlış yazılmış olabilir.
      Aşağıdan devam edebilirsin.</p>
   <div class="btnler">
-    <a class="btn btn-fill" href="/">Ana sayfaya dön</a>
-    <a class="btn btn-ghost" href="/websiteler.html">Radyo web siteleri</a>
+    <a class="btn btn-fill" href="">Ana sayfaya dön</a>
+    <a class="btn btn-ghost" href="websiteler.html">Radyo web siteleri</a>
   </div>
   <div class="radyolar" id="radyolar"></div>
 </main>

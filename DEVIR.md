@@ -12,7 +12,7 @@ Son güncelleme: 28 Temmuz 2026
 Derleme (build) adımı **yok**. Depodaki dosyalar olduğu gibi yayınlanır.
 
 ```
-GitHub deposu ──(git push)──> Netlify ──> https://bespoke-banoffee-f756ac.netlify.app
+GitHub deposu ──(git push)──> GitHub Pages ──> https://eray-ai.github.io/bayrakstar-site
                                               │
                                               └── açılışta Supabase'den içerik çeker
 ```
@@ -30,7 +30,7 @@ Bu ayrım önemli: "yazıyı değiştir" = panel. "Sayfa yapısını değiştir"
 | Ne | Nerede | Not |
 |---|---|---|
 | Kod deposu | GitHub `eray-ai/bayrakstar-site` | **Public** olmak zorunda (aşağıda) |
-| Yayın | Netlify, proje `bespoke-banoffee-f756ac` | `main` dalına push = otomatik yayın |
+| Yayın | GitHub Pages, `main` dalı kökü | `main` dalına push = otomatik yayın |
 | İçerik veritabanı | Supabase, proje `bayrakstar-site` (`bezwdlxombiirihxomnv`), eu-central-1 | Ücretsiz plan |
 | Yönetim paneli | `/admin.html` | Giriş: `yonetim@bayrakstar.com` + şifre |
 
@@ -43,7 +43,9 @@ paneli şifresi değiştirilmeli.
 
 ### 3.1 Yeni radyo eklerken yayın adresini CSP'ye eklemeyi unutma
 Panelden yeni radyo ekleyip yayın linkini yazmak **yetmez**. Güvenlik başlığı
-(CSP) yalnızca tanımlı adreslere ses çalma izni verir. `netlify.toml` içinde:
+(CSP) yalnızca tanımlı adreslere ses çalma izni verir. GitHub Pages özel HTTP
+başlığı gönderemediği için CSP her HTML sayfasının `<head>` bölümüne
+`<meta http-equiv="Content-Security-Policy">` olarak gömülüdür:
 
 ```
 media-src   ... https://YENI-YAYIN-ADRESI
@@ -54,9 +56,8 @@ connect-src ... https://YENI-YAYIN-ADRESI
 Bu bir kod değişikliği olduğu için `git push` gerekir.
 
 ### 3.2 Depo public kalmalı
-Netlify'ın ücretsiz planı, özel (private) depolarda "Unrecognized Git
-contributor" hatasıyla derlemeyi reddediyor. Depo private yapılırsa **yayın
-durur.** Private istenirse Netlify'da ücretli plana geçmek gerekir.
+GitHub Pages ücretsiz planda yalnızca **public** depolarda yayın yapar. Depo
+private yapılırsa **yayın durur.** Private istenirse GitHub Pro/Team gerekir.
 Depoda gizli bilgi yok: içindeki tek anahtar zaten tarayıcıya inen public
 (anon) anahtardır; yönetici şifresi kodda geçmez.
 
@@ -92,8 +93,13 @@ python3 araclar/alan-adi-degistir.py https://www.ornek.com --uygula # uygula
 git add -A && git commit -m "Alan adı güncellendi" && git push
 ```
 
-Sonra Netlify → Domain management'tan alan adını ekleyin ve Google Search
-Console'a yeni adresi + `sitemap.xml`'i tanıtın.
+Sonra GitHub → depo → Settings → Pages → "Custom domain" alanına alan adını
+yazıp DNS'te GitHub Pages IP'lerine (185.199.108–111.153) A kaydı açın; ardından
+Google Search Console'a yeni adresi + `sitemap.xml`'i tanıtın.
+
+Kendi alan adına geçince site alt yol yerine **kökten** yayınlanır; yollar göreli
+olduğu için kod tarafında değişiklik gerekmez, yalnız bu araçla adresleri
+güncelleyin.
 
 ---
 
@@ -144,7 +150,7 @@ Yalnızca giriş yapmış olmak yetmez; bu tabloda olmayan kullanıcı yazamaz.
 | Servis | Sınır | Aşılırsa |
 |---|---|---|
 | Supabase | 5 GB/ay veri transferi; hareketsizlikte proje duraklar | İçerik güncellenemez; site son önbellekle açılmaya devam eder |
-| Netlify | 100 GB/ay bant genişliği | Yayın kısıtlanır |
+| GitHub Pages | 100 GB/ay bant genişliği, 1 GB depo | Yayın kısıtlanır |
 
 İçerik JSON'u ne kadar küçük olursa aylık kapasite o kadar büyür (bkz. 3.3).
 
@@ -152,12 +158,12 @@ Yalnızca giriş yapmış olmak yetmez; bu tabloda olmayan kullanıcı yazamaz.
 
 ## 7. Henüz yapılmamışlar (bilinçli olarak bırakıldı)
 
-- **Ziyaretçi analitiği yok.** Kaç kişi geldiği ölçülmüyor. (Plausible / GA4 /
-  Netlify Analytics eklenebilir; CSP'ye ilgili adresin eklenmesi gerekir.)
+- **Ziyaretçi analitiği yok.** Kaç kişi geldiği ölçülmüyor. (Plausible / GA4
+  eklenebilir; CSP'ye ilgili adresin eklenmesi gerekir.)
 - **Hata ve kesinti izleme yok.** Yayın linki ölürse kimse haber almaz.
   (Uptime izleme + yayın adreslerine periyodik sağlık kontrolü önerilir.)
 - **Deneme (staging) ortamı yok.** Her push doğrudan canlıya gider.
-  Netlify'ın dal önizlemeleri ücretsiz, kurulması yarım saat.
+  Ayrı bir depo ya da ikinci bir Pages dalı ile kurulabilir.
 - **Sosyal medya ön izlemeleri sınırlı.** Sayfa içeriği JavaScript ile
   çizildiği için WhatsApp/Facebook/X gibi platformların ön izleme botları
   radyo ve yayıncı sayfalarında **genel Bayrakstar kartını** gösterir.

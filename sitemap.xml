@@ -2,87 +2,87 @@
 <!-- Bayrakstar site haritası — admin.html bilinçli olarak DIŞARIDA bırakıldı -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/radyo.html?r=fenomen</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/radyo.html?r=fenomen</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/radyo.html?r=fenomenturk</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/radyo.html?r=fenomenturk</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/radyo.html?r=boombox</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/radyo.html?r=boombox</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/radyo.html?r=istanbulfm</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/radyo.html?r=istanbulfm</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/yayinci.html?r=fenomen&amp;h=serdar</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/yayinci.html?r=fenomen&amp;h=serdar</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/yayinci.html?r=fenomen&amp;h=doganay</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/yayinci.html?r=fenomen&amp;h=doganay</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/yayinci.html?r=fenomen&amp;h=dj-k-billy</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/yayinci.html?r=fenomen&amp;h=dj-k-billy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/yayinci.html?r=fenomen&amp;h=deniz-gorkem</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/yayinci.html?r=fenomen&amp;h=deniz-gorkem</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/yayinci.html?r=fenomenturk&amp;h=tansu-caglayan</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/yayinci.html?r=fenomenturk&amp;h=tansu-caglayan</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/yayinci.html?r=fenomenturk&amp;h=doganay-cireli</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/yayinci.html?r=fenomenturk&amp;h=doganay-cireli</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/yayinci.html?r=fenomenturk&amp;h=omer-erismen</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/yayinci.html?r=fenomenturk&amp;h=omer-erismen</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/yayinci.html?r=fenomenturk&amp;h=mert-uzulmez</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/yayinci.html?r=fenomenturk&amp;h=mert-uzulmez</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/yayinci.html?r=fenomenturk&amp;h=murat-ozsoy</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/yayinci.html?r=fenomenturk&amp;h=murat-ozsoy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/yayinci.html?r=istanbulfm&amp;h=emre-mutlu</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/yayinci.html?r=istanbulfm&amp;h=emre-mutlu</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/yayinci.html?r=istanbulfm&amp;h=yalcin-alaca</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/yayinci.html?r=istanbulfm&amp;h=yalcin-alaca</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://bespoke-banoffee-f756ac.netlify.app/websiteler.html</loc>
+    <loc>https://eray-ai.github.io/bayrakstar-site/websiteler.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
