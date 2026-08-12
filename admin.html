@@ -315,6 +315,11 @@ function oneriKutu(g){
 }
 
 /* ==== BÖLÜM TANIMLARI ==== */
+/* Siteye gömülü marka fontları (fontlar/ klasörü) + genel fontlar.
+   Yeni marka fontu eklersen buraya DA yaz, yoksa panelde seçilemez. */
+const MARKA_FONT = ['Gosha Sans','Straight Fighter','Nebulica','Anton','Montserrat','Roboto','Nunito','Open Sans'];
+const METIN_FONT = ['Roboto','Montserrat','Nunito','Open Sans','Anton'];
+
 const B_SITE=[
   {id:'hero',    ad:'Hero / Karşılama',  ikon:'◆', renk:'#f75843'},
   {id:'slider',  ad:'Slider Görselleri', ikon:'▦', renk:'#00bac5', say:()=>D.slides.length},
@@ -698,8 +703,15 @@ function panelRadyo(b,i){
     + '<div class="grid2">'
     +   alan('Marka Rengi', '<div class="color-inp"><input type="color" value="'+(r.color||'#ff0007')+'" oninput="'+P+'.color=this.value;this.nextElementSibling.value=this.value;yenile()"><input type="text" value="'+att(r.color)+'" oninput="'+P+'.color=this.value"></div>')
     +   alan('Aksan Rengi', '<div class="color-inp"><input type="color" value="'+(r.accent||'#ffca11')+'" oninput="'+P+'.accent=this.value;this.nextElementSibling.value=this.value"><input type="text" value="'+att(r.accent)+'" oninput="'+P+'.accent=this.value"></div>')
-    +   alan('Başlık Fontu', selectInput(['Anton','Roboto','Nunito','Open Sans'], r.font||'Anton', P+'.font'))
-    +   alan('Metin Fontu',  selectInput(['Roboto','Nunito','Open Sans','Anton'], r.bodyFont||'Roboto', P+'.bodyFont'))
+    +   alan('Başlık Fontu', selectInput(MARKA_FONT, r.font||'Anton', P+'.font'), 0, '',
+             'Gosha Sans, Straight Fighter ve Nebulica marka fontlarıdır — siteye gömülü geldi.')
+    +   alan('Metin Fontu',  selectInput(METIN_FONT, r.bodyFont||'Roboto', P+'.bodyFont'))
+    + '</div>'
+    + '<div class="grid2">'
+    +   alan('Yazı Rengi', '<div class="color-inp"><input type="color" value="'+(r.ink||'#ffffff')+'" oninput="'+P+'.ink=this.value;this.nextElementSibling.value=this.value"><input type="text" value="'+att(r.ink)+'" oninput="'+P+'.ink=this.value"></div>', 0, '',
+             'Marka renginin üzerine gelen yazıların rengi. Açık marka renginde koyu seç.')
+    +   alan('İkinci Aksan Rengi', '<div class="color-inp"><input type="color" value="'+(r.accent2||'#00ff00')+'" oninput="'+P+'.accent2=this.value;this.nextElementSibling.value=this.value"><input type="text" value="'+att(r.accent2)+'" placeholder="boş bırakılabilir" oninput="'+P+'.accent2=this.value"></div>', 0, '',
+             'İsteğe bağlı ek vurgu rengi (Boombox’ın neon yeşili gibi). Boş bırakılırsa kullanılmaz.')
     + '</div>'
     + logoAlani(r,i)
     + gorselAlani('Kart Arka Plan Görseli', r.img, P+'.img', 'pickRadioImg('+i+')', GORSEL.kart)
@@ -992,7 +1004,12 @@ function editorleriKur(){
 }
 
 function selectInput(secenekler,secili,yol){
-  return '<select onchange="'+yol+'=this.value">'+secenekler.map(function(f){
+  /* Mevcut değer listede yoksa BAŞA eklenir. Yoksa açılır kutu yanlış
+     değeri seçili gösterir (ör. marka fontu Gosha Sans iken "Anton" yazar)
+     ve kullanıcı farkında olmadan marka fontunu kaybeder. */
+  var liste = secenekler.slice();
+  if(secili && liste.indexOf(secili)<0) liste.unshift(secili);
+  return '<select onchange="'+yol+'=this.value">'+liste.map(function(f){
     return '<option '+(f===secili?'selected':'')+'>'+f+'</option>';}).join('')+'</select>';
 }
 function gorselAlani(etiket, deger, yol, yukleFn, oneri){
