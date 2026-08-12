@@ -1,0 +1,88 @@
+name: Günlük bakım
+
+# Her gün 06:10 UTC = Türkiye saatiyle 09:10.
+# Bu tek görev üç işi birden yapıyor:
+#   1. Paylaşım kartlarını canlı içerikten yeniden üretir (panelden yapılan
+#      değişiklik WhatsApp/Facebook ön izlemesine de yansısın).
+#   2. Supabase'i her gün sorgular — ücretsiz plan 7 gün sorgusuz kalınca
+#      projeyi duraklatıyordu ve panel "Bulut sunucusuna ulaşılamadı"
+#      diyordu. Günlük istek bunu kalıcı olarak önler.
+#   3. Site ve 4 canlı yayın adresini denetler; biri ölmüşse GitHub'da
+#      "issue" açar (deponun sahibine e-posta gider).
+on:
+  schedule:
+    - cron: "10 6 * * *"
+  workflow_dispatch:        # elle de çalıştırılabilsin
+
+permissions:
+  contents: write           # üretilen sayfaları geri commit'lemek için
+  issues: write             # kesinti bildirimi açmak için
+
+concurrency:
+  group: gunluk-bakim
+  cancel-in-progress: false
+
+jobs:
+  bakim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # --- 1 + 2: kartları tazele, bu arada Supabase uyanık kalsın ---
+      - name: Paylaşım kartlarını üret
+        id: uret
+        run: python3 araclar/statik-uret.py
+
+      - name: Değişiklik varsa yayına al
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name  "bayrakstar-bot"
+            git config user.email "281391467+eray-ai@users.noreply.github.com"
+            git add -A
+            git commit -m "Paylaşım kartları güncellendi (otomatik)"
+            git push
+            echo "Değişiklik yayına alındı."
+          else
+            echo "Kartlar zaten güncel."
+          fi
+
+      # --- 3: site + yayın sağlık kontrolü ---
+      - name: Site ve yayınları denetle
+        id: saglik
+        run: python3 araclar/saglik-kontrol.py
+        continue-on-error: true
+
+      - name: Sorun varsa bildir
+        if: steps.saglik.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let rapor = 'Ayrıntı okunamadı.';
+            try { rapor = fs.readFileSync('saglik-raporu.txt', 'utf8'); } catch (e) {}
+            const bugun = new Date().toLocaleDateString('tr-TR');
+            // Aynı sorun için her gün yeni issue açılmasın: açık olan varsa yorum ekle.
+            const acik = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'kesinti'
+            });
+            if (acik.data.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: acik.data[0].number,
+                body: `**${bugun} — sorun sürüyor**\n\n\`\`\`\n${rapor}\n\`\`\``
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title: `⚠️ Bayrakstar: site veya yayın erişilemiyor (${bugun})`,
+                labels: ['kesinti'],
+                body: `Günlük denetim bir sorun buldu.\n\n\`\`\`\n${rapor}\n\`\`\`\n` +
+                      `\nSorun düzelince bu kaydı kapatabilirsin; ertesi gün tekrar ` +
+                      `sorun çıkarsa yenisi açılır.`
+              });
+            }
