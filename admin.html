@@ -338,6 +338,7 @@ const B_SITE=[
   {id:'radyolar',ad:'Radyo Listesi',     ikon:'♫', renk:'#ffca11', say:()=>D.radios.length},
   {id:'iletisim',ad:'İletişim',          ikon:'✉', renk:'#00bac5', say:()=>((D.contact&&D.contact.items)||[]).length},
   {id:'grafik',  ad:'Grafik Elementleri',ikon:'◈', renk:'#f75843'},
+  {id:'yasal',   ad:'Künye & KVKK',     ikon:'§', renk:'#4d4d4d'},
   {id:'footer',  ad:'Alt Bilgi',         ikon:'☰', renk:'#4d4d4d'},
   {id:'gecmis',  ad:'Sürüm Geçmişi',     ikon:'↺', renk:'#989a9d'},
   {id:'ziyaret', ad:'Ziyaretler',        ikon:'📈', renk:'#00bac5'}
@@ -410,6 +411,18 @@ function yenile(){ render(); }
 const renderRadios=yenile, renderSlides=yenile, renderSlogans=yenile, renderStats=yenile;
 
 /* ---- Grafik Elementleri bölümünün yardımcıları ---- */
+function yAyar(){
+  if(!D.yasal || typeof D.yasal!=='object') D.yasal={};
+  var Y=D.yasal;
+  if(!Y.kunye || typeof Y.kunye!=='object') Y.kunye={};
+  if(!Y.kvkk  || typeof Y.kvkk !=='object') Y.kvkk={};
+  if(!Array.isArray(Y.kunye.alanlar))  Y.kunye.alanlar=[];
+  if(!Array.isArray(Y.kvkk.bolumler))  Y.kvkk.bolumler=[];
+  if(typeof Y.kunye.yayinda!=='boolean') Y.kunye.yayinda=false;
+  if(typeof Y.kvkk.yayinda !=='boolean') Y.kvkk.yayinda=false;
+  return Y;
+}
+
 function gAyar(){
   if(!D.grafik || typeof D.grafik!=='object') D.grafik={};
   var g=D.grafik;
@@ -540,6 +553,77 @@ function panelSite(b){
     +   '<b style="min-width:52px;text-align:right;font-size:15px">%'+(gAyar().yogunluk)+'</b>'
     + '</div>'
     + '<div class="hint" style="margin-top:18px">Değişikliği görmek için kaydettikten sonra “↗ Siteyi Aç” ile siteyi yenile.</div>';
+
+  if(b.id==='yasal'){
+    var Y=yAyar(), K=Y.kunye, V=Y.kvkk;
+    var kDolu=(K.alanlar||[]).filter(function(a){return a&&(a.deger||'').trim();}).length;
+    return baslik(b,'Sitenin altındaki Künye ve KVKK Aydınlatma Metni sayfası (yasal.html). Bir bölümü “yayında” yapmazsan sitede bağlantısı bile görünmez.')
+
+    /* ---------- KÜNYE ---------- */
+    + '<h3 style="font-size:17px;font-weight:800;margin:6px 0 8px">§ Künye</h3>'
+    + (kDolu ? '' : '<div class="hint" style="margin-bottom:12px;border-left:3px solid #ff0007;padding-left:10px">'
+        + '<b>Künye boş.</b> Şirket bilgilerini uyduramayacağım için alanları boş bıraktım — '
+        + 'ticari unvan, sorumlu müdür, adres ve vergi bilgilerini sen doldurmalısın. '
+        + 'Doldurup “yayında” yapmadan sitede görünmez.</div>')
+    + '<label class="item" style="display:flex;gap:12px;align-items:flex-start;cursor:pointer;margin-bottom:14px">'
+    +   '<input type="checkbox" '+(K.yayinda?'checked':'')+' oninput="D.yasal.kunye.yayinda=this.checked"'
+    +     ' style="margin-top:3px;width:18px;height:18px;accent-color:#ff0007;cursor:pointer;flex-shrink:0">'
+    +   '<span><b style="display:block;font-size:15px">Künye yayında</b>'
+    +   '<span style="display:block;opacity:.62;font-size:13px;line-height:1.5;margin-top:3px">'
+    +   'Kapalıyken sayfada da alt bilgide de hiç görünmez. Dolu olan '+kDolu+' alan var.</span></span></label>'
+    + '<div class="grid2">'
+    +   alan('Başlık', txtInput(K.baslik,'D.yasal.kunye.baslik',40), 40, K.baslik)
+    +   alan('Açıklama', txtInput(K.aciklama,'D.yasal.kunye.aciklama',180), 180, K.aciklama)
+    + '</div>'
+    + '<div class="hint" style="margin:10px 0">Değeri boş bırakılan satır sayfada <b>hiç görünmez</b> — yanlış bilgi yayınlanmasın diye.</div>'
+    + K.alanlar.map(function(a,i){
+        var Yl='D.yasal.kunye.alanlar['+i+']';
+        return '<div class="rowline">'
+        + '<input type="text" value="'+att(a.etiket)+'" placeholder="Etiket" style="max-width:230px;flex:0 0 230px" oninput="'+Yl+'.etiket=this.value">'
+        + '<input type="text" value="'+att(a.deger)+'" placeholder="Değer (boşsa satır gizlenir)" oninput="'+Yl+'.deger=this.value">'
+        + '<button class="mv" onclick="mv(D.yasal.kunye.alanlar,'+i+',-1,yenile)">↑</button>'
+        + '<button class="mv" onclick="mv(D.yasal.kunye.alanlar,'+i+',1,yenile)">↓</button>'
+        + '<button class="del" onclick="silOge(\'D.yasal.kunye.alanlar\','+i+',\''+att(a.etiket||('Satır '+(i+1)))+'\')">Sil</button></div>';
+      }).join('')
+    + '<button class="add" onclick="yAyar().kunye.alanlar.push({etiket:\'\',deger:\'\'});yenile()">+ Künye Satırı Ekle</button>'
+    + '<div style="height:14px"></div>'
+    + alan('Alt not', taInput(K.not,'D.yasal.kunye.not',260), 260, K.not)
+
+    /* ---------- KVKK ---------- */
+    + '<hr style="border:none;border-top:1px solid #e6e4df;margin:34px 0 22px">'
+    + '<h3 style="font-size:17px;font-weight:800;margin-bottom:8px">§ KVKK Aydınlatma Metni</h3>'
+    + '<div class="hint" style="margin-bottom:12px;border-left:3px solid #ffca11;padding-left:10px">'
+    + '<b>Bu metin taslaktır, hukuki danışmanlık değildir.</b> İçerik sitenin gerçek durumuna göre '
+    + 'yazıldı (çerez yok, IP kaydı yok, kişisel veri toplanmıyor). Yayına almadan önce '
+    + 'bir hukukçuya okutmanı öneririm.</div>'
+    + '<label class="item" style="display:flex;gap:12px;align-items:flex-start;cursor:pointer;margin-bottom:14px">'
+    +   '<input type="checkbox" '+(V.yayinda?'checked':'')+' oninput="D.yasal.kvkk.yayinda=this.checked"'
+    +     ' style="margin-top:3px;width:18px;height:18px;accent-color:#ff0007;cursor:pointer;flex-shrink:0">'
+    +   '<span><b style="display:block;font-size:15px">KVKK metni yayında</b>'
+    +   '<span style="display:block;opacity:.62;font-size:13px;line-height:1.5;margin-top:3px">'
+    +   'Kapatırsan sayfadan ve alt bilgiden kalkar.</span></span></label>'
+    + '<div class="grid2">'
+    +   alan('Başlık', txtInput(V.baslik,'D.yasal.kvkk.baslik',50), 50, V.baslik)
+    +   alan('Son güncelleme', txtInput(V.guncelleme,'D.yasal.kvkk.guncelleme',30), 30, V.guncelleme,
+             'Metni her değiştirdiğinde bu tarihi de güncelle.')
+    + '</div>'
+    + alan('Giriş paragrafı', taInput(V.giris,'D.yasal.kvkk.giris',500), 500, V.giris)
+    + '<div class="hint" style="margin:12px 0">Her madde sayfada ayrı başlık olur. Metin içinde '
+    + '<b>&lt;b&gt;kalın&lt;/b&gt;</b> kullanabilirsin.</div>'
+    + V.bolumler.map(function(m,i){
+        var Yb='D.yasal.kvkk.bolumler['+i+']';
+        return '<div class="item"><div class="ihead"><span class="n">'+att(m.baslik||('Madde '+(i+1)))+'</span><div class="ctrl">'
+        + '<button class="mv" onclick="mv(D.yasal.kvkk.bolumler,'+i+',-1,yenile)">↑</button>'
+        + '<button class="mv" onclick="mv(D.yasal.kvkk.bolumler,'+i+',1,yenile)">↓</button>'
+        + '<button class="del" onclick="silOge(\'D.yasal.kvkk.bolumler\','+i+',\''+att(m.baslik||('Madde '+(i+1)))+'\')">Sil</button></div></div>'
+        + alan('Madde başlığı', txtInput(m.baslik,Yb+'.baslik',80), 80, m.baslik)
+        + alan('Madde metni', taInput(m.metin,Yb+'.metin',1600), 1600, m.metin)
+        + '</div>';
+      }).join('')
+    + '<button class="add" onclick="yAyar().kvkk.bolumler.push({baslik:\'\',metin:\'\'});yenile()">+ Madde Ekle</button>'
+    + '<div style="height:14px"></div>'
+    + alan('Alt not', taInput(V.not,'D.yasal.kvkk.not',260), 260, V.not);
+  }
 
   if(b.id==='footer') return baslik(b,'Sayfaların en altındaki bilgi ve sosyal medya bağlantıları.')
     + zenginAlan('z_footer','Hakkında metni', D.footer.about, 'D.footer.about', 180, ['renk','kalin','temiz'], true)

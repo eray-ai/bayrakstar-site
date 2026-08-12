@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
+     kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
+     yayın adresini media-src VE connect-src listelerine ekle. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; connect-src 'self' https://bezwdlxombiirihxomnv.supabase.co https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; worker-src 'self' blob:; manifest-src 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Künye ve KVKK — Bayrakstar</title>
+<meta name="description" content="Bayrakstar Medya künye bilgileri ve KVKK aydınlatma metni.">
+<meta name="theme-color" content="#1c1c1c">
+<link rel="canonical" href="https://eray-ai.github.io/bayrakstar-site/yasal.html">
+
+<!-- Favicon -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!-- Sosyal paylaşım -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bayrakstar">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:title" content="Künye ve KVKK — Bayrakstar">
+<meta property="og:description" content="Künye bilgileri ve KVKK aydınlatma metni.">
+<meta property="og:url" content="https://eray-ai.github.io/bayrakstar-site/yasal.html">
+<meta property="og:image" content="https://eray-ai.github.io/bayrakstar-site/og/bayrakstar.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bayrakstar logosu">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Künye ve KVKK — Bayrakstar">
+<meta name="twitter:description" content="Künye bilgileri ve KVKK aydınlatma metni.">
+<meta name="twitter:image" content="https://eray-ai.github.io/bayrakstar-site/og/bayrakstar.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="data.js"></script>
+<script src="bulut.js"></script>
+<style>
+  :root{--yellow:#ffca11;--blue:#0081ba;--red:#ff0007;--teal:#00bac5;--coral:#f75843;--dark:#1c1c1c}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Open Sans',system-ui,sans-serif;background:var(--dark);color:#fff;min-height:100vh;display:flex;flex-direction:column}
+  a{color:inherit;text-decoration:none}
+  img{display:block}
+  header{display:flex;align-items:center;justify-content:space-between;padding:18px 6vw}
+  header .back{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px;opacity:.85;transition:opacity .2s}
+  header .back:hover{opacity:1}
+  header .back img{height:32px}
+
+  .hero{text-align:center;padding:40px 6vw 20px}
+  .hero .kick{font-size:12px;letter-spacing:.4em;text-transform:uppercase;font-weight:700;color:var(--yellow);margin-bottom:16px}
+  .hero h1{font-size:clamp(30px,5vw,52px);font-weight:800;line-height:1.05;letter-spacing:-.02em}
+  .hero p{opacity:.7;margin-top:16px;font-size:16px;max-width:560px;margin-left:auto;margin-right:auto;line-height:1.7}
+
+  .wrap{flex:1;max-width:1000px;margin:0 auto;padding:40px 6vw 90px;width:100%}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .wcard{position:relative;border-radius:22px;overflow:hidden;min-height:190px;display:flex;flex-direction:column;justify-content:space-between;
+    padding:28px;isolation:isolate;transition:transform .3s,box-shadow .3s;border:1px solid rgba(255,255,255,.08)}
+  .wcard:hover{transform:translateY(-6px);box-shadow:0 24px 50px rgba(0,0,0,.45)}
+  .wcard .bgc{position:absolute;inset:0;z-index:-2;opacity:.16}
+  .wcard::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(120% 120% at 0% 0%,rgba(255,255,255,.06),transparent)}
+  .wcard .logo{height:52px;width:auto;max-width:70%;object-fit:contain;object-position:left;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4))}
+  .wcard .bot{display:flex;align-items:center;justify-content:space-between;margin-top:24px}
+  .wcard .u{font-size:13px;opacity:.7}
+  .wcard .go{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:14px;background:#fff;color:#111;padding:11px 20px;border-radius:40px;transition:gap .25s}
+  .wcard:hover .go{gap:14px}
+  .wcard .go svg{width:15px;height:15px}
+  .note{text-align:center;opacity:.5;font-size:13px;margin-top:34px}
+  footer{text-align:center;padding:26px;opacity:.5;font-size:13px}
+  @media(max-width:680px){.grid{grid-template-columns:1fr}}
+
+  /* erişilebilirlik */
+  a:focus-visible,button:focus-visible{outline:3px solid #fff;outline-offset:3px;border-radius:8px}
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+  }
+</style>
+<link rel="stylesheet" href="paketler/kurumsal.css">
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Open Sans',system-ui,sans-serif;background:#141414;color:#fff;line-height:1.75}
+  a{color:inherit}
+  .ust{padding:26px 6vw;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .ust img{height:34px}
+  .ust a{font-size:13px;font-weight:700;opacity:.75;text-decoration:none}
+  .ust a:hover{opacity:1}
+  .sar{max-width:820px;margin:0 auto;padding:64px 6vw 90px}
+  .sar h1{font-size:clamp(30px,5vw,46px);font-weight:800;letter-spacing:-.02em;margin-bottom:10px}
+  .sar .alt{opacity:.55;font-size:14px;margin-bottom:40px}
+  .blok{margin-bottom:64px;scroll-margin-top:20px}
+  .blok h2{font-size:clamp(22px,3.4vw,30px);font-weight:800;margin-bottom:14px;
+    padding-bottom:12px;border-bottom:2px solid rgba(255,255,255,.14)}
+  .blok .giris{opacity:.75;margin-bottom:26px}
+  .kt{display:grid;grid-template-columns:220px 1fr;gap:0}
+  .kt .s{display:contents}
+  .kt .e{padding:14px 16px 14px 0;opacity:.55;font-size:13.5px;font-weight:700;
+    letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.08)}
+  .kt .d{padding:14px 0;font-size:15px;border-bottom:1px solid rgba(255,255,255,.08);overflow-wrap:anywhere}
+  @media(max-width:620px){.kt{grid-template-columns:1fr}.kt .e{padding-bottom:2px;border:none}}
+  .madde{margin-bottom:26px}
+  .madde h3{font-size:16px;font-weight:800;margin-bottom:7px}
+  .madde p{opacity:.78;font-size:15px}
+  .not{margin-top:26px;opacity:.5;font-size:13.5px;line-height:1.7}
+  .bos-uyari{opacity:.6;font-size:15px}
+  .geri{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font-size:14px;
+    font-weight:700;opacity:.75;text-decoration:none}
+  .geri:hover{opacity:1}
+  .icindekiler{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:44px}
+  .icindekiler a{font-size:13px;font-weight:700;padding:8px 15px;border-radius:30px;
+    border:1px solid rgba(255,255,255,.22);text-decoration:none;opacity:.8}
+  .icindekiler a:hover{opacity:1;background:rgba(255,255,255,.1)}
+</style>
+</head>
+<body>
+<div class="ust">
+  <a href="index.html"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"></a>
+  <a href="index.html">← Ana sayfaya dön</a>
+</div>
+
+<main class="sar">
+  <h1>Künye ve KVKK</h1>
+  <div class="alt" id="ustAlt"></div>
+  <div class="icindekiler" id="icindekiler"></div>
+
+  <section class="blok" id="kunye" hidden>
+    <h2 id="kBaslik"></h2>
+    <p class="giris" id="kAciklama"></p>
+    <div class="kt" id="kTablo"></div>
+    <p class="not" id="kNot"></p>
+  </section>
+
+  <section class="blok" id="kvkk" hidden>
+    <h2 id="vBaslik"></h2>
+    <p class="giris" id="vGiris"></p>
+    <div id="vMaddeler"></div>
+    <p class="not" id="vNot"></p>
+  </section>
+
+  <div id="bosluk" class="bos-uyari" hidden>Bu sayfa hazırlanıyor.</div>
+  <a class="geri" href="index.html">← Ana sayfaya dön</a>
+</main>
+
+<script src="data.js"></script>
+<script src="bulut.js"></script>
+<script>
+window.bulutHazir.then(function(){
+  var D = getSiteData();
+  var Y = D.yasal || {};
+  function esc(t){ return String(t==null?'':t)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  var baglar=[];
+
+  /* ---- KÜNYE ---- */
+  var K = Y.kunye || {};
+  var dolu = (K.alanlar||[]).filter(function(a){ return a && (a.deger||'').trim(); });
+  if(K.yayinda && dolu.length){
+    document.getElementById('kunye').hidden=false;
+    document.getElementById('kBaslik').textContent = K.baslik || 'Künye';
+    var ka=document.getElementById('kAciklama');
+    if(K.aciklama) ka.textContent=K.aciklama; else ka.style.display='none';
+    document.getElementById('kTablo').innerHTML = dolu.map(function(a){
+      return '<div class="e">'+esc(a.etiket)+'</div><div class="d">'+esc(a.deger)+'</div>';
+    }).join('');
+    var kn=document.getElementById('kNot');
+    if(K.not) kn.textContent=K.not; else kn.style.display='none';
+    baglar.push(['#kunye', K.baslik || 'Künye']);
+  }
+
+  /* ---- KVKK ---- */
+  var V = Y.kvkk || {};
+  if(V.yayinda && (V.bolumler||[]).length){
+    document.getElementById('kvkk').hidden=false;
+    document.getElementById('vBaslik').textContent = V.baslik || 'KVKK Aydınlatma Metni';
+    var vg=document.getElementById('vGiris');
+    if(V.giris) vg.textContent=V.giris; else vg.style.display='none';
+    document.getElementById('vMaddeler').innerHTML = (V.bolumler||[]).map(function(b){
+      /* metinde yalnız <b> gibi basit vurgular var, olduğu gibi basılır */
+      return '<div class="madde"><h3>'+esc(b.baslik)+'</h3><p>'+(b.metin||'')+'</p></div>';
+    }).join('');
+    var vn=document.getElementById('vNot');
+    if(V.not) vn.textContent=V.not; else vn.style.display='none';
+    baglar.push(['#kvkk', V.baslik || 'KVKK Aydınlatma Metni']);
+    if(V.guncelleme) document.getElementById('ustAlt').textContent='Son güncelleme: '+V.guncelleme;
+  }
+
+  if(!baglar.length){ document.getElementById('bosluk').hidden=false; }
+  document.getElementById('icindekiler').innerHTML =
+    baglar.map(function(b){ return '<a href="'+b[0]+'">'+esc(b[1])+'</a>'; }).join('');
+});
+</script>
+<script src="site.js"></script>
+</body>
+</html>

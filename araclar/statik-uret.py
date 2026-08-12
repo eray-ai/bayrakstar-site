@@ -214,7 +214,8 @@ def uret(D, kok):
 def sitemap_uret(kok, adresler):
     satirlar = ['<?xml version="1.0" encoding="UTF-8"?>',
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for a, o in [("%s/" % kok, "1.0"), ("%s/websiteler.html" % kok, "0.6")] + adresler:
+    for a, o in [("%s/" % kok, "1.0"), ("%s/websiteler.html" % kok, "0.6"),
+                 ("%s/yasal.html" % kok, "0.3")] + adresler:
         satirlar.append("  <url>\n    <loc>%s</loc>\n    <priority>%s</priority>\n  </url>" % (oz(a), o))
     satirlar.append("</urlset>")
     return "\n".join(satirlar) + "\n"

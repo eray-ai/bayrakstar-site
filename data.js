@@ -856,6 +856,93 @@ window.DEFAULT_DATA = {
       "x": "#",
       "sp": "#"
     }
+  },
+  "yasal": {
+    "kunye": {
+      "yayinda": false,
+      "baslik": "Künye",
+      "aciklama": "Bayrakstar Medya bünyesindeki radyo yayınlarına ve bu web sitesine ilişkin bilgiler.",
+      "alanlar": [
+        {
+          "etiket": "Yayıncı Kuruluş",
+          "deger": ""
+        },
+        {
+          "etiket": "Yayın Türü",
+          "deger": "Radyo yayıncılığı ve internet yayını"
+        },
+        {
+          "etiket": "Sorumlu Müdür",
+          "deger": ""
+        },
+        {
+          "etiket": "Adres",
+          "deger": ""
+        },
+        {
+          "etiket": "Telefon",
+          "deger": ""
+        },
+        {
+          "etiket": "E-posta",
+          "deger": "info@bayrakstar.com.tr"
+        },
+        {
+          "etiket": "Web",
+          "deger": "https://eray-ai.github.io/bayrakstar-site/"
+        },
+        {
+          "etiket": "Ticaret Sicil / MERSİS No",
+          "deger": ""
+        },
+        {
+          "etiket": "Vergi Dairesi / No",
+          "deger": ""
+        }
+      ],
+      "not": "Yayınlarımıza ilişkin görüş, öneri ve şikâyetlerinizi yukarıdaki iletişim kanallarından iletebilirsiniz."
+    },
+    "kvkk": {
+      "yayinda": true,
+      "baslik": "KVKK Aydınlatma Metni",
+      "guncelleme": "12 Ağustos 2026",
+      "giris": "Bu metin, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında, bu web sitesini ziyaret ettiğinizde kişisel verilerinizin nasıl işlendiği konusunda sizi bilgilendirmek için hazırlanmıştır.",
+      "bolumler": [
+        {
+          "baslik": "1. Veri Sorumlusu",
+          "metin": "Veri sorumlusu, künye bölümünde bilgileri yer alan yayıncı kuruluştur. İletişim: info@bayrakstar.com.tr"
+        },
+        {
+          "baslik": "2. Bu sitede hangi veriler işleniyor?",
+          "metin": "Bu web sitesi ziyaretçilerinden <b>kişisel veri toplamamaktadır.</b> Sitede reklam veya takip çerezi kullanılmaz, IP adresiniz kaydedilmez, tarayıcı parmak izi çıkarılmaz, üyelik ya da form yoluyla bilgi toplanmaz. Bu nedenle sitede çerez onay penceresi de bulunmaz."
+        },
+        {
+          "baslik": "3. Ziyaret sayacı",
+          "metin": "Sitenin hangi sayfalarının ne kadar ilgi gördüğünü anlamak için yalnızca <b>“hangi gün, hangi sayfa, kaç kez açıldı”</b> bilgisi tutulur. Bu sayım kişiye bağlanamaz: IP adresi, çerez, cihaz ya da tarayıcı bilgisi kaydedilmez, üçüncü taraf bir analiz servisi kullanılmaz. Bu veriler KVKK anlamında kişisel veri niteliği taşımaz."
+        },
+        {
+          "baslik": "4. Canlı yayın dinlerken",
+          "metin": "Siteden canlı yayın dinlediğinizde ses akışı, ilgili radyonun kendi yayın sunucusundan gelir. Bu bağlantı sırasında teknik bağlantı bilgileriniz o sunucuya ulaşır ve ilgili radyonun kendi gizlilik uygulamalarına tabidir."
+        },
+        {
+          "baslik": "5. Bize yazdığınızda",
+          "metin": "İletişim bölümündeki e-posta adreslerine yazdığınızda ya da istek hatlarına mesaj gönderdiğinizde; ilettiğiniz ad, iletişim bilgisi ve mesaj içeriği, yalnızca talebinizi karşılamak ve size dönüş yapmak amacıyla işlenir. Hukuki sebep, KVKK m.5/2-(f) uyarınca meşru menfaattir. Bu veriler amacı ortadan kalktığında silinir."
+        },
+        {
+          "baslik": "6. Aktarım",
+          "metin": "Kişisel verileriniz, yasal olarak yetkili kamu kurum ve kuruluşları dışında üçüncü kişilerle paylaşılmaz, yurt dışına aktarılmaz. Sitenin barındırıldığı altyapı sağlayıcıları yalnızca teknik hizmet verir."
+        },
+        {
+          "baslik": "7. Haklarınız",
+          "metin": "KVKK m.11 uyarınca; kişisel verinizin işlenip işlenmediğini öğrenme, işlenmişse bilgi talep etme, işlenme amacını öğrenme, eksik veya yanlış işlenmişse düzeltilmesini isteme, silinmesini veya yok edilmesini isteme, bu işlemlerin aktarıldığı üçüncü kişilere bildirilmesini isteme, işlenen verilerin münhasıran otomatik sistemlerle analiz edilmesi suretiyle aleyhinize bir sonuç doğmasına itiraz etme ve kanuna aykırı işleme sebebiyle zarara uğramanız hâlinde zararın giderilmesini talep etme haklarına sahipsiniz."
+        },
+        {
+          "baslik": "8. Başvuru",
+          "metin": "Haklarınıza ilişkin taleplerinizi <b>info@bayrakstar.com.tr</b> adresine iletebilirsiniz. Başvurunuz en geç otuz gün içinde sonuçlandırılır."
+        }
+      ],
+      "not": ""
+    }
   }
 };
 
@@ -879,6 +966,18 @@ window.getSiteData = function () {
   /* grafik elementleri ayarı — panelden gelir; yeni alan eklenirse
      kayıtlı kopya onu gölgelemesin diye alan bazında birleştirilir */
   out.grafik  = Object.assign({}, def.grafik,  saved.grafik  || {});
+  /* künye + KVKK: bölüm bazında birleşir, listeler kayıtlıysa kayıtlı kazanır */
+  (function () {
+    var dy = def.yasal || {}, sy = saved.yasal || {};
+    var y = {};
+    ["kunye", "kvkk"].forEach(function (k) {
+      y[k] = Object.assign({}, dy[k] || {}, sy[k] || {});
+      var liste = (k === "kunye") ? "alanlar" : "bolumler";
+      y[k][liste] = (sy[k] && Array.isArray(sy[k][liste]) && sy[k][liste].length)
+        ? sy[k][liste] : ((dy[k] && dy[k][liste]) || []);
+    });
+    out.yasal = y;
+  })();
   /* iletişim kartları: kayıtlı liste varsa o, yoksa varsayılan */
   out.contact.items = (saved.contact && Array.isArray(saved.contact.items) && saved.contact.items.length)
     ? saved.contact.items : (def.contact ? def.contact.items : []);
