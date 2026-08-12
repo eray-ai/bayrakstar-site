@@ -129,6 +129,53 @@
     });
   }
 
+  /* ------------------------------------------------------------
+     ZİYARET SAYACI
+     Kişisel veri TOPLANMAZ: IP, tarayıcı bilgisi, çerez, oturum kimliği
+     yok. Sunucuya giden tek şey sayfanın yolu; veritabanında yalnızca
+     "hangi gün, hangi sayfa, kaç kez" sayısı tutulur. Bu yüzden çerez
+     uyarısı ya da açık rıza gerekmiyor.
+
+     Tabloya doğrudan yazılamaz (RLS reddeder); sayım yalnızca
+     ziyaret_kaydet() fonksiyonu üzerinden yapılır, o da yolu doğrular.
+
+     Sayım BAŞARISIZ OLURSA sessizce geçilir — ölçüm hiçbir koşulda
+     sitenin açılmasını engellememeli.
+     ------------------------------------------------------------ */
+  function ziyaretSay() {
+    try {
+      var yol = location.pathname.replace(/index\.html$/, "");
+      if (!yol) yol = "/";
+      if (/admin\.html$/.test(location.pathname)) return;   // panel sayılmaz
+      if (location.protocol === "file:") return;            // yerel deneme sayılmaz
+      if (yol.length > 120) return;
+      fetch(URL_ + "/rest/v1/rpc/ziyaret_kaydet", {
+        method: "POST",
+        headers: basliklar(null),
+        body: JSON.stringify({ p_yol: yol }),
+        keepalive: true
+      }).catch(function () {});
+    } catch (e) { /* ölçüm asla sayfayı bozmaz */ }
+  }
+
+  /* Yönetim panelinin okuduğu özet. Tabloyu yalnız giriş yapmış
+     yönetici okuyabilir (RLS); anon boş liste alır. */
+  function ziyaretOzet(gunSayisi) {
+    var t = jeton();
+    if (!t) return Promise.reject(new Error("Önce giriş yapmalısın."));
+    var d = new Date();
+    d.setDate(d.getDate() - (gunSayisi || 30));
+    var bas = d.toISOString().slice(0, 10);
+    return fetch(URL_ + "/rest/v1/ziyaret_sayac?select=gun,yol,adet&gun=gte." + bas +
+                 "&order=gun.desc&limit=2000", { headers: basliklar(t) })
+      .then(function (r) {
+        if (!r.ok) {
+          return r.text().then(function (m) { throw new Error("Ziyaretler okunamadı: " + (m || r.status)); });
+        }
+        return r.json();
+      });
+  }
+
   function onbellekVar() {
     try { return !!localStorage.getItem(ONBELLEK); } catch (e) { return false; }
   }
@@ -166,9 +213,14 @@
     giris: bulutGiris,
     yaz: bulutYaz,
     gecmis: bulutGecmis,
+    ziyaretOzet: ziyaretOzet,
     jeton: jeton,
     girisliMi: function () { return !!jeton(); },
     cikis: function () { try { sessionStorage.removeItem(OTURUM); } catch (e) {} }
   };
   window.bulutHazir = hazir;
+
+  /* Sayım en sona bırakıldı: içerik isteği önce yola çıksın, ölçüm
+     açılış hızına omuz atmasın. */
+  ziyaretSay();
 })();

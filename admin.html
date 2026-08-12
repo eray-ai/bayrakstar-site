@@ -323,7 +323,8 @@ const B_SITE=[
   {id:'radyolar',ad:'Radyo Listesi',     ikon:'♫', renk:'#ffca11', say:()=>D.radios.length},
   {id:'iletisim',ad:'İletişim',          ikon:'✉', renk:'#00bac5', say:()=>((D.contact&&D.contact.items)||[]).length},
   {id:'footer',  ad:'Alt Bilgi',         ikon:'☰', renk:'#4d4d4d'},
-  {id:'gecmis',  ad:'Sürüm Geçmişi',     ikon:'↺', renk:'#989a9d'}
+  {id:'gecmis',  ad:'Sürüm Geçmişi',     ikon:'↺', renk:'#989a9d'},
+  {id:'ziyaret', ad:'Ziyaretler',        ikon:'📈', renk:'#00bac5'}
 ];
 const B_RADYO=[
   {id:'genel',   ad:'Genel Bilgiler', ikon:'ℹ',  renk:'#0081ba'},
@@ -403,6 +404,7 @@ function cizPanel(){
   p.innerHTML = '<div class="card">' + (st.varlik==='site' ? panelSite(b) : panelRadyo(b,st.radyo)) + '</div>';
   /* Sürüm geçmişi buluttan asenkron gelir — bölüm çizildikten sonra doldurulur. */
   if(st.varlik==='site' && b.id==='gecmis') gecmisYukle();
+  if(st.varlik==='site' && b.id==='ziyaret') ziyaretYukle();
 }
 
 /* ============================================================
@@ -533,6 +535,12 @@ function panelSite(b){
            'Kartların altında küçük punto ile çıkar. Boş bırakılırsa hiç görünmez.');
   }
 
+  if(b.id==='ziyaret') return baslik(b,'Son 30 günde sayfaların kaç kez açıldığı.')
+    + '<div class="hint" style="margin-bottom:14px">Kişisel hiçbir veri toplanmıyor — IP, çerez, '
+    + 'tarayıcı bilgisi yok. Yalnızca “hangi gün, hangi sayfa, kaç kez” sayılıyor. '
+    + 'Yönetim paneli sayıma dahil değil.</div>'
+    + '<div id="ziyaretKutu"><div class="bos">Yükleniyor…</div></div>';
+
   if(b.id==='gecmis') return baslik(b,'Her kayıttan ÖNCEKİ hâl otomatik saklanır. Yanlış bir değişikliği buradan geri alabilirsin.')
     + '<div class="hint" style="margin-bottom:14px">Geri yükleme de geçmişe düşer — yani geri almayı da geri alabilirsin. '
     + 'Sürümler yalnızca sana görünür, siteyi açan ziyaretçi göremez.</div>'
@@ -609,6 +617,61 @@ function gecmisGeriYukle(i){
   }).catch(function(e){ alert('Geri yüklenemedi: '+e.message); });
 }
 window.gecmisGeriYukle=gecmisGeriYukle;
+
+/* ============================================================
+   ZİYARETLER
+   Ham satırlar (gün × sayfa) buluttan gelir; özet burada çıkarılır.
+   ============================================================ */
+function ziyaretYukle(){
+  const kutu=document.getElementById('ziyaretKutu');
+  if(!kutu) return;
+  if(!window.BULUT || !BULUT.girisliMi()){
+    kutu.innerHTML='<div class="bos">Ziyaretleri görmek için giriş yapmalısın.</div>'; return;
+  }
+  BULUT.ziyaretOzet(30).then(function(satirlar){
+    if(!satirlar.length){
+      kutu.innerHTML='<div class="bos">Henüz kayıt yok. Sayaç yeni kuruldu — '
+        + 'siteyi birileri ziyaret ettikçe burası dolacak.</div>'; return;
+    }
+    let toplam=0; const sayfa={}, gun={};
+    satirlar.forEach(function(x){
+      toplam+=x.adet;
+      sayfa[x.yol]=(sayfa[x.yol]||0)+x.adet;
+      gun[x.gun]=(gun[x.gun]||0)+x.adet;
+    });
+    const enCok=Object.keys(sayfa).map(function(k){return [k,sayfa[k]];})
+                 .sort(function(a,b){return b[1]-a[1];}).slice(0,12);
+    const enBuyuk=enCok.length?enCok[0][1]:1;
+    const gunler=Object.keys(gun).sort().slice(-14);
+
+    kutu.innerHTML=
+      '<div class="grid2" style="margin-bottom:18px">'
+      + '<div class="item" style="text-align:center"><div style="font-size:34px;font-weight:800">'+toplam+'</div>'
+      +   '<div class="hint" style="margin:0">son 30 günde sayfa görüntüleme</div></div>'
+      + '<div class="item" style="text-align:center"><div style="font-size:34px;font-weight:800">'+Object.keys(sayfa).length+'</div>'
+      +   '<div class="hint" style="margin:0">farklı sayfa</div></div>'
+      + '</div>'
+      + '<div class="field"><label>Son 14 gün</label>'
+      + '<div style="display:flex;align-items:flex-end;gap:4px;height:90px">'
+      + gunler.map(function(g){
+          const v=gun[g]||0, en=Math.max.apply(null,gunler.map(function(x){return gun[x]||0;}))||1;
+          return '<div style="flex:1;text-align:center" title="'+g+': '+v+'">'
+            + '<div style="background:#00bac5;border-radius:3px 3px 0 0;height:'+Math.max(3,Math.round(v/en*70))+'px"></div>'
+            + '<div style="font-size:9px;opacity:.5;margin-top:4px">'+g.slice(8)+'</div></div>';
+        }).join('')
+      + '</div></div>'
+      + '<div class="field"><label>En çok açılan sayfalar</label>'
+      + enCok.map(function(x){
+          return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:7px">'
+            + '<div style="flex:1;min-width:0"><div style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+att(x[0])+'</div>'
+            +   '<div style="height:5px;border-radius:3px;background:#00bac5;opacity:.75;width:'+Math.max(2,Math.round(x[1]/enBuyuk*100))+'%"></div></div>'
+            + '<div style="font-weight:700;font-size:13px;min-width:44px;text-align:right">'+x[1]+'</div></div>';
+        }).join('')
+      + '</div>';
+  }).catch(function(e){
+    kutu.innerHTML='<div class="bos">Ziyaretler okunamadı: '+att(e.message)+'</div>';
+  });
+}
 
 /* ============================================================
    RADYO PANELLERİ
