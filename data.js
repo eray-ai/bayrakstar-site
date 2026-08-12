@@ -31,7 +31,7 @@ window.DEFAULT_DATA = {
   },
   "slides": [
     "gorseller/genis-1.jpg",
-    "gorseller/genis-2.jpg",
+    "gorseller/genis-6.jpg",
     "gorseller/genis-3.jpg",
     "gorseller/genis-4.jpg"
   ],
@@ -252,7 +252,7 @@ window.DEFAULT_DATA = {
       "url": "https://www.fenomenturk.com",
       "stream": "https://live.radyofenomen.com/fenomenturk/128/icecast.audio",
       "img": "gorseller/kart-fenomenturk.jpg",
-      "hero": "gorseller/genis-2.jpg",
+      "hero": "gorseller/genis-6.jpg",
       "about": "Fenomen Türk, en sevilen Türkçe şarkıları eğlenceyle harmanlayan radyodur. “Eğlence ve Müzik” anlayışıyla sevilen seslerin programlarıyla gününüze eşlik eder; sıcak, samimi ve keyifli bir yayın.",
       "hosts": [
         {
