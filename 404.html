@@ -76,7 +76,7 @@
   <div class="radyolar" id="radyolar"></div>
 </main>
 
-<footer>© 2026 Bayrakstar — colorful life  <div style="margin-top:14px;font-size:12.5px;opacity:.5"><a href="yasal.html" style="text-decoration:none">Künye ve KVKK</a></div>
+<footer>© 2026 Bayrakstar — colorful life  <div style="margin-top:14px;font-size:12.5px;opacity:.5;line-height:2.1" data-yasal-blok hidden><div data-yasal></div></div>
 </footer>
 
 <script src="data.js"></script>
@@ -95,6 +95,21 @@
       k.appendChild(a);
     });
   }catch(e){}
+})();
+</script>
+<script>
+/* 404 bilerek buluta bağlanmaz (site.js de yüklenmez); bağlantılar
+   data.js varsayılanından çıkarılır. */
+(function(){
+  var D=window.DEFAULT_DATA||{}, Y=D.yasal||{}, K=Y.kunye||{}, V=Y.kvkk||{}, b=[];
+  if(K.yayinda && (K.alanlar||[]).some(function(a){return a&&(a.deger||'').trim();}))
+    b.push(['yasal.html#kunye', K.baslik||'Künye']);
+  if(V.yayinda && (V.bolumler||[]).length)
+    b.push(['yasal.html#kvkk', V.baslik||'KVKK Aydınlatma Metni']);
+  if(!b.length) return;
+  var k=document.querySelector('[data-yasal]'); if(!k) return;
+  k.innerHTML=b.map(function(x){return '<a href="'+x[0]+'" style="text-decoration:none;display:block">'+x[1]+'</a>';}).join('');
+  var blok=k.closest('[data-yasal-blok]'); if(blok) blok.hidden=false;
 })();
 </script>
 </body>

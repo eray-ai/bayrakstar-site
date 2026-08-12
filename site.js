@@ -233,3 +233,48 @@
     curtain.classList.remove('in'); curtain.classList.add('out');
   });
 })();
+
+
+/* ============================================================
+   KÜNYE / KVKK BAĞLANTILARI
+   Her sayfada ayrı ayrı yazmak yerine tek yerden doldurulur.
+   Yalnızca "yayında" işaretli bölüm listelenir — künye kapalıyken
+   bağlantısı hiç çıkmaz, boş bir bölüme gitmez.
+     <div data-yasal-blok hidden> ... <div data-yasal></div> </div>
+   data-yasal-stil="satir" verilirse yan yana, yoksa ALT ALTA dizilir.
+   ============================================================ */
+(function(){
+  function baglar(){
+    var D = (window.getSiteData ? window.getSiteData() : window.DEFAULT_DATA) || {};
+    var Y = D.yasal || {}, K = Y.kunye || {}, V = Y.kvkk || {}, b = [];
+    var kDolu = (K.alanlar || []).some(function(a){ return a && (a.deger || '').trim(); });
+    if(K.yayinda && kDolu)                    b.push(['yasal.html#kunye', K.baslik || 'Künye']);
+    if(V.yayinda && (V.bolumler || []).length) b.push(['yasal.html#kvkk',  V.baslik || 'KVKK Aydınlatma Metni']);
+    return b;
+  }
+  function doldur(){
+    var b = baglar();
+    var kaplar = document.querySelectorAll('[data-yasal]');
+    for(var i = 0; i < kaplar.length; i++){
+      var k = kaplar[i];
+      var blok = k.closest ? k.closest('[data-yasal-blok]') : null;
+      if(!b.length){ if(blok) blok.hidden = true; k.innerHTML = ''; continue; }
+      var satir = k.getAttribute('data-yasal-stil') === 'satir';
+      k.innerHTML = b.map(function(x){
+        return '<a href="' + x[0] + '">' + x[1] + '</a>';
+      }).join(satir ? ' · ' : '');
+      if(!satir){
+        /* ALT ALTA: her bağlantı kendi satırında */
+        var a = k.querySelectorAll('a');
+        for(var j = 0; j < a.length; j++) a[j].style.display = 'block';
+      }
+      if(blok) blok.hidden = false;
+    }
+  }
+  function baslat(){
+    if(window.bulutHazir && window.bulutHazir.then) window.bulutHazir.then(doldur, doldur);
+    else doldur();
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', baslat);
+  else baslat();
+})();

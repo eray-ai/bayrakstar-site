@@ -427,14 +427,14 @@
       <a href="#iletisim">Basın</a>
       <a href="#iletisim">İletişim</a>
     </div>
-    <div class="foot-radios reveal" id="fYasalSut" hidden>
+    <div class="foot-radios reveal" data-yasal-blok hidden>
       <h4>Yasal</h4>
-      <div id="fYasal"></div>
+      <div data-yasal></div>
     </div>
   </div>
   <div class="foot-bottom">
     <div>© 2026 Bayrakstar. Tüm hakları saklıdır.</div>
-    <div id="fYasalAlt"></div>
+    <div data-yasal data-yasal-stil="satir"></div>
     <div>colorful life</div>
   </div>
 </footer>
@@ -786,20 +786,7 @@ window.playFirst=openBand;
 /* ---- FOOTER ---- */
 document.getElementById('fAbout').innerHTML = D.footer.about;
 
-/* ---- KÜNYE / KVKK bağlantıları: yalnız YAYINDA olan bölüm için çıkar ---- */
-(function(){
-  var Y=D.yasal||{}, b=[];
-  var K=Y.kunye||{}, V=Y.kvkk||{};
-  var kDolu=(K.alanlar||[]).some(function(a){ return a && (a.deger||'').trim(); });
-  if(K.yayinda && kDolu) b.push(['yasal.html#kunye', K.baslik||'Künye']);
-  if(V.yayinda && (V.bolumler||[]).length) b.push(['yasal.html#kvkk', V.baslik||'KVKK Aydınlatma Metni']);
-  if(!b.length) return;
-  document.getElementById('fYasalSut').hidden=false;
-  document.getElementById('fYasal').innerHTML =
-    b.map(function(x){ return '<a href="'+x[0]+'">'+x[1]+'</a>'; }).join('');
-  document.getElementById('fYasalAlt').innerHTML =
-    b.map(function(x){ return '<a href="'+x[0]+'" style="opacity:.85">'+x[1]+'</a>'; }).join(' · ');
-})();
+/* Künye/KVKK bağlantıları site.js'te tek yerden doldurulur ([data-yasal]). */
 const fSoc=document.getElementById('fSocials');
 const socMap={ig:'Instagram',yt:'YouTube',x:'X',sp:'Spotify'};
 const socKisa={ig:'IG',yt:'YT',x:'X',sp:'SP'};
