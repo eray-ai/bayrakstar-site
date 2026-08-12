@@ -142,9 +142,26 @@
      Sayım BAŞARISIZ OLURSA sessizce geçilir — ölçüm hiçbir koşulda
      sitenin açılmasını engellememeli.
      ------------------------------------------------------------ */
+  /* Sitenin kök yolu. GitHub Pages'te site "/bayrakstar-site/" altında
+     duruyor; kendi alan adına geçilince kökten yayınlanacak. Yollar bu
+     önekle kaydedilirse alan adı değiştiği gün geçmiş ikiye bölünür.
+
+     Önek, bu dosyanın KENDİ adresinden çıkarılıyor — böylece nereye
+     taşınırsa taşınsın elle ayar gerekmiyor. */
+  function siteTabani() {
+    try {
+      var src = (document.currentScript && document.currentScript.src) || "";
+      if (!src) return "";
+      var yol = new URL(src, location.href).pathname;      // .../bulut.js
+      return yol.replace(/[^/]*$/, "").replace(/\/$/, ""); // .../  -> ...
+    } catch (e) { return ""; }
+  }
+  var TABAN = siteTabani();
+
   function ziyaretSay() {
     try {
       var yol = location.pathname.replace(/index\.html$/, "");
+      if (TABAN && yol.indexOf(TABAN) === 0) yol = yol.slice(TABAN.length);
       if (!yol) yol = "/";
       if (/admin\.html$/.test(location.pathname)) return;   // panel sayılmaz
       if (location.protocol === "file:") return;            // yerel deneme sayılmaz
