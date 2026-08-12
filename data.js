@@ -2,6 +2,25 @@
    BAYRAKSTAR — Site İçerik Verisi
    Admin panelinden "JSON indir" ile güncellenmiş içerik buraya işlenir.
    ============================================================ */
+/* ============================================================
+   ADRES YARDIMCILARI — TEK KAYNAK
+   ------------------------------------------------------------
+   Radyo ve yayıncı sayfalarının adresi burada üretilir. Sebep:
+   sosyal medya ön izleme botları JavaScript ÇALIŞTIRMAZ, bu yüzden
+   "radyo.html?r=fenomen" gibi sorgu parametreli tek dosya her radyo
+   için AYNI paylaşım kartını gösteriyordu. Artık her radyo/yayıncı
+   kendi klasöründe statik sayfaya sahip (araclar/statik-uret.py).
+
+   Eski "radyo.html?r=<slug>" adresleri ÇALIŞMAYA DEVAM EDER —
+   daha önce paylaşılmış linkler kırılmasın diye bilerek korundu.
+   ============================================================ */
+window.URLRadyo = function (slug) {
+  return slug ? ('r/' + encodeURIComponent(slug) + '/') : '';
+};
+window.URLYayinci = function (radyoSlug, hostSlug) {
+  return 'y/' + encodeURIComponent(radyoSlug) + '-' + encodeURIComponent(hostSlug) + '/';
+};
+
 window.DEFAULT_DATA = {
   "hero": {
     "kicker": "BAYRAKSTAR MEDYA GRUBU",

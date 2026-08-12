@@ -457,7 +457,7 @@ document.getElementById('hSlogan').innerHTML = D.hero.slogan;
 
 /* ---- HEADER nav (radyo isimleri) ---- */
 const nav=document.getElementById('navMenu');
-D.radios.forEach(r=>{const a=document.createElement('a');a.href=r.slug?('radyo.html?r='+r.slug):r.url;if(!r.slug){a.target='_blank';a.rel='noopener';}a.textContent=r.name;nav.appendChild(a);});
+D.radios.forEach(r=>{const a=document.createElement('a');a.href=r.slug?URLRadyo(r.slug):r.url;if(!r.slug){a.target='_blank';a.rel='noopener';}a.textContent=r.name;nav.appendChild(a);});
 
 /* ---- SLIDER ---- */
 const slidesWrap=document.getElementById('slides');
@@ -579,7 +579,7 @@ D.intro.stats.forEach(s=>{
 const grid=document.getElementById('grid');
 D.radios.forEach((r,idx)=>{
   const a=document.createElement('a');
-  a.className='rcard reveal';a.href=r.slug?('radyo.html?r='+r.slug):r.url;a.dataset.idx=idx;
+  a.className='rcard reveal';a.href=r.slug?URLRadyo(r.slug):r.url;a.dataset.idx=idx;
   if(!r.slug){a.target='_blank';a.rel='noopener';}
   const freqHtml = (r.freq && r.freq.trim()) ? esc(r.freq)+' <span style="opacity:.6;font-size:11px">MHz</span>' : 'CANLI';
   const listenBtn = `<button class="listen" onclick="playRadio(${idx},event)" aria-label="${esc(r.name)} canlı yayınını dinle"><span class="pi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span> Canlı Dinle</button>`;
@@ -760,7 +760,7 @@ Object.keys(socMap).forEach(k=>{
 });
 if(!fSoc.children.length) fSoc.style.display='none';
 const fRad=document.getElementById('fRadios');
-D.radios.forEach(r=>{const a=document.createElement('a');a.href=r.slug?('radyo.html?r='+r.slug):r.url;if(!r.slug){a.target='_blank';a.rel='noopener';}a.style.display='block';a.style.marginBottom='12px';a.textContent=r.name+' →';fRad.appendChild(a);});
+D.radios.forEach(r=>{const a=document.createElement('a');a.href=r.slug?URLRadyo(r.slug):r.url;if(!r.slug){a.target='_blank';a.rel='noopener';}a.style.display='block';a.style.marginBottom='12px';a.textContent=r.name+' →';fRad.appendChild(a);});
 
 /* ---- header scroll ---- */
 const hdr=document.getElementById('hdr');

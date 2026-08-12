@@ -5,7 +5,7 @@
 (function(){
   var D = (window.getSiteData ? window.getSiteData() : (window.DEFAULT_DATA||{radios:[]}));
   var onIndex = /index\.html$|\/$|^$/.test(location.pathname.split('/').pop()||'') || location.pathname.endsWith('/');
-  var curSlug = new URLSearchParams(location.search).get('r');
+  var curSlug = new URLSearchParams(location.search).get('r') || window.ON_SLUG || null;
 
   /* ---- stil enjekte et ---- */
   var css = document.createElement('style');
@@ -83,9 +83,26 @@
      Hem radyo.html?r=<slug> hem yayinci.html?r=<slug>&h=<host> tanınır —
      yayıncı sayfası da o radyonun temasını kullanıyor. */
   function hedefRengi(href){
-    var m=/(?:radyo|yayinci)\.html\?r=([^&#]+)/.exec(href||'');
-    if(!m) return null;
-    var slug=decodeURIComponent(m[1]);
+    var h=href||'', slug=null;
+    /* Eski biçim: radyo.html?r=<slug> · yayinci.html?r=<slug>&h=<host> */
+    var m=/(?:radyo|yayinci)\.html\?r=([^&#]+)/.exec(h);
+    if(m) slug=decodeURIComponent(m[1]);
+    /* Yeni biçim: r/<slug>/ */
+    if(!slug){ m=/(?:^|\/)r\/([^/?#]+)\/?/.exec(h); if(m) slug=decodeURIComponent(m[1]); }
+    /* Yeni biçim: y/<radyoSlug>-<yayinciSlug>/ — yayıncı slug'ında tire
+       olabildiği için ilk tireye göre bölmek yerine BİLİNEN radyo slug'ları
+       arasından ön eki tutanı arıyoruz. */
+    if(!slug){
+      m=/(?:^|\/)y\/([^/?#]+)\/?/.exec(h);
+      if(m){
+        var par=decodeURIComponent(m[1]);
+        var bul=(D.radios||[]).find(function(x){
+          return x.slug && par.indexOf(x.slug+'-')===0;
+        });
+        if(bul) slug=bul.slug;
+      }
+    }
+    if(!slug) return null;
     var r=(D.radios||[]).find(function(x){ return x.slug===slug; });
     return (r && r.color) ? r.color : null;
   }
@@ -126,7 +143,7 @@
   var ovl = document.createElement('div');
   ovl.className = 'navovl';
   var radioLinks = (D.radios||[]).map(function(r){
-    var href = r.slug ? ('radyo.html?r='+r.slug) : r.url;
+    var href = r.slug ? URLRadyo(r.slug) : r.url;
     var active = r.slug && r.slug===curSlug;
     return '<a data-nav href="'+href+'"'+(r.slug?'':' target="_blank" rel="noopener"')+'>'+
            '<span class="dot" style="background:'+(r.color||'#fff')+'"></span>'+r.name+(active?' •':'')+'</a>';

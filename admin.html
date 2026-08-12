@@ -202,6 +202,7 @@
     <button class="btn btn-ghost btn-sm" onclick="resetAll()">↺ Sıfırla</button>
     <button class="btn btn-dark btn-sm" onclick="importJson()">⬆ JSON Yükle</button>
     <button class="btn btn-dark btn-sm" onclick="exportJson()">⬇ JSON İndir</button>
+    <button class="btn btn-dark btn-sm" onclick="window.open(SITE_KOK+'/','_blank')">↗ Siteyi Aç</button>
     <button class="btn btn-primary" onclick="saveAndPreview()">☁️ Kaydet &amp; Yayınla</button>
   </div>
 </header>
@@ -336,6 +337,12 @@ const B_RADYO=[
 ];
 
 /* ==== DURUM: hangi varlık + hangi bölüm ==== */
+/* Yayındaki sitenin adresi. Panel hangi kopyadan açılırsa açılsın
+   (eski bir yer imi, yerel dosya, önizleme) "Yayınla" ve "↗ Aç"
+   düğmeleri HER ZAMAN canlı siteyi açsın diye mutlak yazıldı.
+   Alan adı değişince araclar/alan-adi-degistir.py burayı da günceller. */
+const SITE_KOK = 'https://eray-ai.github.io/bayrakstar-site';
+
 let st = { varlik:'site', radyo:0, bolum:'hero' };
 
 function bolumler(){ return st.varlik==='site' ? B_SITE : B_RADYO; }
@@ -622,7 +629,7 @@ function panelRadyo(b,i){
     + alan('🎧 Canlı Yayın Linki', urlInput(r.stream,P+'.stream','https://... icecast.audio / .m3u8'), 0, '',
            'Tarayıcıda çalması için <b>https</b> ve doğrudan ses akışı olmalı. <b>.m3u8</b> linkler Safari’de çalar, Chrome’da ek kod gerekir.')
     + alan('Detay Sayfası Adresi (slug)', txtInput(r.slug,P+'.slug',20), 20, r.slug,
-           'radyo.html?r=<b>'+att(r.slug||'')+'</b> · boşluk ve Türkçe karakter kullanma.');
+           'Sayfa adresi: <b>/r/'+att(r.slug||'')+'/</b> · boşluk ve Türkçe karakter kullanma.');
 
   if(b.id==='gorunum') return baslik(b,'Radyo sayfasının renkleri, yazı tipleri, logosu ve görselleri.')
     + '<div class="grid2">'
@@ -689,7 +696,7 @@ function panelRadyo(b,i){
           +   '<input type="text" value="'+att(h.slug)+'" placeholder="Sayfa adresi (örn. tansu-caglayan)" oninput="'+Y+'.slug=temizSlug(this.value)">'
           +   (h.slug
                 ? '<a class="btn-up" style="text-decoration:none" target="_blank" rel="noopener" '
-                  + 'href="yayinci.html?r='+encodeURIComponent(r.slug||'')+'&h='+encodeURIComponent(h.slug)+'">↗ Aç</a>'
+                  + 'href="'+SITE_KOK+'/'+URLYayinci(r.slug||'',h.slug)+'">↗ Aç</a>'
                 : '')
           + '</div>'
           + '<div class="hint" style="margin:-2px 0 10px">Boş bırakırsan kart tıklanamaz olur, detay sayfası açılmaz. İsmi yazınca kendiliğinden doldurulur.</div>'
@@ -1156,7 +1163,7 @@ function save(){
     return false;
   });
 }
-function saveAndPreview(){save().then(function(ok){if(ok)window.open('index.html','_blank');});}
+function saveAndPreview(){save().then(function(ok){if(ok)window.open(SITE_KOK+'/','_blank');});}
 let _toastZaman=null;
 function toast(msg,sure){
   const t=document.getElementById('toast');
