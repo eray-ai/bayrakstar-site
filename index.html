@@ -154,7 +154,21 @@
   .rcard .glow{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55))}
   .rcard .inner{position:absolute;inset:0;z-index:3;padding:34px;display:flex;flex-direction:column;justify-content:space-between}
   .rcard .top{display:flex;justify-content:space-between;align-items:flex-start}
-  .rcard .logo{height:86px;width:auto;max-width:74%;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4));object-fit:contain;object-position:left}
+  /* Logo dosyalarının içindeki şeffaf boşluklar kırpıldı (logo/_ham/ altında ham
+     hâlleri duruyor). Artık hepsi AYNI 60px'lik kutuya oturuyor: kutular eşit
+     yükseklikte ve aynı hizada başladığı için hem boy hem konum eşitleniyor.
+     İçerik oranları farklı olduğundan (Boombox 1.22, İstanbul FM 3.97) genişlik
+     doğal olarak değişir — max-width çok uzayanı sınırlar. */
+  /* Logolar ORTAK bir bantta dikey ortalanır → konumları birebir aynı hizada.
+     Yükseklik marka bazlı: oranlar çok farklı (Boombox 1.22 iki satırlı blok,
+     İstanbul FM 3.97 uzun yazı). Hepsine tek yükseklik verilince Boombox cılız,
+     İstanbul FM kocaman duruyordu; aşağıdaki değerler optik ağırlığı eşitler. */
+  .rcard .top{min-height:78px}
+  .rcard .logo{align-self:center;height:60px;width:auto;max-width:196px;object-fit:contain;
+    object-position:left center;filter:drop-shadow(0 4px 12px rgba(0,0,0,.45))}
+  .rcard[data-slug="boombox"]    .logo{height:76px}
+  .rcard[data-slug="istanbulfm"] .logo{height:52px}
+  .rcard[data-slug="fenomen"]    .logo{height:58px}
   .rcard .freq{background:rgba(255,255,255,.18);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.25);padding:7px 14px;border-radius:30px;font-weight:800;font-size:13px;white-space:nowrap}
   .rcard .bottom .sl{font-size:22px;font-weight:800;letter-spacing:.01em;margin-bottom:14px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
   /* mini eq badge */
@@ -326,7 +340,11 @@
     .rcard{height:300px}
   }
   @media(max-width:600px){
-    .rcard .logo{height:80px;max-width:78%}
+    .rcard .top{min-height:70px}
+    .rcard .logo{height:54px;max-width:60%}
+    .rcard[data-slug="boombox"]    .logo{height:68px}
+    .rcard[data-slug="istanbulfm"] .logo{height:47px}
+    .rcard[data-slug="fenomen"]    .logo{height:52px}
     .foot-top{flex-direction:column}
   }
 </style>
@@ -596,7 +614,7 @@ D.intro.stats.forEach(s=>{
 const grid=document.getElementById('grid');
 D.radios.forEach((r,idx)=>{
   const a=document.createElement('a');
-  a.className='rcard reveal';a.href=r.slug?URLRadyo(r.slug):r.url;a.dataset.idx=idx;
+  a.className='rcard reveal';a.href=r.slug?URLRadyo(r.slug):r.url;a.dataset.idx=idx;a.dataset.slug=r.slug||'';
   if(!r.slug){a.target='_blank';a.rel='noopener';}
   const freqHtml = (r.freq && r.freq.trim()) ? esc(r.freq)+' <span style="opacity:.6;font-size:11px">MHz</span>' : 'CANLI';
   const listenBtn = `<button class="listen" onclick="playRadio(${idx},event)" aria-label="${esc(r.name)} canlı yayınını dinle"><span class="pi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span> Canlı Dinle</button>`;
