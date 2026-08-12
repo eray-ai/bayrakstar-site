@@ -320,7 +320,9 @@ const B_SITE=[
   {id:'bant',    ad:'Kırmızı Bant',      ikon:'✱', renk:'#ff0007', say:()=>D.slogans.length},
   {id:'tanitim', ad:'Tanıtım & İstatistik',ikon:'¶',renk:'#0081ba'},
   {id:'radyolar',ad:'Radyo Listesi',     ikon:'♫', renk:'#ffca11', say:()=>D.radios.length},
-  {id:'footer',  ad:'Alt Bilgi',         ikon:'☰', renk:'#4d4d4d'}
+  {id:'iletisim',ad:'İletişim',          ikon:'✉', renk:'#00bac5', say:()=>((D.contact&&D.contact.items)||[]).length},
+  {id:'footer',  ad:'Alt Bilgi',         ikon:'☰', renk:'#4d4d4d'},
+  {id:'gecmis',  ad:'Sürüm Geçmişi',     ikon:'↺', renk:'#989a9d'}
 ];
 const B_RADYO=[
   {id:'genel',   ad:'Genel Bilgiler', ikon:'ℹ',  renk:'#0081ba'},
@@ -392,6 +394,8 @@ function cizPanel(){
   const p=document.getElementById('panel');
   const b=bolumler().find(x=>x.id===st.bolum) || bolumler()[0];
   p.innerHTML = '<div class="card">' + (st.varlik==='site' ? panelSite(b) : panelRadyo(b,st.radyo)) + '</div>';
+  /* Sürüm geçmişi buluttan asenkron gelir — bölüm çizildikten sonra doldurulur. */
+  if(st.varlik==='site' && b.id==='gecmis') gecmisYukle();
 }
 
 /* ============================================================
@@ -481,8 +485,123 @@ function panelSite(b){
     +   alan('X (Twitter) linki',urlInput(D.footer.socials.x,'D.footer.socials.x'))
     +   alan('Spotify linki',   urlInput(D.footer.socials.sp,'D.footer.socials.sp'))
     + '</div>';
+
+  if(b.id==='iletisim'){
+    ensureIletisim();
+    const C=D.contact, IK=['✉️','📢','📰','💬','📞','📍','🌐','🎧'];
+    return baslik(b,'Ana sayfanın altındaki İletişim bölümü. Buradaki e-posta ve telefonlar siteye olduğu gibi yansır.')
+    + '<div class="grid2">'
+    +   alan('Üst etiket', txtInput(C.tag,'D.contact.tag',26), 26, C.tag, 'Başlığın üstündeki küçük yazı.')
+    +   alan('Başlık', txtInput(C.headline,'D.contact.headline',40), 40, C.headline)
+    + '</div>'
+    + alan('Açıklama', taInput(C.text,'D.contact.text',300), 300, C.text,
+           'Başlığın altındaki tanıtım cümlesi.')
+    + '<div style="height:10px"></div>'
+    + '<div class="hint" style="margin-bottom:10px">Aşağıdaki her kalem, sitede bir iletişim kartı olur. '
+    + '<b>Bağlantı</b> boş bırakılırsa kart tıklanamaz, sadece bilgi gösterir.</div>'
+    + (C.items.length?'':'<div class="bos">Henüz iletişim kalemi yok.</div>')
+    + C.items.map(function(it,i){
+        const Y='D.contact.items['+i+']';
+        return '<div class="item"><div class="ihead"><span class="n">'+(it.label||'Kalem '+(i+1))+'</span><div class="ctrl">'
+        + '<button class="mv" onclick="mv(D.contact.items,'+i+',-1,yenile)">↑</button>'
+        + '<button class="mv" onclick="mv(D.contact.items,'+i+',1,yenile)">↓</button>'
+        + '<button class="del" onclick="silOge(\'D.contact.items\','+i+',\''+att(it.label||('Kalem '+(i+1)))+'\')">Sil</button></div></div>'
+        + '<div class="grid2">'
+        +   alan('Simge', '<select onchange="'+Y+'.icon=this.value">'
+              + IK.map(function(k){return '<option'+(k===it.icon?' selected':'')+'>'+k+'</option>';}).join('')
+              + (IK.indexOf(it.icon)<0&&it.icon?'<option selected>'+att(it.icon)+'</option>':'')
+              + '</select>')
+        +   alan('Başlık', txtInput(it.label,Y+'.label',30), 30, it.label)
+        + '</div>'
+        + '<div class="grid2">'
+        +   alan('Görünen değer', txtInput(it.value,Y+'.value',44), 44, it.value,
+                 'Ziyaretçinin gördüğü yazı: e-posta ya da telefon.')
+        +   alan('Bağlantı', urlInput(it.href,Y+'.href','mailto:... veya https://wa.me/90...'), 0, '',
+                 'E-posta için <b>mailto:</b> ile, WhatsApp için <b>https://wa.me/90…</b> ile başlat.')
+        + '</div></div>';
+      }).join('')
+    + '<button class="add" onclick="D.contact.items.push({icon:\'✉️\',label:\'\',value:\'\',href:\'\'});yenile()">+ İletişim Kalemi Ekle</button>'
+    + '<div style="height:14px"></div>'
+    + alan('Alt not', taInput(C.note,'D.contact.note',220), 220, C.note,
+           'Kartların altında küçük punto ile çıkar. Boş bırakılırsa hiç görünmez.');
+  }
+
+  if(b.id==='gecmis') return baslik(b,'Her kayıttan ÖNCEKİ hâl otomatik saklanır. Yanlış bir değişikliği buradan geri alabilirsin.')
+    + '<div class="hint" style="margin-bottom:14px">Geri yükleme de geçmişe düşer — yani geri almayı da geri alabilirsin. '
+    + 'Sürümler yalnızca sana görünür, siteyi açan ziyaretçi göremez.</div>'
+    + '<div id="gecmisListe"><div class="bos">Yükleniyor…</div></div>';
+
   return '';
 }
+
+/* ==== İLETİŞİM: eski kayıtlarda blok hiç olmayabilir ==== */
+function ensureIletisim(){
+  if(!D.contact || typeof D.contact!=='object') D.contact={};
+  const C=D.contact;
+  if(typeof C.tag!=='string')      C.tag='Bize Ulaşın';
+  if(typeof C.headline!=='string') C.headline='İletişim';
+  if(typeof C.text!=='string')     C.text='';
+  if(typeof C.note!=='string')     C.note='';
+  if(!Array.isArray(C.items))      C.items=[];
+}
+
+/* ============================================================
+   SÜRÜM GEÇMİŞİ
+   Liste asenkron gelir; bölüm çizildikten SONRA doldurulur.
+   ============================================================ */
+function gecmisYukle(){
+  const kutu=document.getElementById('gecmisListe');
+  if(!kutu) return;
+  if(!window.BULUT || !BULUT.girisliMi()){
+    kutu.innerHTML='<div class="bos">Geçmişi görmek için giriş yapmalısın.</div>'; return;
+  }
+  BULUT.gecmis(20).then(function(satirlar){
+    if(!satirlar.length){
+      kutu.innerHTML='<div class="bos">Henüz kayıtlı sürüm yok. İlk kaydından sonra burada görünecek.</div>'; return;
+    }
+    _gecmisVeri=satirlar;
+    kutu.innerHTML=satirlar.map(function(s,i){
+      const t=new Date(s.kayit_zamani);
+      const ne=gecmisOzet(s.data);
+      return '<div class="item"><div class="ihead"><span class="n">'+gecmisTarih(t)+'</span>'
+        + '<div class="ctrl"><button class="mv" onclick="gecmisGeriYukle('+i+')">↩ Bu sürüme dön</button></div></div>'
+        + '<div class="hint" style="margin:0">'+ne+'</div></div>';
+    }).join('');
+  }).catch(function(e){
+    kutu.innerHTML='<div class="bos">Geçmiş okunamadı: '+att(e.message)+'</div>';
+  });
+}
+let _gecmisVeri=[];
+
+function gecmisTarih(t){
+  try{
+    return t.toLocaleString('tr-TR',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  }catch(e){ return t.toISOString().slice(0,16).replace('T',' '); }
+}
+/* Sürümü açmadan ne içerdiğini anlatan kısa özet */
+function gecmisOzet(d){
+  if(!d) return 'İçerik boş.';
+  const r=(d.radios||[]).length;
+  const y=(d.radios||[]).reduce(function(a,x){return a+((x.hosts||[]).length);},0);
+  const p=(d.radios||[]).reduce(function(a,x){return a+((x.schedule||[]).length);},0);
+  const h=(d.hero&&d.hero.slogan)?String(d.hero.slogan).replace(/<[^>]*>/g,'').slice(0,52):'—';
+  return r+' radyo · '+y+' yayıncı · '+p+' program &nbsp;|&nbsp; Slogan: “'+att(h)+'”';
+}
+
+function gecmisGeriYukle(i){
+  const s=_gecmisVeri[i]; if(!s) return;
+  const t=gecmisTarih(new Date(s.kayit_zamani));
+  if(!confirm('SİTE GERİ ALINACAK\n\n'+t+' tarihindeki hâle dönülecek.\n\n'
+    + gecmisOzet(s.data).replace(/&nbsp;|<[^>]*>/g,' ')+'\n\n'
+    + 'Şu anda canlıda olan içerik de geçmişe kaydedilecek, yani bu işlemi de geri alabilirsin.\n\nDevam edilsin mi?')) return;
+  BULUT.yaz(s.data).then(function(){
+    D=s.data;
+    try{ localStorage.setItem('bayrakstar_data', JSON.stringify(s.data)); }catch(e){}
+    toast('↩ '+t+' sürümüne dönüldü. Site güncellendi.', 6000);
+    render();
+  }).catch(function(e){ alert('Geri yüklenemedi: '+e.message); });
+}
+window.gecmisGeriYukle=gecmisGeriYukle;
 
 /* ============================================================
    RADYO PANELLERİ

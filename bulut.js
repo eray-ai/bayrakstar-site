@@ -98,6 +98,37 @@
     });
   }
 
+  /* ------------------------------------------------------------
+     SÜRÜM GEÇMİŞİ
+     Her kayıttan ÖNCEKİ hâl `site_icerik_gecmis` tablosuna düşer.
+     Bu tabloyu YALNIZCA giriş yapmış yönetici okuyabilir (RLS);
+     anon anahtarla boş liste döner. Yazma/silme politikası hiç yok,
+     yani geçmiş API üzerinden değiştirilemez.
+
+     Geri yükleme ayrı bir uç nokta değil: seçilen sürümün `data`sı
+     normal bulutYaz() ile yazılır — böylece o an canlıda olan içerik
+     de geçmişe düşer, yani geri almanın kendisi de geri alınabilir.
+     ------------------------------------------------------------ */
+  function bulutGecmis(adet) {
+    var t = jeton();
+    if (!t) return Promise.reject(new Error("Önce giriş yapmalısın."));
+    var n = adet || 20;
+    return fetch(URL_ + "/rest/v1/site_icerik_gecmis" +
+                 "?select=id,kayit_zamani,data&icerik_id=eq.1" +
+                 "&order=kayit_zamani.desc&limit=" + n, {
+      headers: basliklar(t)
+    }).then(function (r) {
+      if (r.status === 401 || r.status === 403) {
+        try { sessionStorage.removeItem(OTURUM); } catch (e) {}
+        throw new Error("Oturum süresi doldu. Sayfayı yenileyip tekrar giriş yap.");
+      }
+      if (!r.ok) {
+        return r.text().then(function (t2) { throw new Error("Geçmiş okunamadı: " + (t2 || r.status)); });
+      }
+      return r.json();
+    });
+  }
+
   function onbellekVar() {
     try { return !!localStorage.getItem(ONBELLEK); } catch (e) { return false; }
   }
@@ -134,6 +165,7 @@
     oku: bulutOku,
     giris: bulutGiris,
     yaz: bulutYaz,
+    gecmis: bulutGecmis,
     jeton: jeton,
     girisliMi: function () { return !!jeton(); },
     cikis: function () { try { sessionStorage.removeItem(OTURUM); } catch (e) {} }
