@@ -36,10 +36,10 @@ window.DEFAULT_DATA = {
     "gorseller/genis-4.jpg"
   ],
   "slogans": [
-    "Maksimum Hit Müzik",
-    "Eğlence ve Müzik",
-    "Aç Sesini",
-    "Dinliyorum"
+    "Radyo Fenomen",
+    "Fenomen Türk",
+    "Radyo Boombox",
+    "İstanbul FM"
   ],
   "intro": {
     "tag": "Bayrakstar Çatısı",
@@ -809,7 +809,7 @@ window.DEFAULT_DATA = {
   "contact": {
     "tag": "Bize Ulaşın",
     "headline": "İletişim",
-    "text": "Reklam, iş birliği, basın talepleri ve genel sorular için aşağıdaki kanallardan bize yazabilirsiniz.",
+    "text": "Reklam, iş birliği ve basın talepleri için iletişime geçebileceğiniz mail adreslerimiz",
     "items": [
       {
         "icon": "✉️",
@@ -828,15 +828,19 @@ window.DEFAULT_DATA = {
         "label": "Basın",
         "value": "basin@bayrakstar.com",
         "href": "mailto:basin@bayrakstar.com"
-      },
+      }
+    ],
+    "note": "Radyolara doğrudan ulaşmak için ilgili radyonun sayfasındaki iletişim bilgilerini kullanabilirsiniz.",
+    "istekBaslik": "İstek Hattı",
+    "istekText": "Şarkı isteklerin ve selamların için radyoların WhatsApp hatları",
+    "istekItems": [
       {
         "icon": "💬",
         "label": "İstanbul FM İstek Hattı",
         "value": "+90 544 886 18 86",
         "href": "https://wa.me/905448861886"
       }
-    ],
-    "note": "Radyolara doğrudan ulaşmak için ilgili radyonun sayfasındaki iletişim bilgilerini kullanabilirsiniz."
+    ]
   },
   "grafik": {
     "zeminler": true,
@@ -878,6 +882,9 @@ window.getSiteData = function () {
   /* iletişim kartları: kayıtlı liste varsa o, yoksa varsayılan */
   out.contact.items = (saved.contact && Array.isArray(saved.contact.items) && saved.contact.items.length)
     ? saved.contact.items : (def.contact ? def.contact.items : []);
+  /* dinleyici istek hatları ayrı liste — kayıtlı kopyada yoksa varsayılandan gelir */
+  out.contact.istekItems = (saved.contact && Array.isArray(saved.contact.istekItems) && saved.contact.istekItems.length)
+    ? saved.contact.istekItems : ((def.contact && def.contact.istekItems) || []);
   out.slides  = (saved.slides  && saved.slides.length)  ? saved.slides  : def.slides;
   out.slogans = (saved.slogans && saved.slogans.length) ? saved.slogans : def.slogans;
 

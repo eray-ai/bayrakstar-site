@@ -184,6 +184,12 @@
   .ccard .tx{min-width:0}
   .ccard .lb{font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.55;font-weight:700}
   .ccard .vl{font-weight:800;font-size:14.5px;margin-top:5px;overflow-wrap:anywhere}
+  /* Kurumsal mail kartlarından AYRI duran dinleyici istek hattı bloğu */
+  .istek-blok{margin-top:52px;padding-top:44px;position:relative}
+  .istek-blok::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:min(280px,60%);height:1px;background:rgba(255,255,255,.14)}
+  .istek-blok h3{font-size:clamp(20px,2.6vw,28px);font-weight:800;letter-spacing:-.01em}
+  .istek-blok .lead{margin:12px auto 30px}
   .contact .cnote{opacity:.45;font-size:13px;line-height:1.7;margin-top:30px}
 
   /* ============ FOOTER ============ */
@@ -393,6 +399,11 @@
     <h2 id="cHead"></h2>
     <p class="lead" id="cText"></p>
     <div class="cgrid" id="cGrid"></div>
+    <div id="cIstek" class="istek-blok" hidden>
+      <h3 id="cIstekBaslik"></h3>
+      <p class="lead" id="cIstekText"></p>
+      <div class="cgrid" id="cIstekGrid"></div>
+    </div>
     <p class="cnote" id="cNote"></p>
   </div>
 </section>
@@ -739,8 +750,32 @@ window.playFirst=openBand;
                  '<span class="vl" style="display:block">'+esc(it.value)+'</span></span>';
     cg.appendChild(el);
   });
+  /* ---- dinleyici istek hattı: kurumsal maillerden ayrı blok ---- */
+  var ig=document.getElementById('cIstekGrid');
+  (C.istekItems||[]).forEach(function(it){
+    if(!it || !(it.value||'').trim()) return;
+    var hedef=(it.href||'').trim();
+    var el=document.createElement(hedef?'a':'div');
+    el.className='ccard';
+    if(hedef){
+      el.href=hedef;
+      if(/^https?:/.test(hedef)){ el.target='_blank'; el.rel='noopener'; }
+      el.setAttribute('aria-label',(it.label||'')+': '+it.value);
+    }
+    el.innerHTML='<span class="ic" aria-hidden="true">'+esc(it.icon||'•')+'</span>'+
+                 '<span class="tx"><span class="lb">'+esc(it.label||'')+'</span>'+
+                 '<span class="vl" style="display:block">'+esc(it.value)+'</span></span>';
+    ig.appendChild(el);
+  });
+  if(ig.children.length){
+    document.getElementById('cIstek').hidden=false;
+    document.getElementById('cIstekBaslik').textContent = C.istekBaslik || 'İstek Hattı';
+    var itx=document.getElementById('cIstekText');
+    if(C.istekText) itx.textContent=C.istekText; else itx.style.display='none';
+  }
+
   /* hiç iletişim kalemi yoksa bölümü hiç gösterme */
-  if(!cg.children.length) document.getElementById('iletisim').style.display='none';
+  if(!cg.children.length && !ig.children.length) document.getElementById('iletisim').style.display='none';
 })();
 
 /* ---- FOOTER ---- */

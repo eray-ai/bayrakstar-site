@@ -553,7 +553,34 @@ function panelSite(b){
   if(b.id==='iletisim'){
     ensureIletisim();
     const C=D.contact, IK=['✉️','📢','📰','💬','📞','📍','🌐','🎧'];
-    return baslik(b,'Ana sayfanın altındaki İletişim bölümü. Buradaki e-posta ve telefonlar siteye olduğu gibi yansır.')
+    /* Kalem listesi iki yerde birebir aynı biçimde çiziliyor: kurumsal mailler
+       ve dinleyici istek hatları. Tek fonksiyon, iki farklı dizi yolu. */
+    function iletisimListesi(dizi, yol, ekleSimge){
+      return (dizi.length?'':'<div class="bos">Henüz kalem yok.</div>')
+      + dizi.map(function(it,i){
+          const Y=yol+'['+i+']';
+          return '<div class="item"><div class="ihead"><span class="n">'+(it.label||'Kalem '+(i+1))+'</span><div class="ctrl">'
+          + '<button class="mv" onclick="mv('+yol+','+i+',-1,yenile)">↑</button>'
+          + '<button class="mv" onclick="mv('+yol+','+i+',1,yenile)">↓</button>'
+          + '<button class="del" onclick="silOge(\''+yol+'\','+i+',\''+att(it.label||('Kalem '+(i+1)))+'\')">Sil</button></div></div>'
+          + '<div class="grid2">'
+          +   alan('Simge', '<select onchange="'+Y+'.icon=this.value">'
+                + IK.map(function(k){return '<option'+(k===it.icon?' selected':'')+'>'+k+'</option>';}).join('')
+                + (IK.indexOf(it.icon)<0&&it.icon?'<option selected>'+att(it.icon)+'</option>':'')
+                + '</select>')
+          +   alan('Başlık', txtInput(it.label,Y+'.label',30), 30, it.label)
+          + '</div>'
+          + '<div class="grid2">'
+          +   alan('Görünen değer', txtInput(it.value,Y+'.value',44), 44, it.value,
+                   'Ziyaretçinin gördüğü yazı: e-posta ya da telefon.')
+          +   alan('Bağlantı', urlInput(it.href,Y+'.href','mailto:... veya https://wa.me/90...'), 0, '',
+                   'E-posta için <b>mailto:</b> ile, WhatsApp için <b>https://wa.me/90…</b> ile başlat.')
+          + '</div></div>';
+        }).join('')
+      + '<button class="add" onclick="'+yol+'.push({icon:\''+ekleSimge+'\',label:\'\',value:\'\',href:\'\'});yenile()">+ Kalem Ekle</button>';
+    }
+
+    return baslik(b,'Ana sayfanın altındaki İletişim bölümü. Üstte kurumsal mail adresleri, altında ayrı bir blokta dinleyici istek hatları görünür.')
     + '<div class="grid2">'
     +   alan('Üst etiket', txtInput(C.tag,'D.contact.tag',26), 26, C.tag, 'Başlığın üstündeki küçük yazı.')
     +   alan('Başlık', txtInput(C.headline,'D.contact.headline',40), 40, C.headline)
@@ -563,28 +590,19 @@ function panelSite(b){
     + '<div style="height:10px"></div>'
     + '<div class="hint" style="margin-bottom:10px">Aşağıdaki her kalem, sitede bir iletişim kartı olur. '
     + '<b>Bağlantı</b> boş bırakılırsa kart tıklanamaz, sadece bilgi gösterir.</div>'
-    + (C.items.length?'':'<div class="bos">Henüz iletişim kalemi yok.</div>')
-    + C.items.map(function(it,i){
-        const Y='D.contact.items['+i+']';
-        return '<div class="item"><div class="ihead"><span class="n">'+(it.label||'Kalem '+(i+1))+'</span><div class="ctrl">'
-        + '<button class="mv" onclick="mv(D.contact.items,'+i+',-1,yenile)">↑</button>'
-        + '<button class="mv" onclick="mv(D.contact.items,'+i+',1,yenile)">↓</button>'
-        + '<button class="del" onclick="silOge(\'D.contact.items\','+i+',\''+att(it.label||('Kalem '+(i+1)))+'\')">Sil</button></div></div>'
-        + '<div class="grid2">'
-        +   alan('Simge', '<select onchange="'+Y+'.icon=this.value">'
-              + IK.map(function(k){return '<option'+(k===it.icon?' selected':'')+'>'+k+'</option>';}).join('')
-              + (IK.indexOf(it.icon)<0&&it.icon?'<option selected>'+att(it.icon)+'</option>':'')
-              + '</select>')
-        +   alan('Başlık', txtInput(it.label,Y+'.label',30), 30, it.label)
-        + '</div>'
-        + '<div class="grid2">'
-        +   alan('Görünen değer', txtInput(it.value,Y+'.value',44), 44, it.value,
-                 'Ziyaretçinin gördüğü yazı: e-posta ya da telefon.')
-        +   alan('Bağlantı', urlInput(it.href,Y+'.href','mailto:... veya https://wa.me/90...'), 0, '',
-                 'E-posta için <b>mailto:</b> ile, WhatsApp için <b>https://wa.me/90…</b> ile başlat.')
-        + '</div></div>';
-      }).join('')
-    + '<button class="add" onclick="D.contact.items.push({icon:\'✉️\',label:\'\',value:\'\',href:\'\'});yenile()">+ İletişim Kalemi Ekle</button>'
+    + iletisimListesi(C.items,'D.contact.items','✉️')
+
+    /* ---- ayrı blok: dinleyici istek hatları ---- */
+    + '<hr style="border:none;border-top:1px solid #e6e4df;margin:30px 0 22px">'
+    + '<h3 style="font-size:17px;font-weight:800;margin-bottom:6px">💬 İstek Hattı bloğu</h3>'
+    + '<div class="hint" style="margin-bottom:14px">Kurumsal maillerin ALTINDA, ayrı başlıkla görünür. '
+    + 'Buraya hiç kalem eklemezsen blok hiç çizilmez.</div>'
+    + '<div class="grid2">'
+    +   alan('Blok başlığı', txtInput(C.istekBaslik,'D.contact.istekBaslik',40), 40, C.istekBaslik)
+    +   alan('Blok açıklaması', txtInput(C.istekText,'D.contact.istekText',160), 160, C.istekText,
+             'Boş bırakılırsa yazılmaz.')
+    + '</div>'
+    + iletisimListesi(C.istekItems,'D.contact.istekItems','💬')
     + '<div style="height:14px"></div>'
     + alan('Alt not', taInput(C.note,'D.contact.note',220), 220, C.note,
            'Kartların altında küçük punto ile çıkar. Boş bırakılırsa hiç görünmez.');
@@ -613,6 +631,10 @@ function ensureIletisim(){
   if(typeof C.text!=='string')     C.text='';
   if(typeof C.note!=='string')     C.note='';
   if(!Array.isArray(C.items))      C.items=[];
+  /* dinleyici istek hatları — kurumsal maillerden ayrı blok */
+  if(typeof C.istekBaslik!=='string') C.istekBaslik='İstek Hattı';
+  if(typeof C.istekText!=='string')   C.istekText='';
+  if(!Array.isArray(C.istekItems))    C.istekItems=[];
 }
 
 /* ============================================================
