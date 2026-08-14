@@ -9,6 +9,10 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://eray-ai.github.io/bayrakstar-site/uygulamalar.html</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://eray-ai.github.io/bayrakstar-site/yasal.html</loc>
     <priority>0.3</priority>
   </url>

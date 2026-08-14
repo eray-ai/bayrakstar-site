@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
+     kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
+     yayın adresini media-src VE connect-src listelerine ekle. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; connect-src 'self' https://bezwdlxombiirihxomnv.supabase.co https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; worker-src 'self' blob:; manifest-src 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uygulamalarımız — Bayrakstar</title>
+<meta name="description" content="Bayrakstar radyolarının mobil uygulamaları: Radyo Fenomen, Radyo Boombox ve İstanbul FM'i iPhone, iPad, Android telefon ve tabletten, Apple CarPlay ile Android Auto üzerinden dinle.">
+<meta name="theme-color" content="#1c1c1c">
+<link rel="canonical" href="https://eray-ai.github.io/bayrakstar-site/uygulamalar.html">
+
+<!-- Favicon -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!-- Sosyal paylaşım -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bayrakstar">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:title" content="Uygulamalarımız — Bayrakstar">
+<meta property="og:description" content="Radyolarımızı telefonundan, tabletinden ve aracının ekranından dinle. Uygulamalar ücretsiz.">
+<meta property="og:url" content="https://eray-ai.github.io/bayrakstar-site/uygulamalar.html">
+<meta property="og:image" content="https://eray-ai.github.io/bayrakstar-site/og/bayrakstar.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bayrakstar logosu">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Uygulamalarımız — Bayrakstar">
+<meta name="twitter:description" content="Radyolarımızı telefonundan, tabletinden ve aracının ekranından dinle.">
+<meta name="twitter:image" content="https://eray-ai.github.io/bayrakstar-site/og/bayrakstar.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="data.js"></script>
+<script src="bulut.js"></script>
+<style>
+  :root{--yellow:#ffca11;--blue:#0081ba;--red:#ff0007;--teal:#00bac5;--coral:#f75843;--dark:#1c1c1c}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Open Sans',system-ui,sans-serif;background:var(--dark);color:#fff;min-height:100vh;display:flex;flex-direction:column}
+  a{color:inherit;text-decoration:none}
+  img{display:block}
+  header{display:flex;align-items:center;justify-content:space-between;padding:18px 6vw}
+  header .back{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px;opacity:.85;transition:opacity .2s}
+  header .back:hover{opacity:1}
+  header .back img{height:32px}
+
+  .hero{text-align:center;padding:40px 6vw 20px}
+  .hero .kick{font-size:12px;letter-spacing:.4em;text-transform:uppercase;font-weight:700;color:var(--yellow);margin-bottom:16px}
+  .hero h1{font-size:clamp(30px,5vw,52px);font-weight:800;line-height:1.05;letter-spacing:-.02em}
+  .hero p{opacity:.7;margin-top:16px;font-size:16px;max-width:600px;margin-left:auto;margin-right:auto;line-height:1.7}
+
+  .wrap{flex:1;max-width:1060px;margin:0 auto;padding:40px 6vw 90px;width:100%}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px}
+
+  .ucard{position:relative;border-radius:22px;overflow:hidden;padding:32px 26px 28px;display:flex;flex-direction:column;align-items:center;text-align:center;
+    border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);transition:transform .3s,box-shadow .3s,background .3s}
+  .ucard:hover{transform:translateY(-6px);box-shadow:0 24px 50px rgba(0,0,0,.45);background:rgba(255,255,255,.07)}
+  .uicon{width:118px;height:118px;border-radius:28px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;position:relative;overflow:hidden;
+    box-shadow:0 14px 32px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.25)}
+  .uicon img{width:74%;height:74%;object-fit:contain;position:relative;z-index:2}
+  .uicon::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.22),transparent 55%)}
+  .ucard h2{font-size:21px;font-weight:800;letter-spacing:-.01em;margin-bottom:8px}
+  .ucard .cihaz{opacity:.62;font-size:13.5px;line-height:1.75;margin-bottom:22px}
+  .ucard .arac{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    opacity:.55;border:1px solid rgba(255,255,255,.18);border-radius:30px;padding:6px 13px;margin-bottom:22px}
+  .stores{display:flex;flex-direction:column;gap:10px;align-items:stretch;width:100%;max-width:210px;margin-top:auto}
+  .store{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:#000;color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:9px 15px;transition:.25s}
+  .store:hover{background:#fff;color:#000;border-color:#fff}
+  .store svg{width:21px;height:21px;flex:none}
+  .store span{display:flex;flex-direction:column;line-height:1.15;text-align:left}
+  .store b{font-size:13px;font-weight:800}
+  .store i{font-size:9px;font-style:normal;letter-spacing:.12em;text-transform:uppercase;opacity:.75}
+
+  .note{text-align:center;opacity:.5;font-size:13px;margin-top:34px;line-height:1.9}
+  footer{text-align:center;padding:26px;opacity:.5;font-size:13px}
+
+  /* erişilebilirlik */
+  a:focus-visible,button:focus-visible{outline:3px solid #fff;outline-offset:3px;border-radius:8px}
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+  }
+</style>
+<link rel="stylesheet" href="paketler/kurumsal.css">
+</head>
+<body>
+<header>
+  <a class="back" href="index.html"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"> <span>← Ana Sayfa</span></a>
+</header>
+
+<section class="hero">
+  <div class="kick">Mobil Uygulamalar</div>
+  <h1>Radyolarımız cebinde</h1>
+  <p>iPhone, iPad, Android telefon ve tablet… Aracının ekranında Apple CarPlay ve Android Auto ile. Uygulamalar ücretsiz.</p>
+</section>
+
+<div class="wrap">
+  <div class="grid" id="grid"></div>
+  <div class="note" id="note"></div>
+</div>
+
+<footer>© 2026 Bayrakstar — colorful life  <div style="margin-top:14px;font-size:12.5px;opacity:.5;line-height:2.1" data-yasal-blok hidden><div data-yasal></div></div>
+</footer>
+
+<script>
+window.bulutHazir.then(function(){
+const D = window.getSiteData();
+const esc = s => (s==null?'':String(s));
+
+const elmaSvg='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.7c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.9-3-.8c-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.9-2.3.9-1.3 1.3-2.6 1.3-2.7 0 0-2.5-1-2.6-3.7zM14.2 5.9c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.8 1.4-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.5 2.8-1.3z"/></svg>';
+const playSvg='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#00d0ff" d="M3.6 2.3c-.3.3-.5.8-.5 1.4v16.6c0 .6.2 1.1.5 1.4l8.7-9.1-8.7-9.3z"/><path fill="#ffcc00" d="M17.3 9.1l-3.4-2-2.2 2.3 2.4 2.5 3.2-1.9c.9-.5.9-1.4 0-1.9z"/><path fill="#ff3a44" d="M3.6 2.3c.5-.5 1.2-.5 2-.1l11.7 6.9-3.4 3.5L3.6 2.3z"/><path fill="#00e676" d="M3.6 21.7l10.3-10.3 3.4 3.5-11.7 6.9c-.8.4-1.5.4-2-.1z"/></svg>';
+
+const uygulamali = D.radios.filter(r => r.apps && (r.apps.ios || r.apps.android));
+const uygulamasiz = D.radios.filter(r => !(r.apps && (r.apps.ios || r.apps.android)));
+
+const rozet = (link, logo, ust, alt, ad) => link
+  ? '<a class="store" href="'+esc(link)+'" target="_blank" rel="noopener" aria-label="'+esc(ad)+' uygulamasını indir: '+ust+'">'+logo+'<span><b>'+ust+'</b><i>'+alt+'</i></span></a>'
+  : '';
+
+document.getElementById('grid').innerHTML = uygulamali.map(function(r){
+  const A = r.apps;
+  const arac = [A.carplay?'Apple CarPlay':'', A.androidauto?'Android Auto':''].filter(Boolean).join(' · ');
+  return '<div class="ucard">'+
+    '<div class="uicon" style="background:linear-gradient(145deg,'+esc(r.color)+',rgba(0,0,0,.55))">'+
+      '<img src="'+esc(r.logo)+'" alt="'+esc(r.name)+' uygulama simgesi" loading="lazy">'+
+    '</div>'+
+    '<h2>'+esc(r.name)+'</h2>'+
+    '<div class="cihaz">'+esc(r.slogan||'')+'<br>iPhone · iPad · Android telefon ve tablet</div>'+
+    (arac ? '<div class="arac">'+esc(arac)+' destekli</div>' : '')+
+    '<div class="stores">'+
+      rozet(A.ios, elmaSvg, 'App Store’dan', 'İndirin', r.name)+
+      rozet(A.android, playSvg, 'Google Play', '’den alın', r.name)+
+    '</div>'+
+  '</div>';
+}).join('');
+
+const notlar = ['Bağlantılar App Store ve Google Play’de yeni sekmede açılır.'];
+if (uygulamasiz.length) {
+  notlar.push(uygulamasiz.map(function(r){return esc(r.name);}).join(', ') + ' için uygulama yakında. O zamana kadar radyo sayfasından canlı dinleyebilirsin.');
+}
+document.getElementById('note').innerHTML = notlar.join('<br>');
+});
+</script>
+<script src="site.js"></script>
+<script src="paketler/kurumsal.js"></script>
+</body>
+</html>
