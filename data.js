@@ -412,7 +412,7 @@ window.DEFAULT_DATA = {
       "bodyFont": "Roboto",
       "ink": "#ffffff",
       "url": "https://www.fenomenturk.com",
-      "apps": {"ios":"","android":"","carplay":false,"androidauto":false},
+      "apps": {"ios":"https://apps.apple.com/tr/app/id447790493","android":"https://play.google.com/store/apps/details?id=com.radyofenomen","carplay":true,"androidauto":true,"not":"Radyo Fenomen uygulaması içinden dinlenir"},
       "stream": "https://live.radyofenomen.com/fenomenturk/128/icecast.audio",
       "img": "gorseller/kart-fenomenturk.jpg",
       "hero": "gorseller/genis-6.jpg",
