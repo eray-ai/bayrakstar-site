@@ -85,7 +85,12 @@ window.DEFAULT_DATA = {
       "bodyFont": "Roboto",
       "ink": "#ffffff",
       "url": "https://www.radyofenomen.com",
-      "apps": {"ios":"https://apps.apple.com/tr/app/id447790493","android":"https://play.google.com/store/apps/details?id=com.radyofenomen","carplay":true,"androidauto":true},
+      "apps": {
+        "ios": "https://apps.apple.com/tr/app/id447790493",
+        "android": "https://play.google.com/store/apps/details?id=com.radyofenomen",
+        "carplay": true,
+        "androidauto": true
+      },
       "stream": "https://live.radyofenomen.com/fenomen/128/icecast.audio",
       "img": "gorseller/kart-fenomen.jpg",
       "hero": "gorseller/genis-1.jpg",
@@ -236,6 +241,150 @@ window.DEFAULT_DATA = {
         "fb": "https://facebook.com/radyofenomen"
       },
       "scheduleGun": {
+        "0": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Serdar’la Sabah Modu",
+            "host": "Serdar Koçak",
+            "img": "yayincilar/fenomen-serdar.jpg"
+          },
+          {
+            "t": "10:00 – 13:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "13:00 – 16:00",
+            "name": "DJ K-Billy’le Fenomen Hit Müzik",
+            "host": "Onur Kaymak",
+            "img": "yayincilar/fenomen-dj-k-billy.jpg"
+          },
+          {
+            "t": "16:00 – 17:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "17:00 – 20:00",
+            "name": "Deniz Görkem’le Update",
+            "host": "Deniz Görkem Kaya",
+            "img": "yayincilar/fenomen-deniz-gorkem.jpg"
+          },
+          {
+            "t": "20:00 – 00:00",
+            "name": "Maksimum Hit Müzik"
+          }
+        ],
+        "1": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Serdar’la Sabah Modu",
+            "host": "Serdar Koçak",
+            "img": "yayincilar/fenomen-serdar.jpg"
+          },
+          {
+            "t": "10:00 – 13:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "13:00 – 16:00",
+            "name": "DJ K-Billy’le Fenomen Hit Müzik",
+            "host": "Onur Kaymak",
+            "img": "yayincilar/fenomen-dj-k-billy.jpg"
+          },
+          {
+            "t": "16:00 – 17:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "17:00 – 20:00",
+            "name": "Deniz Görkem’le Update",
+            "host": "Deniz Görkem Kaya",
+            "img": "yayincilar/fenomen-deniz-gorkem.jpg"
+          },
+          {
+            "t": "20:00 – 00:00",
+            "name": "Maksimum Hit Müzik"
+          }
+        ],
+        "2": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Serdar’la Sabah Modu",
+            "host": "Serdar Koçak",
+            "img": "yayincilar/fenomen-serdar.jpg"
+          },
+          {
+            "t": "10:00 – 13:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "13:00 – 16:00",
+            "name": "DJ K-Billy’le Fenomen Hit Müzik",
+            "host": "Onur Kaymak",
+            "img": "yayincilar/fenomen-dj-k-billy.jpg"
+          },
+          {
+            "t": "16:00 – 17:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "17:00 – 20:00",
+            "name": "Deniz Görkem’le Update",
+            "host": "Deniz Görkem Kaya",
+            "img": "yayincilar/fenomen-deniz-gorkem.jpg"
+          },
+          {
+            "t": "20:00 – 00:00",
+            "name": "Maksimum Hit Müzik"
+          }
+        ],
+        "3": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Serdar’la Sabah Modu",
+            "host": "Serdar Koçak",
+            "img": "yayincilar/fenomen-serdar.jpg"
+          },
+          {
+            "t": "10:00 – 13:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "13:00 – 16:00",
+            "name": "DJ K-Billy’le Fenomen Hit Müzik",
+            "host": "Onur Kaymak",
+            "img": "yayincilar/fenomen-dj-k-billy.jpg"
+          },
+          {
+            "t": "16:00 – 17:00",
+            "name": "Maksimum Hit Müzik"
+          },
+          {
+            "t": "17:00 – 20:00",
+            "name": "Deniz Görkem’le Update",
+            "host": "Deniz Görkem Kaya",
+            "img": "yayincilar/fenomen-deniz-gorkem.jpg"
+          },
+          {
+            "t": "20:00 – 00:00",
+            "name": "Maksimum Hit Müzik"
+          }
+        ],
         "4": [
           {
             "t": "00:00 – 07:00",
@@ -285,9 +434,7 @@ window.DEFAULT_DATA = {
             "t": "23:00 – 00:00",
             "name": "Underground Boutique",
             "host": "Ahmet Şendil"
-          }
-        ],
-        "5": [
+          },
           {
             "t": "00:00 – 01:00",
             "name": "Fenomen Clubbin’",
@@ -303,7 +450,9 @@ window.DEFAULT_DATA = {
             "t": "02:00 – 03:00",
             "name": "Flow",
             "host": "Fatih Doğan"
-          },
+          }
+        ],
+        "5": [
           {
             "t": "03:00 – 10:00",
             "name": "Maksimum Hit Müzik"
@@ -350,9 +499,7 @@ window.DEFAULT_DATA = {
             "t": "23:00 – 00:00",
             "name": "Back To The Future",
             "host": "İlkay Şencan"
-          }
-        ],
-        "6": [
+          },
           {
             "t": "00:00 – 01:00",
             "name": "Sound Pool",
@@ -367,7 +514,9 @@ window.DEFAULT_DATA = {
             "t": "02:00 – 03:00",
             "name": "Global Mix",
             "host": "Bilgehan Başkan"
-          },
+          }
+        ],
+        "6": [
           {
             "t": "03:00 – 10:00",
             "name": "Maksimum Hit Müzik"
@@ -414,7 +563,13 @@ window.DEFAULT_DATA = {
       "bodyFont": "Roboto",
       "ink": "#ffffff",
       "url": "https://www.fenomenturk.com",
-      "apps": {"ios":"https://apps.apple.com/tr/app/id447790493","android":"https://play.google.com/store/apps/details?id=com.radyofenomen","carplay":true,"androidauto":true,"not":"Radyo Fenomen uygulaması içinden dinlenir"},
+      "apps": {
+        "ios": "https://apps.apple.com/tr/app/id447790493",
+        "android": "https://play.google.com/store/apps/details?id=com.radyofenomen",
+        "carplay": true,
+        "androidauto": true,
+        "not": "Radyo Fenomen uygulaması içinden dinlenir"
+      },
       "stream": "https://live.radyofenomen.com/fenomenturk/128/icecast.audio",
       "img": "gorseller/kart-fenomenturk.jpg",
       "hero": "gorseller/genis-6.jpg",
@@ -510,9 +665,7 @@ window.DEFAULT_DATA = {
         },
         {
           "t": "15:00 – 18:00",
-          "name": "Mert’le Perde Arkası",
-          "host": "Mert Üzülmez",
-          "img": "yayincilar/fenomenturk-mert-uzulmez.jpg"
+          "name": "Eğlence ve Müzik"
         },
         {
           "t": "18:00 – 20:00",
@@ -551,6 +704,174 @@ window.DEFAULT_DATA = {
         "yt": "https://www.youtube.com/@radyofenomenturk"
       },
       "scheduleGun": {
+        "0": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Tansu Çağlayan’la Yeni Gün",
+            "host": "Tansu Çağlayan",
+            "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
+          },
+          {
+            "t": "10:00 – 12:00",
+            "name": "Doğanay’ın Dünyası",
+            "host": "Doğanay Cireli",
+            "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+          },
+          {
+            "t": "12:00 – 13:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "13:00 – 15:00",
+            "name": "Ömer Erişmen’le Extra",
+            "host": "Ömer Erişmen",
+            "img": "yayincilar/fenomenturk-omer-erismen.jpg"
+          },
+          {
+            "t": "15:00 – 18:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "18:00 – 20:00",
+            "name": "Murat Özsoy’la Şarzzz",
+            "host": "Murat Özsoy",
+            "img": "yayincilar/fenomenturk-murat-ozsoy.jpg"
+          },
+          {
+            "t": "20:00 – 00:00",
+            "name": "Eğlence ve Müzik"
+          }
+        ],
+        "1": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Tansu Çağlayan’la Yeni Gün",
+            "host": "Tansu Çağlayan",
+            "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
+          },
+          {
+            "t": "10:00 – 12:00",
+            "name": "Doğanay’ın Dünyası",
+            "host": "Doğanay Cireli",
+            "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+          },
+          {
+            "t": "12:00 – 13:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "13:00 – 15:00",
+            "name": "Ömer Erişmen’le Extra",
+            "host": "Ömer Erişmen",
+            "img": "yayincilar/fenomenturk-omer-erismen.jpg"
+          },
+          {
+            "t": "15:00 – 18:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "18:00 – 20:00",
+            "name": "Murat Özsoy’la Şarzzz",
+            "host": "Murat Özsoy",
+            "img": "yayincilar/fenomenturk-murat-ozsoy.jpg"
+          },
+          {
+            "t": "20:00 – 00:00",
+            "name": "Eğlence ve Müzik"
+          }
+        ],
+        "2": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Tansu Çağlayan’la Yeni Gün",
+            "host": "Tansu Çağlayan",
+            "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
+          },
+          {
+            "t": "10:00 – 12:00",
+            "name": "Doğanay’ın Dünyası",
+            "host": "Doğanay Cireli",
+            "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+          },
+          {
+            "t": "12:00 – 13:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "13:00 – 15:00",
+            "name": "Ömer Erişmen’le Extra",
+            "host": "Ömer Erişmen",
+            "img": "yayincilar/fenomenturk-omer-erismen.jpg"
+          },
+          {
+            "t": "15:00 – 18:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "18:00 – 20:00",
+            "name": "Murat Özsoy’la Şarzzz",
+            "host": "Murat Özsoy",
+            "img": "yayincilar/fenomenturk-murat-ozsoy.jpg"
+          },
+          {
+            "t": "20:00 – 00:00",
+            "name": "Eğlence ve Müzik"
+          }
+        ],
+        "3": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Tansu Çağlayan’la Yeni Gün",
+            "host": "Tansu Çağlayan",
+            "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
+          },
+          {
+            "t": "10:00 – 12:00",
+            "name": "Doğanay’ın Dünyası",
+            "host": "Doğanay Cireli",
+            "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+          },
+          {
+            "t": "12:00 – 13:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "13:00 – 15:00",
+            "name": "Ömer Erişmen’le Extra",
+            "host": "Ömer Erişmen",
+            "img": "yayincilar/fenomenturk-omer-erismen.jpg"
+          },
+          {
+            "t": "15:00 – 18:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "18:00 – 20:00",
+            "name": "Murat Özsoy’la Şarzzz",
+            "host": "Murat Özsoy",
+            "img": "yayincilar/fenomenturk-murat-ozsoy.jpg"
+          },
+          {
+            "t": "20:00 – 00:00",
+            "name": "Eğlence ve Müzik"
+          }
+        ],
         "4": [
           {
             "t": "00:00 – 07:00",
@@ -580,9 +901,7 @@ window.DEFAULT_DATA = {
           },
           {
             "t": "15:00 – 18:00",
-            "name": "Mert’le Perde Arkası",
-            "host": "Mert Üzülmez",
-            "img": "yayincilar/fenomenturk-mert-uzulmez.jpg"
+            "name": "Eğlence ve Müzik"
           },
           {
             "t": "18:00 – 20:00",
@@ -639,14 +958,8 @@ window.DEFAULT_DATA = {
         ],
         "6": [
           {
-            "t": "00:00 – 12:00",
+            "t": "00:00 – 15:00",
             "name": "Eğlence ve Müzik"
-          },
-          {
-            "t": "12:00 – 15:00",
-            "name": "Mert’le Perde Arkası",
-            "host": "Mert Üzülmez",
-            "img": "yayincilar/fenomenturk-mert-uzulmez.jpg"
           },
           {
             "t": "15:00 – 16:00",
@@ -675,7 +988,12 @@ window.DEFAULT_DATA = {
       "bodyFont": "Montserrat",
       "ink": "#ffffff",
       "url": "https://www.radyoboombox.com.tr",
-      "apps": {"ios":"https://apps.apple.com/tr/app/id6450677238","android":"https://play.google.com/store/apps/details?id=com.radyoboombox","carplay":true,"androidauto":true},
+      "apps": {
+        "ios": "https://apps.apple.com/tr/app/id6450677238",
+        "android": "https://play.google.com/store/apps/details?id=com.radyoboombox",
+        "carplay": true,
+        "androidauto": true
+      },
       "stream": "https://yayin.radyoboombox.com.tr/boombox/playlist.m3u8",
       "img": "gorseller/kart-boombox.jpg",
       "hero": "gorseller/genis-4.jpg",
@@ -712,7 +1030,133 @@ window.DEFAULT_DATA = {
         "fb": "https://www.facebook.com/radyoboombox",
         "tiktok": "https://www.tiktok.com/@radyoboombox"
       },
-      "scheduleGun": {}
+      "scheduleGun": {
+        "0": [
+          {
+            "t": "00:00 – 10:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          },
+          {
+            "t": "10:00 – 16:00",
+            "name": "Acil İstek Hattı",
+            "img": "programlar/boombox-acil-istek-hatti.jpg"
+          },
+          {
+            "t": "16:00 – 00:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          }
+        ],
+        "1": [
+          {
+            "t": "00:00 – 10:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          },
+          {
+            "t": "10:00 – 16:00",
+            "name": "Acil İstek Hattı",
+            "img": "programlar/boombox-acil-istek-hatti.jpg"
+          },
+          {
+            "t": "16:00 – 00:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          }
+        ],
+        "2": [
+          {
+            "t": "00:00 – 10:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          },
+          {
+            "t": "10:00 – 16:00",
+            "name": "Acil İstek Hattı",
+            "img": "programlar/boombox-acil-istek-hatti.jpg"
+          },
+          {
+            "t": "16:00 – 00:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          }
+        ],
+        "3": [
+          {
+            "t": "00:00 – 10:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          },
+          {
+            "t": "10:00 – 16:00",
+            "name": "Acil İstek Hattı",
+            "img": "programlar/boombox-acil-istek-hatti.jpg"
+          },
+          {
+            "t": "16:00 – 00:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          }
+        ],
+        "4": [
+          {
+            "t": "00:00 – 10:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          },
+          {
+            "t": "10:00 – 16:00",
+            "name": "Acil İstek Hattı",
+            "img": "programlar/boombox-acil-istek-hatti.jpg"
+          },
+          {
+            "t": "16:00 – 00:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          }
+        ],
+        "5": [
+          {
+            "t": "00:00 – 13:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          },
+          {
+            "t": "13:00 – 14:00",
+            "name": "Boombox İlk 20"
+          },
+          {
+            "t": "14:00 – 15:00",
+            "name": "Specialbox"
+          },
+          {
+            "t": "15:00 – 00:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          }
+        ],
+        "6": [
+          {
+            "t": "00:00 – 15:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          },
+          {
+            "t": "15:00 – 16:00",
+            "name": "Specialbox"
+          },
+          {
+            "t": "16:00 – 17:00",
+            "name": "Boombox İlk 20"
+          },
+          {
+            "t": "17:00 – 00:00",
+            "name": "Freestyle",
+            "img": "programlar/boombox-freestyle.jpg"
+          }
+        ]
+      }
     },
     {
       "name": "İstanbul FM",
@@ -729,7 +1173,12 @@ window.DEFAULT_DATA = {
       "bodyFont": "Nunito",
       "ink": "#ffffff",
       "url": "https://www.istanbulfm.com.tr",
-      "apps": {"ios":"https://apps.apple.com/tr/app/id1463801479","android":"https://play.google.com/store/apps/details?id=com.radioistanbulfm","carplay":true,"androidauto":true},
+      "apps": {
+        "ios": "https://apps.apple.com/tr/app/id1463801479",
+        "android": "https://play.google.com/store/apps/details?id=com.radioistanbulfm",
+        "carplay": true,
+        "androidauto": true
+      },
       "stream": "https://yayin.istanbulfm.com.tr/istanbulfm/playlist.m3u8",
       "img": "gorseller/kart-istanbulfm.jpg",
       "hero": "gorseller/genis-5.jpg",
@@ -763,8 +1212,7 @@ window.DEFAULT_DATA = {
       "schedule": [
         {
           "t": "00:00 – 07:00",
-          "name": "Kesintisiz Müzik",
-          "img": "programlar/istanbulfm-kesintisiz.jpg"
+          "name": "İstanbul FM Kesintisiz Müzik"
         },
         {
           "t": "07:00 – 10:00",
@@ -823,7 +1271,213 @@ window.DEFAULT_DATA = {
         "yt": "https://www.youtube.com/channel/UCwvD2SW9lvzHFQkh1x2JYmg",
         "fb": "https://www.facebook.com/istanbulfmoffical/"
       },
-      "scheduleGun": {}
+      "scheduleGun": {
+        "0": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "İstanbul FM Kesintisiz Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Emre Mutlu Show",
+            "host": "Emre Mutlu",
+            "img": "yayincilar/istanbulfm-emre-mutlu.jpg"
+          },
+          {
+            "t": "10:00 – 14:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          },
+          {
+            "t": "14:00 – 16:00",
+            "name": "Yalçın.Net",
+            "host": "Yalçın Alaca",
+            "img": "yayincilar/istanbulfm-yalcin-alaca.jpg"
+          },
+          {
+            "t": "16:00 – 17:00",
+            "name": "Nerede O Eski Şarkılar?",
+            "img": "programlar/istanbulfm-nerede-o-eski-sarkilar.jpg"
+          },
+          {
+            "t": "17:00 – 00:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          }
+        ],
+        "1": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "İstanbul FM Kesintisiz Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Emre Mutlu Show",
+            "host": "Emre Mutlu",
+            "img": "yayincilar/istanbulfm-emre-mutlu.jpg"
+          },
+          {
+            "t": "10:00 – 14:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          },
+          {
+            "t": "14:00 – 16:00",
+            "name": "Yalçın.Net",
+            "host": "Yalçın Alaca",
+            "img": "yayincilar/istanbulfm-yalcin-alaca.jpg"
+          },
+          {
+            "t": "16:00 – 17:00",
+            "name": "Nerede O Eski Şarkılar?",
+            "img": "programlar/istanbulfm-nerede-o-eski-sarkilar.jpg"
+          },
+          {
+            "t": "17:00 – 00:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          }
+        ],
+        "2": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "İstanbul FM Kesintisiz Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Emre Mutlu Show",
+            "host": "Emre Mutlu",
+            "img": "yayincilar/istanbulfm-emre-mutlu.jpg"
+          },
+          {
+            "t": "10:00 – 14:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          },
+          {
+            "t": "14:00 – 16:00",
+            "name": "Yalçın.Net",
+            "host": "Yalçın Alaca",
+            "img": "yayincilar/istanbulfm-yalcin-alaca.jpg"
+          },
+          {
+            "t": "16:00 – 17:00",
+            "name": "Nerede O Eski Şarkılar?",
+            "img": "programlar/istanbulfm-nerede-o-eski-sarkilar.jpg"
+          },
+          {
+            "t": "17:00 – 00:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          }
+        ],
+        "3": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "İstanbul FM Kesintisiz Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Emre Mutlu Show",
+            "host": "Emre Mutlu",
+            "img": "yayincilar/istanbulfm-emre-mutlu.jpg"
+          },
+          {
+            "t": "10:00 – 14:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          },
+          {
+            "t": "14:00 – 16:00",
+            "name": "Yalçın.Net",
+            "host": "Yalçın Alaca",
+            "img": "yayincilar/istanbulfm-yalcin-alaca.jpg"
+          },
+          {
+            "t": "16:00 – 17:00",
+            "name": "Nerede O Eski Şarkılar?",
+            "img": "programlar/istanbulfm-nerede-o-eski-sarkilar.jpg"
+          },
+          {
+            "t": "17:00 – 00:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          }
+        ],
+        "4": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "İstanbul FM Kesintisiz Müzik"
+          },
+          {
+            "t": "07:00 – 10:00",
+            "name": "Emre Mutlu Show",
+            "host": "Emre Mutlu",
+            "img": "yayincilar/istanbulfm-emre-mutlu.jpg"
+          },
+          {
+            "t": "10:00 – 14:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          },
+          {
+            "t": "14:00 – 16:00",
+            "name": "Yalçın.Net",
+            "host": "Yalçın Alaca",
+            "img": "yayincilar/istanbulfm-yalcin-alaca.jpg"
+          },
+          {
+            "t": "16:00 – 17:00",
+            "name": "Nerede O Eski Şarkılar?",
+            "img": "programlar/istanbulfm-nerede-o-eski-sarkilar.jpg"
+          },
+          {
+            "t": "17:00 – 00:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          }
+        ],
+        "5": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "İstanbul FM Kesintisiz Müzik"
+          },
+          {
+            "t": "07:00 – 13:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          },
+          {
+            "t": "13:00 – 14:00",
+            "name": "İstanbul FM TOP10 Listesi"
+          },
+          {
+            "t": "14:00 – 00:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          }
+        ],
+        "6": [
+          {
+            "t": "00:00 – 07:00",
+            "name": "İstanbul FM Kesintisiz Müzik"
+          },
+          {
+            "t": "07:00 – 13:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          },
+          {
+            "t": "13:00 – 14:00",
+            "name": "İstanbul FM TOP10 Listesi"
+          },
+          {
+            "t": "14:00 – 00:00",
+            "name": "İstanbul FM En İyiler",
+            "img": "programlar/istanbulfm-en-iyiler.jpg"
+          }
+        ]
+      }
     }
   ],
   "contact": {

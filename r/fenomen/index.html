@@ -647,9 +647,23 @@ document.getElementById('aboutText').textContent = R.about || '';
     if(!oz && R.scheduleGun) oz = R.scheduleGun[String(g)];
     return (oz && oz.length) ? oz : (R.schedule || []);
   }
+  /* "Bu güne özel" rozeti: gün, VARSAYILAN akıştan farklıysa işaretlenir.
+     Eskiden "o güne kayıt var mı" diye bakıyordu; artık 7 günün de kendi
+     akışı olduğu için o kural yedi günü birden işaretliyor, hiçbir şey
+     anlatmıyordu. */
+  function ayniMi(a,b){
+    a=a||[]; b=b||[];
+    if(a.length!==b.length) return false;
+    for(var i=0;i<a.length;i++){
+      if((a[i].t||'')!==(b[i].t||'') || (a[i].name||'')!==(b[i].name||'') ||
+         (a[i].host||'')!==(b[i].host||'')) return false;
+    }
+    return true;
+  }
   function ozelMi(g){
     var oz = (R.scheduleGun && (R.scheduleGun[g] || R.scheduleGun[String(g)]));
-    return !!(oz && oz.length);
+    if(!(oz && oz.length)) return false;
+    return !ayniMi(oz, R.schedule);
   }
   var varMi = (R.schedule && R.schedule.length) ||
               (R.scheduleGun && Object.keys(R.scheduleGun).some(function(k){
