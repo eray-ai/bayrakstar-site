@@ -26,6 +26,13 @@
       opacity:0;transform:translateX(-16px);transition:opacity .4s,transform .4s}
     .navovl.open a{opacity:1;transform:none}
     .navovl a .dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+    /* Radyo satırları isim yerine markanın kendi logosuyla çiziliyor.
+       Logolar farklı en/boy oranında (İstanbul FM çok yatık, Boombox kare gibi)
+       olduğu için yükseklik marka başına ayrı veriliyor — hepsi aynı yükseklikte
+       verilirse Boombox devleşiyor, İstanbul FM cılız kalıyor. */
+    .navovl a.radio{padding:7px 0}
+    .navovl a.radio img{height:52px;max-width:74vw;width:auto;object-fit:contain;object-position:left center;display:block}
+    .navovl a.radio .now{width:10px;height:10px;border-radius:50%;flex-shrink:0}
     .navovl a.small{font-size:clamp(18px,4.5vw,22px);font-weight:700;opacity:.8}
     .navovl.open a.small{opacity:.8}
     .navovl a:hover{color:#fff}
@@ -142,11 +149,22 @@
   /* ---- overlay menü kur ---- */
   var ovl = document.createElement('div');
   ovl.className = 'navovl';
+  /* Logoların optik denge yükseklikleri (px) — dosyadaki en/boy oranından
+     geliyor: yatık logolar alçak, dikey/kare olan Boombox daha yüksek. */
+  var LOGO_H = { fenomen:46, fenomenturk:56, boombox:74, istanbulfm:44 };
   var radioLinks = (D.radios||[]).map(function(r){
     var href = r.slug ? URLRadyo(r.slug) : r.url;
     var active = r.slug && r.slug===curSlug;
-    return '<a data-nav href="'+href+'"'+(r.slug?'':' target="_blank" rel="noopener"')+'>'+
-           '<span class="dot" style="background:'+(r.color||'#fff')+'"></span>'+r.name+(active?' •':'')+'</a>';
+    var hedef = (r.slug?'':' target="_blank" rel="noopener"');
+    var nokta = active ? '<span class="now" style="background:'+(r.color||'#fff')+'"></span>' : '';
+    /* Logosu olmayan radyo eski biçimde (renkli nokta + isim) çizilir. */
+    if(!r.logo){
+      return '<a data-nav href="'+href+'"'+hedef+'>'+
+             '<span class="dot" style="background:'+(r.color||'#fff')+'"></span>'+r.name+(active?' •':'')+'</a>';
+    }
+    var h = LOGO_H[r.slug] || 52;
+    return '<a data-nav class="radio" href="'+href+'"'+hedef+' aria-label="'+r.name+'">'+
+           '<img src="'+r.logo+'" alt="'+r.name+'" style="height:'+h+'px">'+nokta+'</a>';
   }).join('');
   ovl.setAttribute('role','dialog');
   ovl.setAttribute('aria-modal','true');
