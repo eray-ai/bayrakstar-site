@@ -71,11 +71,12 @@
   .brand-slg{font-size:11px;letter-spacing:.3em;opacity:.75;font-weight:400;line-height:1;padding-left:2px}
   .brand-slg b{font-weight:700}
   @media(max-width:520px){ .brand img{height:32px} .brand-slg{font-size:9px;letter-spacing:.24em} }
-  nav.menu{display:flex;gap:30px;font-size:13px;font-weight:700;letter-spacing:.08em}
-  nav.menu a{position:relative;opacity:.82;transition:opacity .25s;white-space:nowrap}
-  nav.menu a::after{content:"";position:absolute;left:0;bottom:-6px;height:2px;width:0;background:var(--coral);transition:width .3s}
-  nav.menu a:hover{opacity:1}
-  nav.menu a:hover::after{width:100%}
+  /* Radyo isimleri, radyo sayfalarındaki "diğer radyolarımız" şeridiyle
+     aynı hap biçiminde duruyor — iki sayfa arasında tutarlı görünsün. */
+  nav.menu{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  nav.menu a{font-size:12px;font-weight:700;padding:7px 13px;border-radius:30px;
+    border:1px solid rgba(255,255,255,.2);opacity:.75;transition:.2s;white-space:nowrap}
+  nav.menu a:hover{opacity:1;background:var(--coral);border-color:var(--coral);color:#fff}
   .burger{display:none;flex-direction:column;gap:5px;cursor:pointer}
   .burger span{width:26px;height:3px;background:#fff;border-radius:3px;transition:.3s}
 
@@ -401,9 +402,7 @@
 <!-- HEADER -->
 <header id="hdr">
   <a class="brand" href="#top"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"><span class="brand-slg" id="brandSlg" aria-hidden="true"></span></a>
-  <nav class="menu" id="navMenu">
-    <a href="#radyolar">Radyolarımız</a>
-  </nav>
+  <nav class="menu" id="navMenu" aria-label="Radyolarımız"></nav>
   <div class="burger" onclick="location.href='#radyolar'"><span></span><span></span><span></span></div>
 </header>
 

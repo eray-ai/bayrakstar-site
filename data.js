@@ -701,7 +701,13 @@ window.DEFAULT_DATA = {
         }
       ],
       "company": "Rumeli Reklam ve Radyo Yayıncılık A.Ş.",
-      "social": {},
+      "social": {
+        "ig": "https://www.instagram.com/radyoboombox/",
+        "x": "https://twitter.com/radyoboombox",
+        "yt": "https://www.youtube.com/@RadyoBoombox",
+        "fb": "https://www.facebook.com/radyoboombox",
+        "tiktok": "https://www.tiktok.com/@radyoboombox"
+      },
       "scheduleGun": {}
     },
     {
@@ -806,7 +812,12 @@ window.DEFAULT_DATA = {
       ],
       "company": "İstanbul FM Radyo Televizyon ve Uydu Yayıncılığı A.Ş.",
       "whatsapp": "+90 544 886 18 86",
-      "social": {},
+      "social": {
+        "ig": "https://www.instagram.com/istanbulfm/",
+        "x": "https://twitter.com/istanbulfm886",
+        "yt": "https://www.youtube.com/channel/UCwvD2SW9lvzHFQkh1x2JYmg",
+        "fb": "https://www.facebook.com/istanbulfmoffical/"
+      },
       "scheduleGun": {}
     }
   ],
@@ -1033,6 +1044,9 @@ window.getSiteData = function () {
     var sv = savedBySlug[dr.slug];
     if (!sv) return dr;
     var birlesik = Object.assign({}, dr, sv);
+    /* Sosyal hesaplar alan bazında birleşir: bulut kopyasında "social": {}
+       duran radyo, data.js'e sonradan eklenen hesapları yutmasın. */
+    birlesik.social = Object.assign({}, dr.social || {}, sv.social || {});
     /* önce kalıcı alan, tutmazsa ad: adı değiştirilen kaydın görseli kaybolmasın */
     birlesik.schedule    = listeBirlestir(dr.schedule,    sv.schedule,    ["t", "name"]);
     /* güne özel akışlar: her gün kendi içinde birleştirilir. Kayıtlı kopyada
