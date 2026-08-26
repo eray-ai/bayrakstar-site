@@ -1156,7 +1156,8 @@ window.DEFAULT_DATA = {
             "img": "programlar/boombox-freestyle.jpg"
           }
         ]
-      }
+      },
+      "weekendNote": "Hafta sonu: Boombox İlk 20 ve Specialbox gibi özel programlar yayınlanır."
     },
     {
       "name": "İstanbul FM",
@@ -1477,7 +1478,8 @@ window.DEFAULT_DATA = {
             "img": "programlar/istanbulfm-en-iyiler.jpg"
           }
         ]
-      }
+      },
+      "weekendNote": "Hafta sonu: İstanbul FM TOP10 Listesi yayınlanır."
     }
   ],
   "contact": {
