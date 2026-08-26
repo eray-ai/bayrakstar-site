@@ -55,6 +55,9 @@
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{font-family:'Open Sans',system-ui,sans-serif;background:var(--dark);color:#fff;overflow-x:hidden}
+  /* Çalar bandı sabit duruyor; sayfanın en altındaki içerik altında kalmasın */
+  body:has(.player.show){padding-bottom:86px}
+  @media(max-width:760px){ body:has(.player.show){padding-bottom:78px} }
   a{color:inherit;text-decoration:none}
   ::selection{background:var(--coral);color:#fff}
   img{display:block}
@@ -752,8 +755,19 @@ D.radios.forEach((r,i)=>{
   strip.appendChild(b);
 });
 
+/* Çalar bandı sayfa açılır açılmaz görünür — ziyaretçi "nereden dinlerim"
+   diye aramasın. Henüz radyo seçilmediği için ÇALMAZ, sadece durur.
+   Kullanıcı kapatırsa o sekme boyunca kapalı kalır (sessionStorage);
+   her gezinmede yeniden açılıp rahatsız etmesin. */
+(function(){
+  var kapali=false;
+  try{ kapali = sessionStorage.getItem('bs_calar_kapali')==='1'; }catch(e){}
+  if(!kapali) player.classList.add('show');
+})();
+
 // "Canlı Dinle" → bandı aç; ilk yayınlı radyoyu başlat
 function openBand(){
+  try{ sessionStorage.removeItem('bs_calar_kapali'); }catch(e){}
   player.classList.add('show');
   if(curIdx<0){ const first=D.radios.findIndex(r=>r.stream&&r.stream.trim()); if(first>=0) playRadio(first); }
 }
@@ -857,7 +871,11 @@ function togglePlay(){
      yayına baştan bağlan */
   audio.play().catch(()=>{ playRadio(curIdx); });
 }
-function closePlayer(){yayinDurdur(audio);player.classList.remove('show');markActive(-1);curIdx=-1;scDurdurTakip();scRadyo=null;plProg.classList.remove('on');}
+function closePlayer(){
+  yayinDurdur(audio);player.classList.remove('show');markActive(-1);curIdx=-1;
+  scDurdurTakip();scRadyo=null;plProg.classList.remove('on');
+  try{ sessionStorage.setItem('bs_calar_kapali','1'); }catch(e){}
+}
 function markActive(i){
   document.querySelectorAll('.pl-chip').forEach(c=>{
     const acik = (+c.dataset.idx===i && isPlaying);
