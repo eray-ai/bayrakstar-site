@@ -65,12 +65,13 @@
     padding:16px 5vw;transition:background .4s,padding .4s,backdrop-filter .4s;
   }
   header.scrolled{background:rgba(18,18,18,.82);backdrop-filter:blur(14px);padding:10px 5vw;box-shadow:0 8px 30px rgba(0,0,0,.4)}
-  /* Marka kilidi: logo + altında "colorful life" (dikey hizalı) */
-  .brand{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+  /* Marka kilidi: logo + altında ortalanmış "colorful life".
+     Slogan logodan geniş olmamalı — punto ve harf aralığı buna göre. */
+  .brand{display:flex;flex-direction:column;align-items:center;gap:4px}
   .brand img{height:38px;width:auto}
-  .brand-slg{font-size:11px;letter-spacing:.3em;opacity:.75;font-weight:400;line-height:1;padding-left:2px}
+  .brand-slg{font-size:9px;letter-spacing:.12em;opacity:.72;font-weight:400;line-height:1;text-align:center;white-space:nowrap}
   .brand-slg b{font-weight:700}
-  @media(max-width:520px){ .brand img{height:32px} .brand-slg{font-size:9px;letter-spacing:.24em} }
+  @media(max-width:520px){ .brand img{height:32px} .brand-slg{font-size:8px;letter-spacing:.08em} }
   /* Radyo isimleri, radyo sayfalarındaki "diğer radyolarımız" şeridiyle
      aynı hap biçiminde duruyor — iki sayfa arasında tutarlı görünsün. */
   nav.menu{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
@@ -115,7 +116,7 @@
      ayrı veriliyor (--h); tek yükseklikte Boombox devleşiyor, İstanbul FM
      cılız kalıyor. --ls küçük ekranda hepsini birden küçültür. */
   .hero-logos{display:flex;align-items:center;justify-content:center;gap:clamp(22px,4vw,52px);
-    flex-wrap:wrap;margin-top:38px;animation:rise .9s .5s both}
+    flex-wrap:wrap;margin-top:clamp(52px,7vh,86px);animation:rise .9s .5s both}
   .hero-logos a{display:block;padding:6px;transition:transform .3s,filter .3s;opacity:.94}
   .hero-logos img{height:calc(var(--h,52) * 1px * var(--ls,1));width:auto;display:block;
     filter:drop-shadow(0 6px 18px rgba(0,0,0,.55))}
