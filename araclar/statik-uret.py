@@ -140,7 +140,12 @@ def sayfa_uret(sablon, derinlik, gomulu, baslik, aciklama, adres, gorsel):
 
     # 1) <base> — göreli yollar kök dizine çözülsün
     base = '<base href="' + ("../" * derinlik) + '">'
-    if "<base " not in s:
+    if "<base " in s:
+        # Şablonlarda artık kök için <base href="./"> duruyor; derinliğe göre
+        # DEĞİŞTİR. Eskiden "varsa dokunma" idi ve bu, üretilen alt klasör
+        # sayfalarının yollarını kırıyordu.
+        s = re.sub(r"<base [^>]*>", base, s, count=1)
+    else:
         s = re.sub(r'(<meta name="viewport"[^>]*>\n)', r"\1" + base + "\n", s, count=1)
 
     # 2) Sayfaya gömülü slug/host — sorgu parametresi olmadan da bilsin

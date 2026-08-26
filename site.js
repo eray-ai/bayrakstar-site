@@ -9,6 +9,7 @@
 
   /* ---- stil enjekte et ---- */
   var css = document.createElement('style');
+  css.setAttribute('data-ortak','');   /* sayfa değişse de kalır */
   css.textContent = `
     .navburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;z-index:1300}
     .navburger span{width:26px;height:3px;background:#fff;border-radius:3px;transition:.3s}
@@ -65,6 +66,7 @@
   /* ---- sayfa geçiş perdesi ---- */
   var curtain = document.createElement('div');
   curtain.className = 'pagecurtain';
+  curtain.setAttribute('data-kalici','');   /* sayfa değişince silinmez */
   curtain.innerHTML = '<div class="cload"><i></i><i></i><i></i><i></i><i></i></div>';
   document.body.appendChild(curtain);
   /* Bayrakstar (çatı) sayfaları için çok renkli marka degradesi */
@@ -140,19 +142,17 @@
     } else { ac(); }
   })();
 
-  function goTo(href){
-    perdeyiBoya(hedefRengi(href));      /* GİDİLEN sayfanın rengiyle kapan */
-    curtain.classList.remove('out'); curtain.classList.add('in');
-    setTimeout(function(){ location.href = href; }, 460);
-  }
+  /* Eski adı koruyoruz — başka yerlerden çağrılıyor olabilir. */
+  function goTo(href){ spaGit(href); }
 
   /* ---- overlay menü kur ---- */
   var ovl = document.createElement('div');
   ovl.className = 'navovl';
+  ovl.setAttribute('data-kalici','');       /* sayfa değişince silinmez */
   /* Logoların optik denge yükseklikleri (px) — dosyadaki en/boy oranından
      geliyor: yatık logolar alçak, dikey/kare olan Boombox daha yüksek. */
   var LOGO_H = { fenomen:46, fenomenturk:56, boombox:74, istanbulfm:44 };
-  var radioLinks = (D.radios||[]).map(function(r){
+  function radyoBaglantilari(){ return (D.radios||[]).map(function(r){
     var href = r.slug ? URLRadyo(r.slug) : r.url;
     var active = r.slug && r.slug===curSlug;
     var hedef = (r.slug?'':' target="_blank" rel="noopener"');
@@ -165,20 +165,23 @@
     var h = LOGO_H[r.slug] || 52;
     return '<a data-nav class="radio" href="'+href+'"'+hedef+' aria-label="'+r.name+'">'+
            '<img src="'+r.logo+'" alt="'+r.name+'" style="height:'+h+'px">'+nokta+'</a>';
-  }).join('');
+  }).join(''); }
   ovl.setAttribute('role','dialog');
   ovl.setAttribute('aria-modal','true');
   ovl.setAttribute('aria-label','Menü');
   ovl.setAttribute('aria-hidden','true');
+  function ovlDoldur(){
   ovl.innerHTML =
     '<div class="top"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"><button class="x" aria-label="Menüyü kapat">×</button></div>'+
     '<a data-nav href="index.html">Ana Sayfa</a>'+
     '<div class="lbl">Radyolarımız</div>'+
-    radioLinks +
+    radyoBaglantilari() +
     '<div class="lbl">Kurumsal</div>'+
     '<a data-nav class="small" href="index.html#hakkimizda">Hakkımızda</a>'+
     '<a data-nav class="small" href="index.html#radyolar">Tüm Radyolar</a>'+
     '<a data-nav class="small" href="index.html#iletisim">İletişim</a>';
+  ovl.querySelector('.x').addEventListener('click', closeMenu);
+  }
   document.body.appendChild(ovl);
 
   var burger = null;
@@ -194,13 +197,15 @@
     ovl.setAttribute('aria-hidden','true');
     if(burger){ burger.setAttribute('aria-expanded','false'); if(aciktiMi) burger.focus(); }
   }
-  ovl.querySelector('.x').addEventListener('click', closeMenu);
   ovl.addEventListener('click', function(e){ if(e.target===ovl) closeMenu(); });
   document.addEventListener('keydown', function(e){
     if(e.key==='Escape' && ovl.classList.contains('open')) closeMenu();
   });
 
-  /* ---- burger butonu (yoksa header'a ekle) ---- */
+  /* ---- burger butonu (yoksa header'a ekle) ----
+     Sayfa yenilenmeden gezinildiğinde <header> de değişiyor; bu yüzden
+     her sayfa kurulumunda yeniden bağlanması gerekiyor. */
+  function burgerKur(){
   var header = document.querySelector('header');
   burger = document.querySelector('.burger') || document.querySelector('.navburger');
   if(!burger && header){
@@ -225,6 +230,152 @@
     burger.setAttribute('aria-expanded','false');
     burger.addEventListener('click', openMenu);
   }
+  }
+
+  /* ============================================================
+     SAYFA YENİLEMEDEN GEZİNME
+     ------------------------------------------------------------
+     NEDEN: Canlı yayın dinlerken başka sayfaya geçilince ses kesiliyordu.
+     Sebebi, her sayfanın kendi <audio> düğümünün olması ve sayfa yeniden
+     yüklenince o düğümün ölmesiydi.
+
+     ÇÖZÜM: Sayfa artık YENİDEN YÜKLENMİYOR. Hedef sayfa arka planda
+     indirilip <body> içeriği yerinde değiştiriliyor. Ses kaynağı
+     (calar.js'teki <audio data-kalici>) bu değişimin dışında kaldığı için
+     hiç ölmüyor — ses milisaniye bile kesilmiyor.
+
+     KORUNAN DÜĞÜMLER: data-kalici işaretli olanlar (ses kaynağı, geçiş
+     perdesi, mobil menü). Geri kalan her şey yenisiyle değişir.
+
+     TEMİZLİK: Sayfaların kurduğu zamanlayıcı/gözlemcileri kendi
+     sayfalarıyla birlikte kapatabilmek için sayfalar
+     window.sayfaTemizligi(fn) ile kayıt bırakır; geçişte hepsi çağrılır.
+     ============================================================ */
+
+  /* Bunlar TÜM sayfalarda ortak; geçişte yeniden çalıştırılmamalı. */
+  var ORTAK_BETIK = ['data.js','bulut.js','yayin.js','simdicaliyor.js','calar.js','site.js'];
+
+  var temizleyiciler = [];
+  window.sayfaTemizligi = function(fn){ if(typeof fn==='function') temizleyiciler.push(fn); };
+  function temizle(){
+    var liste = temizleyiciler; temizleyiciler = [];
+    liste.forEach(function(f){ try{ f(); }catch(e){ if(window.console) console.warn(e); } });
+  }
+
+  /* Her sayfa kurulumunda tazelenmesi gerekenler */
+  function sayfaKur(){
+    curSlug = new URLSearchParams(location.search).get('r') || window.ON_SLUG || null;
+    ovlDoldur();
+    burgerKur();
+  }
+
+  /* DOMParser ile gelen <script> düğümleri ÇALIŞMAZ; yenisiyle değiştirilir.
+     async=false, sırayı korumak için şart (kurumsal.js gibi dış betikler
+     satır içi betiklerden önce/sonra doğru sırada çalışsın). */
+  function betikleriCalistir(kok){
+    var betikler = Array.prototype.slice.call(kok.querySelectorAll('script'));
+    betikler.forEach(function(eski){
+      var src = eski.getAttribute('src') || '';
+      if(src && ORTAK_BETIK.some(function(ad){ return src.indexOf(ad) >= 0; })){
+        eski.parentNode.removeChild(eski); return;
+      }
+      var yeni = document.createElement('script');
+      for(var i=0;i<eski.attributes.length;i++){
+        yeni.setAttribute(eski.attributes[i].name, eski.attributes[i].value);
+      }
+      yeni.async = false;
+      yeni.textContent = eski.textContent;
+      eski.parentNode.replaceChild(yeni, eski);
+    });
+  }
+
+  /* Sayfaya özel <style> ve <title>/<meta> düğümlerini değiştirir. */
+  function kafayiGuncelle(doc){
+    /* Sayfaya ait tüm stiller gider, ortak olan (site.js'inki) kalır. */
+    document.head.querySelectorAll('style:not([data-ortak])').forEach(function(n){ n.remove(); });
+    doc.head.querySelectorAll('style').forEach(function(n){
+      var k = document.createElement('style');
+      k.setAttribute('data-sayfa','');
+      k.textContent = n.textContent;
+      document.head.appendChild(k);
+    });
+    document.title = doc.title || document.title;
+    ['description'].forEach(function(ad){
+      var y = doc.head.querySelector('meta[name="'+ad+'"]');
+      var m = document.head.querySelector('meta[name="'+ad+'"]');
+      if(y && m) m.setAttribute('content', y.getAttribute('content')||'');
+    });
+    var yc = doc.head.querySelector('link[rel="canonical"]');
+    var mc = document.head.querySelector('link[rel="canonical"]');
+    if(yc && mc) mc.setAttribute('href', yc.getAttribute('href')||'');
+    /* Statik /r/ ve /y/ sayfalarındaki gömülü slug head'de duruyor; head
+       betikleri çalıştırılmadığı için elle taşınmalı. */
+    window.ON_SLUG = null; window.ON_HOST = null;
+    doc.head.querySelectorAll('script:not([src])').forEach(function(n){
+      var m1 = /ON_SLUG\s*=\s*"([^"]*)"/.exec(n.textContent||'');
+      var m2 = /ON_HOST\s*=\s*"([^"]*)"/.exec(n.textContent||'');
+      if(m1) window.ON_SLUG = m1[1];
+      if(m2) window.ON_HOST = m2[1];
+    });
+  }
+
+  function govdeyiDegistir(doc){
+    Array.prototype.slice.call(document.body.children).forEach(function(n){
+      if(!n.hasAttribute('data-kalici')) n.parentNode.removeChild(n);
+    });
+    var parca = document.createDocumentFragment();
+    Array.prototype.slice.call(doc.body.children).forEach(function(n){
+      parca.appendChild(document.importNode(n, true));
+    });
+    document.body.insertBefore(parca, document.body.firstChild);
+    /* body'nin kendi sınıf/biçimleri de sayfaya ait */
+    document.body.className = doc.body.className;
+  }
+
+  var geciyor = false;
+
+  function spaGit(href, gecmiseYaz){
+    if(geciyor) return;
+    geciyor = true;
+    perdeyiBoya(hedefRengi(href));
+    curtain.classList.remove('out'); curtain.classList.add('in');
+
+    /* Perde kapanma süresi ile indirme aynı anda yürüsün */
+    var perdeBitti = new Promise(function(r){ setTimeout(r, 460); });
+
+    fetch(href, { credentials:'same-origin' })
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.text(); })
+      .then(function(metin){
+        var doc = new DOMParser().parseFromString(metin, 'text/html');
+        return perdeBitti.then(function(){ return doc; });
+      })
+      .then(function(doc){
+        temizle();
+        /* radyo sayfaları --brand gibi değişkenleri <html>'e yazıyor;
+           çatı sayfasına dönerken eski markanın rengi kalmasın */
+        document.documentElement.removeAttribute('style');
+        if(gecmiseYaz !== false) history.pushState({ bs:1 }, '', href);
+        kafayiGuncelle(doc);
+        govdeyiDegistir(doc);
+        betikleriCalistir(document.body);
+        sayfaKur();
+        window.scrollTo(0, 0);
+        requestAnimationFrame(function(){
+          curtain.classList.remove('in'); curtain.classList.add('out');
+        });
+        geciyor = false;
+      })
+      .catch(function(e){
+        /* Ağ/ayrıştırma sorunu: eski usul git, ziyaretçi takılı kalmasın */
+        if(window.console) console.warn('[gezinme]', e);
+        location.href = href;
+      });
+  }
+
+  /* Geri/ileri tuşları */
+  window.addEventListener('popstate', function(){
+    spaGit(location.pathname + location.search, false);
+  });
 
   /* ---- tüm iç .html linklerinde yumuşak geçiş ---- */
   document.addEventListener('click', function(e){
@@ -234,13 +385,33 @@
     if(!href) return;
     if(a.target==='_blank' || a.hasAttribute('data-ext')) return;
     if(/^(https?:|mailto:|tel:)/.test(href)) return;
-    if(href.charAt(0)==='#'){ closeMenu(); return; }        // aynı sayfa çapası
-    if(href.indexOf('.html')===-1) return;
-    // aynı sayfaya (aynı radyo) tıklama → sadece menüyü kapat
+    if(e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;  /* yeni sekme */
+    if(href.charAt(0)==='#'){
+      /* <base> kök dizini gösterdiği için tarayıcı "#bolum" bağlantısını ana
+         sayfaya götürüyor. Aynı sayfa çapası olduğu için kaydırmayı biz
+         yapıyoruz. */
+      e.preventDefault(); closeMenu();
+      var hedef = href.length>1 ? document.getElementById(href.slice(1)) : null;
+      if(hedef) hedef.scrollIntoView({behavior:'smooth', block:'start'});
+      else window.scrollTo({top:0, behavior:'smooth'});
+      return;
+    }
+    if(href.indexOf('.html')===-1 && !/^(r|y)\//.test(href)) return;
     e.preventDefault();
     closeMenu();
-    goTo(href);
+    /* Ana sayfa bağlantısındaki #bolum: önce sayfayı getir, sonra kaydır */
+    var parca = href.split('#');
+    spaGit(parca[0]);
+    if(parca[1]){
+      setTimeout(function(){
+        var h = document.getElementById(parca[1]);
+        if(h) h.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 700);
+    }
   });
+
+  /* İlk açılışta da sayfaya özel kurulum yapılmalı (menü + burger). */
+  sayfaKur();
 
   /* Geri/ileri ile (bfcache'ten) dönünce perde takılı kalmasın.
      DİKKAT: pageshow ilk açılışta da tetikleniyor; koşulsuz bırakılırsa
