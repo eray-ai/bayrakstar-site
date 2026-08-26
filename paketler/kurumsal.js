@@ -161,12 +161,8 @@
      PAKET B — MARKA BİLEŞENLERİ
      ===================================================================== */
   function paketB(slug, R){
-    /* hero'ya resmî canlı rozeti */
-    var hb=document.querySelector('.hero .freqline');
-    if(hb && !hb.querySelector('.kk-live')){
-      var r=el('span','kk-live'); r.textContent='Canlı';
-      hb.insertBefore(r, hb.firstChild);
-    }
+    /* Hero'daki "● Canlı" rozeti kaldırıldı (kullanıcı isteği): sayfada zaten
+       alttaki canlı yayın bandı var, rozet gereksiz tekrar oluyordu. */
     /* Boombox: bölüm başlıklarına fosforlu kalem vurgusu */
     if(slug==='boombox'){
       Array.prototype.forEach.call(document.querySelectorAll('.sec h2,.about h2'), function(h){

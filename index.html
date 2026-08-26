@@ -65,8 +65,12 @@
     padding:16px 5vw;transition:background .4s,padding .4s,backdrop-filter .4s;
   }
   header.scrolled{background:rgba(18,18,18,.82);backdrop-filter:blur(14px);padding:10px 5vw;box-shadow:0 8px 30px rgba(0,0,0,.4)}
-  .brand{display:flex;align-items:center;gap:12px}
+  /* Marka kilidi: logo + altında "colorful life" (dikey hizalı) */
+  .brand{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
   .brand img{height:38px;width:auto}
+  .brand-slg{font-size:11px;letter-spacing:.3em;opacity:.75;font-weight:400;line-height:1;padding-left:2px}
+  .brand-slg b{font-weight:700}
+  @media(max-width:520px){ .brand img{height:32px} .brand-slg{font-size:9px;letter-spacing:.24em} }
   nav.menu{display:flex;gap:30px;font-size:13px;font-weight:700;letter-spacing:.08em}
   nav.menu a{position:relative;opacity:.82;transition:opacity .25s;white-space:nowrap}
   nav.menu a::after{content:"";position:absolute;left:0;bottom:-6px;height:2px;width:0;background:var(--coral);transition:width .3s}
@@ -89,12 +93,12 @@
       radial-gradient(120% 90% at 50% 22%,rgba(20,20,20,.02),rgba(15,15,15,.42) 82%),
       linear-gradient(180deg,rgba(15,15,15,.26),rgba(15,15,15,.18) 42%,rgba(15,15,15,.70))}
   .slider-content{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 6vw 100px}
-  .eq-heart{width:132px;height:106px;margin-bottom:24px;filter:drop-shadow(0 10px 30px rgba(0,0,0,.5));overflow:visible}
+  .eq-heart{width:186px;height:150px;margin-bottom:26px;filter:drop-shadow(0 10px 30px rgba(0,0,0,.5));overflow:visible}
   .eq-heart rect{transform-box:fill-box;transform-origin:center}
   /* hareketi azalt tercihi: sabit kalp, animasyon yok */
   @media (prefers-reduced-motion:reduce){.eq-heart{animation:none!important}}
-  .kicker{font-size:12px;letter-spacing:.42em;text-transform:uppercase;font-weight:700;color:var(--yellow);margin-bottom:18px}
-  .slider-content h1{font-weight:800;line-height:.98;font-size:clamp(44px,8vw,110px);letter-spacing:-.02em;
+  .kicker{font-size:clamp(14px,1.5vw,18px);letter-spacing:.42em;text-transform:uppercase;font-weight:700;color:var(--yellow);margin-bottom:18px}
+  .slider-content h1{font-weight:800;line-height:.98;font-size:clamp(34px,5.6vw,76px);letter-spacing:-.02em;
       text-shadow:0 3px 26px rgba(0,0,0,.55),0 1px 4px rgba(0,0,0,.4)}
   .slider-content .kicker,.slider-content .slogan{text-shadow:0 2px 14px rgba(0,0,0,.6)}
   .eq-heart{filter:drop-shadow(0 10px 30px rgba(0,0,0,.65))}
@@ -105,6 +109,22 @@
   .slogan{font-size:clamp(17px,2.2vw,24px);font-weight:400;opacity:.92;margin-top:20px;letter-spacing:.2em}
   .slogan b{font-weight:700}
   .slider-btns{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap;justify-content:center}
+  /* Hero'daki radyo logoları — tıklayınca o radyonun sayfasına gider.
+     Logoların en/boy oranı çok farklı olduğu için yükseklik marka başına
+     ayrı veriliyor (--h); tek yükseklikte Boombox devleşiyor, İstanbul FM
+     cılız kalıyor. --ls küçük ekranda hepsini birden küçültür. */
+  .hero-logos{display:flex;align-items:center;justify-content:center;gap:clamp(22px,4vw,52px);
+    flex-wrap:wrap;margin-top:38px;animation:rise .9s .5s both}
+  .hero-logos a{display:block;padding:6px;transition:transform .3s,filter .3s;opacity:.94}
+  .hero-logos img{height:calc(var(--h,52) * 1px * var(--ls,1));width:auto;display:block;
+    filter:drop-shadow(0 6px 18px rgba(0,0,0,.55))}
+  .hero-logos a:hover{transform:translateY(-6px) scale(1.06);opacity:1}
+  .hero-logos a:focus-visible{outline:3px solid #fff;outline-offset:6px;border-radius:10px}
+  @media(max-width:900px){ .hero-logos{--ls:.82;gap:26px} }
+  /* Dar ekranda 3+1 kırılıp tek başına kalan logo dengesiz duruyordu → 2x2 */
+  @media(max-width:560px){ .hero-logos{--ls:.62;gap:18px 0;max-width:340px;margin-inline:auto}
+    .hero-logos a{flex:0 0 50%;display:flex;justify-content:center} }
+  @media (prefers-reduced-motion:reduce){ .hero-logos a:hover{transform:none} }
   .btn{padding:15px 30px;border-radius:44px;font-weight:800;font-size:14px;letter-spacing:.03em;transition:transform .25s,box-shadow .25s;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:10px}
   .btn-fill{background:#fff;color:var(--ink)}
   .btn-fill:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(255,255,255,.22)}
@@ -380,7 +400,7 @@
 
 <!-- HEADER -->
 <header id="hdr">
-  <a class="brand" href="#top"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"></a>
+  <a class="brand" href="#top"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"><span class="brand-slg" id="brandSlg" aria-hidden="true"></span></a>
   <nav class="menu" id="navMenu">
     <a href="#radyolar">Radyolarımız</a>
   </nav>
@@ -396,10 +416,7 @@
     <div class="kicker" id="hKicker"></div>
     <h1 id="hTitle"></h1>
     <div class="slogan" id="hSlogan"></div>
-    <div class="slider-btns">
-      <button class="btn btn-fill" onclick="playFirst()" aria-label="Canlı yayın çalarını aç"><svg viewBox="0 0 24 24" width="18" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> Canlı Dinle</button>
-      <a class="btn btn-ghost" href="#radyolar">Radyoları Keşfet</a>
-    </div>
+    <nav class="hero-logos" id="heroLogos" aria-label="Radyolarımız"></nav>
   </div>
   <div class="dots" id="dots" role="tablist" aria-label="Görsel seçimi"></div>
   <button class="slider-pause" id="sliderPause" aria-label="Görsel geçişini duraklat"></button>
@@ -511,6 +528,27 @@ const azHareket = window.matchMedia && window.matchMedia('(prefers-reduced-motio
 document.getElementById('hKicker').textContent = D.hero.kicker;
 document.getElementById('hTitle').innerHTML = esc(D.hero.title1)+'<span class="grad">'+esc(D.hero.accent)+'</span><br>'+esc(D.hero.title2);
 document.getElementById('hSlogan').innerHTML = D.hero.slogan;
+/* Slogan artık sol üstteki marka kilidinde duruyor; hero'da tekrar etmesin. */
+document.getElementById('hSlogan').style.display = 'none';
+document.getElementById('brandSlg').innerHTML = D.hero.slogan;
+
+/* Hero'daki radyo logoları — her biri kendi radyo sayfasına gider.
+   Slogansız (-sade) sürüm kullanılıyor; küçükken logo içindeki slogan
+   okunmuyor, sadece bulanık bir leke oluşturuyordu. */
+(function(){
+  const YUK = { fenomen:52, fenomenturk:58, boombox:76, istanbulfm:36 };
+  const kap = document.getElementById('heroLogos');
+  kap.innerHTML = D.radios.map(r=>{
+    const href = r.slug ? URLRadyo(r.slug) : r.url;
+    const dis  = r.slug ? '' : ' target="_blank" rel="noopener"';
+    const src  = r.slug ? 'logo/'+r.slug+'-sade.png' : (r.logo||'');
+    const yed  = (r.logo||'').replace(/"/g,'&quot;');
+    return '<a href="'+esc(href)+'"'+dis+' style="--h:'+(YUK[r.slug]||52)+'" aria-label="'+esc(r.name)+'">'
+         + '<img src="'+esc(src)+'" alt="'+esc(r.name)+'" '
+         + 'onerror="if(this.src.indexOf(\'-sade\')>-1){this.src=&quot;'+yed+'&quot;}">'
+         + '</a>';
+  }).join('');
+})();
 
 /* ---- HEADER nav (radyo isimleri) ---- */
 const nav=document.getElementById('navMenu');
@@ -766,8 +804,8 @@ document.getElementById('plVol').addEventListener('input',e=>{
   e.target.setAttribute('aria-valuetext','%'+e.target.value);
 });
 
-// hero "Canlı Dinle" → bandı aç
-window.playFirst=openBand;
+/* Hero'daki "Canlı Dinle" düğmesi kaldırıldı (yerine radyo logoları geldi);
+   bandı radyo kartlarındaki dinle düğmeleri açıyor. */
 
 /* ---- İLETİŞİM ---- */
 (function(){

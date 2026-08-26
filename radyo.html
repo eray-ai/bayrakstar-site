@@ -314,8 +314,7 @@
     <div class="slg head-font" id="slogan"></div>
     <div class="freqline" id="freqline"></div>
     <div class="hero-btns">
-      <button class="btn btn-play" id="heroPlay" onclick="togglePlay()" aria-label="Canlı yayını çal"><svg viewBox="0 0 24 24" width="18" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> Canlı Dinle</button>
-      <a class="btn btn-ghost" id="siteBtn" target="_blank" rel="noopener">Resmî Web Sitesi ↗</a>
+      <a class="btn btn-ghost" id="siteBtn" target="_blank" rel="noopener"></a>
     </div>
   </div>
 </section>
@@ -544,15 +543,21 @@ const azHareket = window.matchMedia && window.matchMedia('(prefers-reduced-motio
 /* hero */
 document.getElementById('heroImg').src = R.hero || R.img || '';
 const hLogo = document.getElementById('heroLogo');
-hLogo.src = R.logo || '';
+/* Hero'da logonun SLOGANSIZ sürümü kullanılıyor (logo/<slug>-sade.png):
+   logonun içindeki slogan, hemen altında yazıyla tekrar edince boğuyordu.
+   Sade sürüm yoksa tam logoya düşer. */
+hLogo.onerror = function(){ if(this.src.indexOf('-sade.png')>-1 && R.logo){ this.onerror=null; this.src=R.logo; } };
+hLogo.src = (R.slug ? 'logo/'+R.slug+'-sade.png' : (R.logo||''));
 hLogo.alt = R.name + ' logosu';
-document.getElementById('heroPlay').setAttribute('aria-label', R.name + ' canlı yayınını çal');
 document.getElementById('slogan').textContent = R.slogan || '';
 const fl=document.getElementById('freqline');
 if(R.genre) fl.innerHTML += '<div class="chip">🎵 '+esc(R.genre)+'</div>';
 if(R.freq && R.freq.trim()) fl.innerHTML += '<div class="chip">📡 <b>'+esc(R.freq)+'</b> MHz</div>';
-fl.innerHTML += '<div class="chip">🔴 Canlı Yayında</div>';
 const sBtn=document.getElementById('siteBtn'); sBtn.href=R.url||'#';
+/* Düğmede adresin kendisi yazsın (radyofenomen.com gibi) — tıklanabilir
+   bir bağlantı olduğu böyle anlaşılıyor. */
+sBtn.innerHTML = '🌐 <b>'+esc((R.url||'').replace(/^https?:\/\//,'').replace(/^www\./,'').replace(/\/$/,''))+'</b> ↗';
+sBtn.setAttribute('aria-label', R.name + ' resmî web sitesi (yeni sekmede açılır)');
 
 /* about */
 document.getElementById('aboutTitle').textContent = R.name;
@@ -855,9 +860,7 @@ function setIcon(p){
   const h=p?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>'
            :'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
   const b=document.getElementById('playBtn');
-  b.innerHTML=h; b.setAttribute('aria-label', p?'Duraklat':'Çal');
-  document.getElementById('heroPlay').setAttribute('aria-label',
-    (p?'Duraklat: ':'Canlı yayını çal: ')+R.name);
+  b.innerHTML=h; b.setAttribute('aria-label', (p?'Duraklat: ':'Canlı yayını çal: ')+R.name);
 }
 audio.addEventListener('playing',()=>{isPlaying=true;band.classList.add('on');setIcon(true);bandSub.textContent='Canlı Yayın';});
 audio.addEventListener('pause',()=>{isPlaying=false;band.classList.remove('on');setIcon(false);});
