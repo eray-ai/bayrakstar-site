@@ -73,6 +73,7 @@ window.DEFAULT_DATA = {
     {
       "name": "Radyo Fenomen",
       "slug": "fenomen",
+      "caliyor": "fenomen",
       "logo": "logo/fenomen-beyaz.png",
       "logoColor": "logo/fenomen-renkli.png",
       "slogan": "Maksimum Hit Müzik",
@@ -230,7 +231,7 @@ window.DEFAULT_DATA = {
       "social": {
         "ig": "https://instagram.com/radyofenomen",
         "x": "https://twitter.com/radyofenomen",
-        "yt": "https://youtube.com/radyofenomen",
+        "yt": "https://www.youtube.com/@radyofenomenmaksimum",
         "tiktok": "https://tiktok.com/@radyofenomen",
         "fb": "https://facebook.com/radyofenomen"
       },
@@ -401,6 +402,7 @@ window.DEFAULT_DATA = {
     {
       "name": "Fenomen Türk",
       "slug": "fenomenturk",
+      "caliyor": "fenomenturk",
       "logo": "logo/fenomenturk-beyaz.png",
       "logoColor": "logo/fenomenturk-renkli.png",
       "slogan": "Eğlence ve Müzik",
@@ -545,7 +547,8 @@ window.DEFAULT_DATA = {
       "social": {
         "ig": "https://instagram.com/radyofenomenturk",
         "x": "https://twitter.com/fenomen_turk",
-        "fb": "https://facebook.com/fenomenturk"
+        "fb": "https://www.facebook.com/fenomen.turk",
+        "yt": "https://www.youtube.com/@radyofenomenturk"
       },
       "scheduleGun": {
         "4": [
@@ -659,6 +662,7 @@ window.DEFAULT_DATA = {
     {
       "name": "Radyo Boombox",
       "slug": "boombox",
+      "caliyor": "boombox",
       "logo": "logo/boombox-beyaz.png",
       "logoColor": "logo/boombox-renkli.png",
       "slogan": "Aç Sesini",
@@ -713,6 +717,7 @@ window.DEFAULT_DATA = {
     {
       "name": "İstanbul FM",
       "slug": "istanbulfm",
+      "caliyor": "istanbulfm",
       "logo": "logo/istanbulfm-beyaz.png",
       "logoColor": "logo/istanbulfm-renkli.png",
       "slogan": "Senin İçin",

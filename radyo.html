@@ -916,8 +916,9 @@ function scCiz(){
   scAltSatir();
   scCubuk();
 }
-if(window.SimdiCaliyor && R.slug){
-  SimdiCaliyor.izle(R.slug, s=>{ scSarki=s; scT0=Date.now(); if(s) scDurum=''; scCiz(); });
+const scKaynak = R.caliyor || R.slug;
+if(window.SimdiCaliyor && scKaynak){
+  SimdiCaliyor.izle(scKaynak, s=>{ scSarki=s; scT0=Date.now(); if(s) scDurum=''; scCiz(); });
   setInterval(scCubuk,1000);
 }
 

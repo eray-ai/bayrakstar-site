@@ -140,5 +140,17 @@
     return function () { durdu = true; if (zaman) clearTimeout(zaman); };
   }
 
-  window.SimdiCaliyor = { izle: izle };
+  /* Panelin açılır listesi buradan besleniyor — yeni radyo eklenirse
+     KAYNAK'a bir satır yaz, panel kendiliğinden görür. */
+  var ETIKET = {
+    fenomen:     'Radyo Fenomen',
+    fenomenturk: 'Fenomen Türk',
+    boombox:     'Radyo Boombox',
+    istanbulfm:  'İstanbul FM'
+  };
+  function kaynaklar(){
+    return Object.keys(KAYNAK).map(function(k){ return { deger:k, etiket:ETIKET[k]||k }; });
+  }
+
+  window.SimdiCaliyor = { izle: izle, kaynaklar: kaynaklar };
 })();

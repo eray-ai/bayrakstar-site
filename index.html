@@ -818,8 +818,9 @@ function scBaslat(r){
   scDurdurTakip();
   scRadyo=r;
   scCiz();
-  if(!window.SimdiCaliyor || !r.slug) return;
-  scBirak=SimdiCaliyor.izle(r.slug, s=>{
+  const kaynak = r.caliyor || r.slug;
+  if(!window.SimdiCaliyor || !kaynak) return;
+  scBirak=SimdiCaliyor.izle(kaynak, s=>{
     scSarki=s; scT0=Date.now();
     if(s) scDurum='';           /* şarkı geldiyse geçici durum yazısını bırak */
     scCiz();
