@@ -5,7 +5,7 @@
 <!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
      kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
      yayın adresini media-src VE connect-src listelerine ekle. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; connect-src 'self' https://bezwdlxombiirihxomnv.supabase.co https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; worker-src 'self' blob:; manifest-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; connect-src 'self' https://bezwdlxombiirihxomnv.supabase.co https://api.radyofenomen.com https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; worker-src 'self' blob:; manifest-src 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bayrakstar — colorful life</title>
 <meta name="description" content="Bayrakstar; Radyo Fenomen, Fenomen Türk, Radyo Boombox ve İstanbul FM'i tek çatı altında buluşturan radyo ağı. Tüm radyoları canlı dinle, yayın akışlarını ve frekansları keşfet.">
@@ -40,6 +40,7 @@
 <script src="data.js"></script>
 <script src="bulut.js"></script>
 <script src="yayin.js"></script>
+<script src="simdicaliyor.js"></script>
 <style>
   :root{
     --dark:#242424;
@@ -278,7 +279,16 @@
   .pl-inner{margin:0 auto;max-width:1300px;background:rgba(20,20,20,.94);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.12);border-bottom:none;border-radius:20px 20px 0 0;padding:12px 20px;display:flex;align-items:center;gap:16px;box-shadow:0 -16px 44px rgba(0,0,0,.5)}
   .pl-cover{width:54px;height:54px;border-radius:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
   .pl-cover img{max-width:78%;max-height:78%;object-fit:contain}
-  .pl-meta{min-width:0;width:150px}
+  /* şimdi çalıyor: albüm kapağı kutuyu doldurur, radyo logosu köşede rozet olur */
+  .pl-cover.art #plLogo{max-width:100%;max-height:100%;width:100%;height:100%;object-fit:cover}
+  .pl-roz{display:none;position:absolute;right:2px;bottom:2px;width:20px;height:20px;border-radius:6px;
+    background:rgba(10,10,10,.85);padding:2px;object-fit:contain;box-shadow:0 1px 5px rgba(0,0,0,.7)}
+  .pl-cover.art .pl-roz{display:block}
+  .pl-prog{display:none;height:3px;border-radius:3px;background:rgba(255,255,255,.16);margin-top:7px;overflow:hidden}
+  .pl-prog.on{display:block}
+  .pl-prog i{display:block;height:100%;width:0;background:#fff;border-radius:3px;transition:width .95s linear}
+  @media (prefers-reduced-motion:reduce){ .pl-prog i{transition:none} }
+  .pl-meta{min-width:0;width:200px}
   .pl-name{font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .pl-sub{font-size:11px;opacity:.6;margin-top:2px;display:flex;align-items:center;gap:6px}
   .pl-sub .ld{width:7px;height:7px;border-radius:50%;background:var(--red);animation:live 1.5s infinite}
@@ -295,7 +305,7 @@
   .pl-vol input{width:100%;accent-color:var(--coral);cursor:pointer}
   .pl-close{background:none;border:none;color:#fff;opacity:.5;cursor:pointer;font-size:24px;line-height:1;flex-shrink:0}
   .pl-close:hover{opacity:1}
-  @media(max-width:760px){.viz,.pl-vol,.pl-meta{display:none}.pl-inner{gap:10px;justify-content:space-between}}
+  @media(max-width:760px){.viz,.pl-vol{display:none}.pl-meta{width:auto;flex:1}.pl-inner{gap:10px;justify-content:space-between}}
 
   /* ==== üst duyuru şeridi ==== */
   .annbar{position:fixed;top:0;left:0;right:0;z-index:130;height:40px;display:flex;align-items:center;justify-content:center;gap:9px;
@@ -501,10 +511,11 @@
   <audio id="audio" preload="none"></audio>
   <div class="pl-inner">
     <div class="pl-now">
-      <div class="pl-cover" id="plCover"><img id="plLogo" src="logo/bayrakstar-beyaz.png" alt=""></div>
+      <div class="pl-cover" id="plCover"><img id="plLogo" src="logo/bayrakstar-beyaz.png" alt=""><img class="pl-roz" id="plRoz" alt="" aria-hidden="true"></div>
       <div class="pl-meta">
         <div class="pl-name" id="plName">Bir radyo seç</div>
         <div class="pl-sub"><span class="ld" aria-hidden="true"></span><span id="plSub" role="status">Canlı Yayın</span></div>
+        <div class="pl-prog" id="plProg" aria-hidden="true"><i></i></div>
       </div>
       <button class="pl-play" id="plPlay" onclick="togglePlay()" aria-label="Çal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
     </div>
@@ -747,27 +758,95 @@ function openBand(){
   if(curIdx<0){ const first=D.radios.findIndex(r=>r.stream&&r.stream.trim()); if(first>=0) playRadio(first); }
 }
 
+/* ==== ŞİMDİ ÇALIYOR ====
+   Seçili radyoda o an çalan şarkıyı gösterir: albüm kapağı kutuyu doldurur,
+   radyo logosu köşede küçük rozete iner, isim satırı şarkı adını yazar.
+   Bağlanma/hata gibi DURUM yazıları alt satırı geçici olarak devralır; şarkı
+   bilgisi geldiğinde ya da yayın oturduğunda kendiliğinden geri gelir. */
+const plCover=document.getElementById('plCover'), plLogo=document.getElementById('plLogo'),
+      plRoz=document.getElementById('plRoz'), plProg=document.getElementById('plProg'),
+      plSubEl=document.getElementById('plSub'), plNameEl=document.getElementById('plName');
+let scBirak=null, scSarki=null, scT0=0, scTik=null, scRadyo=null, scDurum='';
+
+function scAltSatir(){
+  /* Durum yazısı varsa o öncelikli; yoksa "Sanatçı · Radyo" */
+  if(scDurum){ plSubEl.textContent=scDurum; return; }
+  if(scSarki && scSarki.sanatci) plSubEl.textContent=scSarki.sanatci+' · '+(scRadyo?scRadyo.name:'');
+  else plSubEl.textContent='Canlı Yayın';
+}
+function durumYaz(t){ scDurum=t||''; scAltSatir(); }
+
+function scCiz(){
+  if(!scRadyo) return;
+  if(scSarki){
+    plNameEl.textContent=scSarki.sarki;
+    if(scSarki.kapak){
+      plCover.classList.add('art');
+      plLogo.src=scSarki.kapak;
+      plLogo.alt=scSarki.sarki;
+      plRoz.src=scRadyo.logo;
+      /* kapak inmezse sessizce radyo logosuna dön */
+      plLogo.onerror=()=>{ plCover.classList.remove('art'); plLogo.onerror=null; plLogo.src=scRadyo.logo; };
+    } else scKapakSifirla();
+  } else {
+    plNameEl.textContent=scRadyo.name;
+    scKapakSifirla();
+  }
+  scAltSatir();
+  scCubuk();
+}
+function scKapakSifirla(){
+  plCover.classList.remove('art');
+  plLogo.onerror=null;
+  plLogo.src=scRadyo?scRadyo.logo:'logo/bayrakstar-beyaz.png';
+  plLogo.alt='';
+}
+/* Çubuk saniyede bir yerel olarak ilerler — her saniye ağa gitmiyoruz. */
+function scCubuk(){
+  const g=plProg.firstElementChild;
+  if(!scSarki || scSarki.oran===null || !scSarki.sure){ plProg.classList.remove('on'); g.style.width='0%'; return; }
+  const gecen=scSarki.gecen+(Date.now()-scT0)/1000;
+  plProg.classList.add('on');
+  g.style.width=Math.max(0,Math.min(100,gecen/scSarki.sure*100)).toFixed(1)+'%';
+}
+function scDurdurTakip(){
+  if(scBirak){scBirak();scBirak=null;}
+  if(scTik){clearInterval(scTik);scTik=null;}
+  scSarki=null;
+}
+function scBaslat(r){
+  scDurdurTakip();
+  scRadyo=r;
+  scCiz();
+  if(!window.SimdiCaliyor || !r.slug) return;
+  scBirak=SimdiCaliyor.izle(r.slug, s=>{
+    scSarki=s; scT0=Date.now();
+    if(s) scDurum='';           /* şarkı geldiyse geçici durum yazısını bırak */
+    scCiz();
+  });
+  scTik=setInterval(scCubuk,1000);
+}
+
 function playRadio(i,e){
   if(e){e.preventDefault();e.stopPropagation();}
   const r=D.radios[i];
   player.classList.add('show');
-  document.getElementById('plName').textContent=r.name;
   document.getElementById('plCover').style.background=r.color;
-  document.getElementById('plLogo').src=r.logo;
+  scDurum='';
+  scBaslat(r);
   if(!r.stream||!r.stream.trim()){
     curIdx=-1; isPlaying=false; markActive(-1); audio.pause();
-    document.getElementById('plSub').textContent='Canlı yayın linki yakında (panelden eklenecek)';
+    durumYaz('Canlı yayın linki yakında (panelden eklenecek)');
     return;
   }
   if(curIdx===i && isPlaying){ togglePlay(); return; }
   curIdx=i;
-  const sub=document.getElementById('plSub');
-  sub.textContent='Bağlanıyor…';
+  durumYaz('Bağlanıyor…');
   audio.volume=document.getElementById('plVol').value/100;
   /* .m3u8 (HLS) yayınlar hls.js üzerinden, diğerleri doğrudan çalar */
   yayinBaslat(audio, r.stream, {
-    durum: t=>{ if(curIdx===i) sub.textContent=t; },
-    hata:  m=>{ if(curIdx===i) sub.textContent=m; }
+    durum: t=>{ if(curIdx===i) durumYaz(t); },
+    hata:  m=>{ if(curIdx===i) durumYaz(m); }
   });
 }
 function togglePlay(){
@@ -777,7 +856,7 @@ function togglePlay(){
      yayına baştan bağlan */
   audio.play().catch(()=>{ playRadio(curIdx); });
 }
-function closePlayer(){yayinDurdur(audio);player.classList.remove('show');markActive(-1);curIdx=-1;}
+function closePlayer(){yayinDurdur(audio);player.classList.remove('show');markActive(-1);curIdx=-1;scDurdurTakip();scRadyo=null;plProg.classList.remove('on');}
 function markActive(i){
   document.querySelectorAll('.pl-chip').forEach(c=>{
     const acik = (+c.dataset.idx===i && isPlaying);
@@ -792,12 +871,12 @@ function setPlayIcon(p){const b=document.getElementById('plPlay');
   :'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
   b.setAttribute('aria-label', p?'Duraklat':'Çal');}
 
-audio.addEventListener('playing',()=>{isPlaying=true;player.classList.add('on');setPlayIcon(true);document.getElementById('plSub').textContent='Canlı Yayın';markActive(curIdx);});
+audio.addEventListener('playing',()=>{isPlaying=true;player.classList.add('on');setPlayIcon(true);durumYaz('');markActive(curIdx);});
 audio.addEventListener('pause',()=>{isPlaying=false;player.classList.remove('on');setPlayIcon(false);markActive(-1);});
-audio.addEventListener('waiting',()=>{document.getElementById('plSub').textContent='Tamponlanıyor…';});
+audio.addEventListener('waiting',()=>{durumYaz('Tamponlanıyor…');});
 /* hls.js bağlıyken hata yönetimi yayin.js'te — buradaki genel dinleyici karışmasın */
 audio.addEventListener('error',()=>{
-  if(curIdx>=0 && !audio._hls) document.getElementById('plSub').textContent='Yayına ulaşılamadı';
+  if(curIdx>=0 && !audio._hls) durumYaz('Yayına ulaşılamadı');
 });
 document.getElementById('plVol').addEventListener('input',e=>{
   audio.volume=e.target.value/100;

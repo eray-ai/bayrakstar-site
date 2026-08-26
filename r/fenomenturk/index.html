@@ -5,7 +5,7 @@
 <!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
      kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
      yayın adresini media-src VE connect-src listelerine ekle. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; connect-src 'self' https://bezwdlxombiirihxomnv.supabase.co https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; worker-src 'self' blob:; manifest-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; connect-src 'self' https://bezwdlxombiirihxomnv.supabase.co https://api.radyofenomen.com https://live.radyofenomen.com https://yayin.radyoboombox.com.tr https://yayin.istanbulfm.com.tr; worker-src 'self' blob:; manifest-src 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <base href="../../">
 <title>Fenomen Türk — Eğlence ve Müzik | Bayrakstar</title>
@@ -44,6 +44,7 @@
 <script src="data.js"></script>
 <script src="bulut.js"></script>
 <script src="yayin.js"></script>
+<script src="simdicaliyor.js"></script>
 <style>
   /* ---- Marka başlık yazıyüzleri (kurumsal kimlik rehberlerinden) ----
      Rehberlerde "yardımcı yazıyüzü, yalnızca başlıklarda" diye tanımlı.
@@ -144,7 +145,17 @@
   .band-in{max-width:1400px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:16px}
   .band .cov{width:52px;height:52px;border-radius:12px;background:#1c1c1c;border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
   .band .cov img{max-width:80%;max-height:80%;object-fit:contain}
-  .band .meta{min-width:0;width:170px}
+  /* şimdi çalıyor: albüm kapağı kutuyu doldurur, radyo logosu köşede rozet olur */
+  .band .cov.art #bandLogo{max-width:100%;max-height:100%;width:100%;height:100%;object-fit:cover}
+  .band .cov{position:relative}
+  .band .roz{display:none;position:absolute;right:2px;bottom:2px;width:20px;height:20px;border-radius:6px;
+    background:rgba(10,10,10,.85);padding:2px;object-fit:contain;box-shadow:0 1px 5px rgba(0,0,0,.7)}
+  .band .cov.art .roz{display:block}
+  .band .prog{display:none;height:3px;border-radius:3px;background:rgba(255,255,255,.16);margin-top:7px;overflow:hidden}
+  .band .prog.on{display:block}
+  .band .prog i{display:block;height:100%;width:0;background:var(--brand);border-radius:3px;transition:width .95s linear}
+  @media (prefers-reduced-motion:reduce){ .band .prog i{transition:none} }
+  .band .meta{min-width:0;width:210px}
   .band .nm{font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .band .sb{font-size:11px;opacity:.6;margin-top:2px;display:flex;align-items:center;gap:6px}
   .band .sb .ld{width:7px;height:7px;border-radius:50%;background:var(--brand);animation:live 1.5s infinite}
@@ -415,10 +426,11 @@
 <div class="band" id="band" role="region" aria-label="Canlı yayın çalar">
   <audio id="audio" preload="none"></audio>
   <div class="band-in">
-    <div class="cov" id="bandCov"><img id="bandLogo" src="" alt="" aria-hidden="true"></div>
+    <div class="cov" id="bandCov"><img id="bandLogo" src="" alt="" aria-hidden="true"><img class="roz" id="bandRoz" alt="" aria-hidden="true"></div>
     <div class="meta">
       <div class="nm" id="bandName">—</div>
       <div class="sb"><span class="ld" aria-hidden="true"></span><span id="bandSub" role="status">Canlı Yayın</span></div>
+      <div class="prog" id="bandProg" aria-hidden="true"><i></i></div>
     </div>
     <button class="play" id="playBtn" onclick="togglePlay()" aria-label="Çal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
     <div class="viz" id="viz" aria-hidden="true"></div>
@@ -861,28 +873,78 @@ for(let i=0;i<44;i++){const b=document.createElement('i');b.style.animationDelay
 const bandSub=document.getElementById('bandSub');
 let bagliMi=false;   /* yayın bir kez bağlandı mı (HLS'te audio.src blob olur) */
 
+/* ==== ŞİMDİ ÇALIYOR ====
+   Bu radyoda o an çalan şarkı: albüm kapağı kutuyu doldurur, radyo logosu
+   köşede rozete iner, isim satırı şarkı adını yazar. Bağlanma/hata gibi DURUM
+   yazıları alt satırı geçici devralır, şarkı gelince kendiliğinden geri döner. */
+const bandCov=document.getElementById('bandCov'), bandLogo=document.getElementById('bandLogo'),
+      bandRoz=document.getElementById('bandRoz'), bandProg=document.getElementById('bandProg'),
+      bandNameEl=document.getElementById('bandName');
+let scSarki=null, scT0=0, scDurum='';
+
+function scAltSatir(){
+  if(scDurum){ bandSub.textContent=scDurum; return; }
+  bandSub.textContent = (scSarki && scSarki.sanatci) ? scSarki.sanatci : 'Canlı Yayın';
+}
+function durumYaz(t){ scDurum=t||''; scAltSatir(); }
+function scKapakSifirla(){
+  bandCov.classList.remove('art');
+  bandLogo.onerror=null;
+  bandLogo.src=R.logo||'';
+  bandLogo.alt='';
+}
+function scCubuk(){
+  const g=bandProg.firstElementChild;
+  if(!scSarki || scSarki.oran===null || !scSarki.sure){ bandProg.classList.remove('on'); g.style.width='0%'; return; }
+  const gecen=scSarki.gecen+(Date.now()-scT0)/1000;
+  bandProg.classList.add('on');
+  g.style.width=Math.max(0,Math.min(100,gecen/scSarki.sure*100)).toFixed(1)+'%';
+}
+function scCiz(){
+  if(scSarki){
+    bandNameEl.textContent=scSarki.sarki;
+    if(scSarki.kapak){
+      bandCov.classList.add('art');
+      bandLogo.src=scSarki.kapak;
+      bandLogo.alt=scSarki.sarki;
+      bandRoz.src=R.logo||'';
+      /* kapak inmezse sessizce radyo logosuna dön */
+      bandLogo.onerror=()=>{ bandLogo.onerror=null; scKapakSifirla(); };
+    } else scKapakSifirla();
+  } else {
+    bandNameEl.textContent=R.name;
+    scKapakSifirla();
+  }
+  scAltSatir();
+  scCubuk();
+}
+if(window.SimdiCaliyor && R.slug){
+  SimdiCaliyor.izle(R.slug, s=>{ scSarki=s; scT0=Date.now(); if(s) scDurum=''; scCiz(); });
+  setInterval(scCubuk,1000);
+}
+
 function togglePlay(){
   if(!R.stream || !R.stream.trim()){
-    bandSub.textContent='Yayın için resmî siteye yönlendiriliyorsunuz…';
+    durumYaz('Yayın için resmî siteye yönlendiriliyorsunuz…');
     window.open(R.url,'_blank','noopener');return;
   }
   if(isPlaying){audio.pause();return;}
   audio.volume=document.getElementById('vol').value/100;
-  bandSub.textContent='Bağlanıyor…';
+  durumYaz('Bağlanıyor…');
   /* İlk sefer bağlan; duraklatılmışsa sürdür, sürdürülemezse baştan bağlan.
      Boombox ve İstanbul FM .m3u8 yayınlıyor → hls.js devreye girer. */
   if(!bagliMi){
     bagliMi=true;
     yayinBaslat(audio, R.stream, {
-      durum: t=>bandSub.textContent=t,
-      hata:  m=>{ bandSub.textContent=m; bagliMi=false; }
+      durum: t=>durumYaz(t),
+      hata:  m=>{ durumYaz(m); bagliMi=false; }
     });
   }else{
     audio.play().catch(()=>{
       bagliMi=true;
       yayinBaslat(audio, R.stream, {
-        durum: t=>bandSub.textContent=t,
-        hata:  m=>{ bandSub.textContent=m; bagliMi=false; }
+        durum: t=>durumYaz(t),
+        hata:  m=>{ durumYaz(m); bagliMi=false; }
       });
     });
   }
@@ -893,11 +955,11 @@ function setIcon(p){
   const b=document.getElementById('playBtn');
   b.innerHTML=h; b.setAttribute('aria-label', (p?'Duraklat: ':'Canlı yayını çal: ')+R.name);
 }
-audio.addEventListener('playing',()=>{isPlaying=true;band.classList.add('on');setIcon(true);bandSub.textContent='Canlı Yayın';});
+audio.addEventListener('playing',()=>{isPlaying=true;band.classList.add('on');setIcon(true);durumYaz('');});
 audio.addEventListener('pause',()=>{isPlaying=false;band.classList.remove('on');setIcon(false);});
-audio.addEventListener('waiting',()=>bandSub.textContent='Tamponlanıyor…');
+audio.addEventListener('waiting',()=>durumYaz('Tamponlanıyor…'));
 /* hls.js bağlıyken hatayı yayin.js yönetiyor — genel dinleyici karışmasın */
-audio.addEventListener('error',()=>{ if(!audio._hls) bandSub.textContent='Yayına ulaşılamadı'; });
+audio.addEventListener('error',()=>{ if(!audio._hls) durumYaz('Yayına ulaşılamadı'); });
 document.getElementById('vol').addEventListener('input',e=>{
   audio.volume=e.target.value/100;
   e.target.setAttribute('aria-valuetext','%'+e.target.value);
