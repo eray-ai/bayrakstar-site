@@ -16,7 +16,8 @@
 
   var ONBELLEK   = "bayrakstar_data";      // data.js'in okuduğu anahtar
   var OTURUM     = "bayrakstar_token";     // yönetici erişim jetonu
-  var EPOSTA     = "yonetim@bayrakstar.com";
+  var ROL        = "bayrakstar_rol";       // 'sahip' | 'yonetici'
+  var EPOSTA_SON = "bayrakstar_eposta";    // giriş kutusuna hatırlatma
   /* Bulut YAVAŞ olduğunda (kapalı değil — yavaş) sayfa bu süre kadar boş kalır.
      Ölçüldü: 5000 ms'de ziyaretçi 6,4 sn beyaz ekran görüyordu. Ücretsiz
      Supabase projesi hareketsizlikten sonra duraklıyor ve uyanırken tam olarak
@@ -59,17 +60,82 @@
     });
   }
 
-  /* ---- GİRİŞ: yönetici şifresiyle jeton al ---- */
-  function bulutGiris(sifre) {
+  /* ------------------------------------------------------------
+     GİRİŞ
+     Her yöneticinin KENDİ e-postası ve şifresi var. Tek ortak şifre
+     yok; böylece kimin ne yaptığı ayrılabiliyor ve bir kişinin
+     erişimi kapatılınca diğerleri etkilenmiyor.
+
+     Giriş başarılıysa hemen ardından rol okunur ('sahip' | 'yonetici').
+     Rol yalnızca EKRANI şekillendirir — asıl kilit veritabanında (RLS)
+     durur, yani tarayıcıdan rol değiştirmek hiçbir kapı açmaz.
+     ------------------------------------------------------------ */
+  function bulutGiris(eposta, sifre) {
+    /* Eski çağrı biçimi — tek argümanla sadece şifre — desteklenmiyor;
+       hangi hesapla girildiği artık zorunlu bilgi. */
+    if (arguments.length < 2) return Promise.reject(new Error("E-posta ve şifre gerekli."));
     return fetch(URL_ + "/auth/v1/token?grant_type=password", {
       method: "POST",
       headers: { "apikey": KEY, "Content-Type": "application/json" },
-      body: JSON.stringify({ email: EPOSTA, password: sifre })
+      body: JSON.stringify({ email: String(eposta || "").trim().toLowerCase(), password: sifre })
     }).then(function (r) {
       return r.json().then(function (j) {
-        if (!r.ok || !j.access_token) throw new Error(j.error_description || j.msg || "Şifre yanlış.");
-        try { sessionStorage.setItem(OTURUM, j.access_token); } catch (e) {}
-        return j.access_token;
+        if (!r.ok || !j.access_token) throw new Error(j.error_description || j.msg || "E-posta ya da şifre yanlış.");
+        try {
+          sessionStorage.setItem(OTURUM, j.access_token);
+          localStorage.setItem(EPOSTA_SON, String(eposta || "").trim().toLowerCase());
+        } catch (e) {}
+        return rolOku().then(function (rol) {
+          if (!rol) {
+            /* Auth'ta hesabı var ama yetki listesinde yok: erişimi kaldırılmış. */
+            try { sessionStorage.removeItem(OTURUM); } catch (e) {}
+            throw new Error("Bu hesabın panele erişim yetkisi yok.");
+          }
+          return { jeton: j.access_token, rol: rol };
+        });
+      });
+    });
+  }
+
+  /* Rolü sunucuya sorar; oturum boyunca saklanır. */
+  function rolOku() {
+    var t = jeton();
+    if (!t) return Promise.resolve(null);
+    return fetch(URL_ + "/rest/v1/rpc/benim_rolum", {
+      method: "POST", headers: basliklar(t), body: "{}"
+    }).then(function (r) {
+      if (!r.ok) return null;
+      return r.json();
+    }).then(function (rol) {
+      rol = (typeof rol === "string" && rol) ? rol : null;
+      try { rol ? sessionStorage.setItem(ROL, rol) : sessionStorage.removeItem(ROL); } catch (e) {}
+      return rol;
+    }).catch(function () { return null; });
+  }
+
+  function rol() {
+    try { return sessionStorage.getItem(ROL); } catch (e) { return null; }
+  }
+  function sahipMi() { return rol() === "sahip"; }
+
+  /* ------------------------------------------------------------
+     YÖNETİCİ HESAPLARI
+     Hesap açmak/silmek sunucudaki `yoneticiler` fonksiyonuna gider;
+     o fonksiyon çağıranın gerçekten süper yönetici olduğunu jetondan
+     doğrular. Buradaki sahipMi() kontrolü sadece boşuna istek atmamak
+     içindir, güvenliğin kendisi değildir.
+     ------------------------------------------------------------ */
+  function yoneticiIslem(govde) {
+    var t = jeton();
+    if (!t) return Promise.reject(new Error("Önce giriş yapmalısın."));
+    return fetch(URL_ + "/functions/v1/yoneticiler", {
+      method: "POST",
+      headers: { "apikey": KEY, "Authorization": "Bearer " + t, "Content-Type": "application/json" },
+      body: JSON.stringify(govde || { islem: "liste" })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (!r.ok) throw new Error(j.hata || ("İşlem başarısız (" + r.status + ")"));
+        return j;
       });
     });
   }
@@ -232,8 +298,18 @@
     gecmis: bulutGecmis,
     ziyaretOzet: ziyaretOzet,
     jeton: jeton,
+    rol: rol,
+    rolOku: rolOku,
+    sahipMi: sahipMi,
+    sonEposta: function () { try { return localStorage.getItem(EPOSTA_SON) || ""; } catch (e) { return ""; } },
+    yoneticiListe: function () { return yoneticiIslem({ islem: "liste" }).then(function (j) { return j.yoneticiler || []; }); },
+    yoneticiEkle:  function (eposta, sifre, ad) { return yoneticiIslem({ islem: "ekle", eposta: eposta, sifre: sifre, ad: ad }); },
+    yoneticiSil:   function (uid) { return yoneticiIslem({ islem: "sil", uid: uid }); },
+    yoneticiSifre: function (uid, sifre) { return yoneticiIslem({ islem: "sifre", uid: uid, sifre: sifre }); },
     girisliMi: function () { return !!jeton(); },
-    cikis: function () { try { sessionStorage.removeItem(OTURUM); } catch (e) {} }
+    cikis: function () {
+      try { sessionStorage.removeItem(OTURUM); sessionStorage.removeItem(ROL); } catch (e) {}
+    }
   };
   window.bulutHazir = hazir;
 

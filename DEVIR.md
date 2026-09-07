@@ -32,7 +32,7 @@ Bu ayrım önemli: "yazıyı değiştir" = panel. "Sayfa yapısını değiştir"
 | Kod deposu | GitHub `eray-ai/bayrakstar-site` | **Public** olmak zorunda (aşağıda) |
 | Yayın | GitHub Pages, `main` dalı kökü | `main` dalına push = otomatik yayın |
 | İçerik veritabanı | Supabase, proje `bayrakstar-site` (`bezwdlxombiirihxomnv`), eu-central-1 | Ücretsiz plan |
-| Yönetim paneli | `/admin.html` | Giriş: `yonetim@bayrakstar.com` + şifre |
+| Yönetim paneli | `/admin.html` | Giriş: kişinin **kendi e-postası** + şifresi (bkz. 5) |
 
 **Devirde yapılacaklar:** üç hesabın da sahipliği/erişimi devredilmeli, yönetim
 paneli şifresi değiştirilmeli.
@@ -127,21 +127,37 @@ alabilirsiniz.
 
 ---
 
-## 5. Yetkilendirme
+## 5. Yetkilendirme — iki rol
 
-İçeriği yalnızca `site_yoneticiler` tablosundaki kullanıcılar değiştirebilir.
-Yeni yönetici eklemek için (Supabase → SQL Editor):
+Panele girenler iki gruba ayrılır. Ayrım `site_yoneticiler.rol` alanında durur:
 
-```sql
--- 1) Authentication > Users ekranından kullanıcıyı oluştur, uid'sini kopyala
--- 2) yetkilendir:
-insert into site_yoneticiler (uid, eposta) values ('BURAYA-UID', 'kisi@ornek.com');
+| Rol | Kim | Neye erişir |
+|---|---|---|
+| `sahip` (Süper Yönetici) | `yonetim@bayrakstar.com` | Her şey: içerik, sürüm geçmişi, ziyaretler, JSON yedek/sıfırlama, yönetici hesapları |
+| `yonetici` | Anlaşma yapılan kişiler | Yalnızca içeriği düzenleyip yayına alma |
 
--- yetkiyi geri al:
-delete from site_yoneticiler where eposta = 'kisi@ornek.com';
-```
+**Yeni yönetici eklemek için SQL'e girmeye gerek yok.** Süper yönetici olarak
+panele gir → sol menüde **Yöneticiler** → e-posta + şifre yaz → *Hesabı Aç*.
+Aynı ekrandan erişimi kaldırır ya da şifre sıfırlarsın.
 
-Yalnızca giriş yapmış olmak yetmez; bu tabloda olmayan kullanıcı yazamaz.
+### Kilit nerede duruyor?
+
+Panelin düğmeleri role göre gizleniyor, ama asıl engel **veritabanında** (RLS):
+
+- `site_icerik_gecmis` ve `ziyaret_sayac` → `sahip_mi()` şartı. Yönetici hesabı
+  bu tabloları sorgularsa **boş liste** alır; panelin kodu kurcalansa bile veri gelmez.
+- `site_yoneticiler` → yönetici yalnızca kendi satırını görür, rolünü değiştiremez,
+  başkasını ekleyemez. (Denendi ve doğrulandı.)
+- Hesap açma/silme `functions/v1/yoneticiler` uç noktasında; çağıranın süper
+  yönetici olduğunu **jetondan** doğrular, tarayıcının iddiasına bakmaz.
+
+### Sınırın dürüst tarifi
+
+"JSON Yükle" ve "Sıfırla" düğmeleri yöneticide gizli, ama bunlar sunucuya normal
+bir içerik kaydı olarak gider — yani yetkisi olan biri teknik olarak içeriği
+toptan değiştirebilir. Bu bir açık değil, rolün tanımı: yönetici zaten içeriği
+düzenleyebiliyor. Güvence sürüm geçmişinde: her kayıttan önceki hâl saklanıyor
+ve **yalnızca süper yönetici** geri alabiliyor.
 
 ---
 

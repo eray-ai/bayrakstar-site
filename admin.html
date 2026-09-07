@@ -124,7 +124,7 @@
   .yaz b{font-weight:800}
   .yaz .c{color:#49a6d6}          /* eski içerikteki mavi sınıf */
   .yaz:empty:before{content:attr(data-bos);color:#666}
-  input[type=text],input[type=url],textarea,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit;background:#fafafa}
+  input[type=text],input[type=url],input[type=email],input[type=password]:not(#gate input),input:not([type]),textarea,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit;background:#fafafa}
   input:focus,textarea:focus,select:focus{outline:none;border-color:var(--blue);background:#fff}
   input.asti,textarea.asti{border-color:#e39c9c;background:#fff8f8}
   textarea{resize:vertical;min-height:70px;line-height:1.5}
@@ -196,9 +196,12 @@
 <div id="gate">
   <div class="box">
     <h1>Bayrakstar Yönetim</h1>
-    <p>Devam etmek için şifre girin</p>
+    <p>Kendi e-postan ve şifrenle gir</p>
     <p style="font-size:12px;opacity:.55;margin-top:-14px">Kaydettiklerin doğrudan yayına gider</p>
-    <input type="password" id="pw" placeholder="Şifre" onkeydown="if(event.key==='Enter')login()">
+    <input type="email" id="epostaKutu" placeholder="E-posta" autocomplete="username"
+           onkeydown="if(event.key==='Enter')document.getElementById('pw').focus()">
+    <input type="password" id="pw" placeholder="Şifre" autocomplete="current-password"
+           onkeydown="if(event.key==='Enter')login()">
     <button onclick="login()">Giriş Yap</button>
     <div class="err" id="loginErr"></div>
   </div>
@@ -212,11 +215,13 @@
   </div>
   <div class="actions">
     <span id="boyutRozet" class="rozet iyi">İçerik: —</span>
-    <button class="btn btn-ghost btn-sm" onclick="resetAll()">↺ Sıfırla</button>
-    <button class="btn btn-dark btn-sm" onclick="importJson()">⬆ JSON Yükle</button>
-    <button class="btn btn-dark btn-sm" onclick="exportJson()">⬇ JSON İndir</button>
+    <span id="kimRozet" class="rozet" style="display:none"></span>
+    <button class="btn btn-ghost btn-sm sahip-ozel" onclick="resetAll()">↺ Sıfırla</button>
+    <button class="btn btn-dark btn-sm sahip-ozel" onclick="importJson()">⬆ JSON Yükle</button>
+    <button class="btn btn-dark btn-sm sahip-ozel" onclick="exportJson()">⬇ JSON İndir</button>
     <button class="btn btn-dark btn-sm" onclick="window.open(SITE_KOK+'/','_blank')">↗ Siteyi Aç</button>
     <button class="btn btn-primary" onclick="saveAndPreview()">☁️ Kaydet &amp; Yayınla</button>
+    <button class="btn btn-ghost btn-sm" onclick="cikisYap()" title="Oturumu kapat">⏻</button>
   </div>
 </header>
 
@@ -252,19 +257,62 @@
 function login(){
   const btn=document.querySelector('#gate button');
   const err=document.getElementById('loginErr');
-  const v=document.getElementById('pw').value;
+  const e1=document.getElementById('epostaKutu').value;
+  const v =document.getElementById('pw').value;
   err.textContent=''; btn.disabled=true; btn.textContent='Giriş yapılıyor…';
-  window.BULUT.giris(v).then(function(){
+  window.BULUT.giris(e1, v).then(function(){
     btn.disabled=false; btn.textContent='Giriş Yap'; openPanel();
   }).catch(function(e){
     btn.disabled=false; btn.textContent='Giriş Yap';
     err.textContent = /fetch|network|Failed/i.test(e.message)
-      ? 'Bulut sunucusuna ulaşılamadı — internet bağlantını kontrol et.' : 'Şifre yanlış.';
+      ? 'Bulut sunucusuna ulaşılamadı — internet bağlantını kontrol et.'
+      : (/yetkisi yok/.test(e.message) ? e.message : 'E-posta ya da şifre yanlış.');
   });
 }
+
+/* En son giren e-posta hatırlanır — şifre ASLA saklanmaz. */
+(function(){
+  document.addEventListener('DOMContentLoaded', function(){
+    var k=document.getElementById('epostaKutu');
+    if(!k || !window.BULUT) return;
+    k.value = window.BULUT.sonEposta();
+    (k.value ? document.getElementById('pw') : k).focus();
+  });
+})();
+
+function cikisYap(){
+  if(!confirm('Oturumu kapatmak istediğine emin misin?\n\nKaydedilmemiş değişiklikler kaybolur.')) return;
+  window.BULUT.cikis();
+  location.reload();
+}
+
+/* ==== YETKİ ====
+   Rol yalnızca EKRANI şekillendirir. Asıl kilit veritabanındaki
+   kurallarda (RLS) duruyor: sürüm geçmişi ve ziyaret sayıları
+   yönetici hesabına sunucu tarafında kapalı — tarayıcıdan bu
+   sayfanın kodu kurcalansa bile o veriler gelmez. */
+function sahipMi(){ return window.BULUT && window.BULUT.sahipMi(); }
+
+function yetkiUygula(){
+  var sahip = sahipMi();
+  document.querySelectorAll('.sahip-ozel').forEach(function(el){
+    el.style.display = sahip ? '' : 'none';
+  });
+  var r=document.getElementById('kimRozet');
+  if(r){
+    r.style.display='';
+    r.className='rozet ' + (sahip ? 'iyi' : '');
+    r.textContent = sahip ? 'Süper Yönetici' : 'Yönetici';
+    r.title = sahip
+      ? 'Her şeye erişimin var.'
+      : 'İçeriği düzenleyip yayına alabilirsin. Sürüm geçmişi, ziyaretler ve yedek işlemleri süper yöneticide.';
+  }
+}
+
 function openPanel(){
   document.getElementById('gate').style.display='none';
   document.getElementById('app').style.display='flex';
+  yetkiUygula();
   window.bulutHazir.then(function(){
     D = JSON.parse(JSON.stringify(window.getSiteData()));
     render();
@@ -343,8 +391,11 @@ const B_SITE=[
   {id:'grafik',  ad:'Grafik Elementleri',ikon:'◈', renk:'#f75843'},
   {id:'yasal',   ad:'Künye & KVKK',     ikon:'§', renk:'#4d4d4d'},
   {id:'footer',  ad:'Alt Bilgi',         ikon:'☰', renk:'#4d4d4d'},
-  {id:'gecmis',  ad:'Sürüm Geçmişi',     ikon:'↺', renk:'#989a9d'},
-  {id:'ziyaret', ad:'Ziyaretler',        ikon:'📈', renk:'#00bac5'}
+  /* sahip:true olanlar YALNIZCA süper yöneticiye görünür.
+     Görünmemesi tek başına engel değil; asıl kilit veritabanında. */
+  {id:'gecmis',  ad:'Sürüm Geçmişi',     ikon:'↺', renk:'#989a9d', sahip:true},
+  {id:'ziyaret', ad:'Ziyaretler',        ikon:'📈', renk:'#00bac5', sahip:true},
+  {id:'yonetim', ad:'Yöneticiler',       ikon:'👤', renk:'#0081ba', sahip:true}
 ];
 const B_RADYO=[
   {id:'genel',   ad:'Genel Bilgiler', ikon:'ℹ',  renk:'#0081ba'},
@@ -367,7 +418,11 @@ const SITE_KOK = 'https://eray-ai.github.io/bayrakstar-site';
 
 let st = { varlik:'site', radyo:0, bolum:'hero', gun:null };  /* gun: null = varsayılan akış, 0..6 = o güne özel */
 
-function bolumler(){ return st.varlik==='site' ? B_SITE : B_RADYO; }
+function bolumler(){
+  var liste = st.varlik==='site' ? B_SITE : B_RADYO;
+  if (sahipMi()) return liste;
+  return liste.filter(function(b){ return !b.sahip; });
+}
 
 /* ==== SEÇİCİ (sol üst açılır panel) ==== */
 function switcherAc(e){ e.stopPropagation(); document.getElementById('switcher').classList.toggle('open'); }
@@ -458,6 +513,7 @@ function cizPanel(){
   /* Sürüm geçmişi buluttan asenkron gelir — bölüm çizildikten sonra doldurulur. */
   if(st.varlik==='site' && b.id==='gecmis') gecmisYukle();
   if(st.varlik==='site' && b.id==='ziyaret') ziyaretYukle();
+  if(st.varlik==='site' && b.id==='yonetim')  yoneticiYukle();
 }
 
 /* ============================================================
@@ -702,6 +758,28 @@ function panelSite(b){
     + 'Yönetim paneli sayıma dahil değil.</div>'
     + '<div id="ziyaretKutu"><div class="bos">Yükleniyor…</div></div>';
 
+  if(b.id==='yonetim') return baslik(b,'Panele kimler girebilir? Buradan yeni yönetici hesabı açar, erişimi kaldırır ya da şifre sıfırlarsın.')
+    + '<div class="hint" style="margin-bottom:14px">Yönetici hesapları içeriği düzenleyip yayına alabilir. '
+    + 'Sürüm geçmişi, ziyaret sayıları, JSON yedekleme ve sıfırlama YALNIZCA sana açık — '
+    + 'bu kısıt sunucuda tanımlı, panelin kodu kurcalansa bile aşılamaz.</div>'
+    + '<div class="item" style="background:#fff">'
+    +   '<div class="ihead"><span class="n">＋ Yeni yönetici</span></div>'
+    +   '<div class="grid2">'
+    +     '<div class="field"><label>Ad Soyad <span class="lim">isteğe bağlı</span></label>'
+    +       '<input id="yyAd" placeholder="Örn. Ömer Erişmen"></div>'
+    +     '<div class="field"><label>E-posta</label>'
+    +       '<input id="yyEposta" type="email" placeholder="kisi@bayrakstar.com"></div>'
+    +   '</div>'
+    +   '<div class="field"><label>Şifre</label>'
+    +     '<div style="display:flex;gap:8px;align-items:center">'
+    +       '<input id="yySifre" placeholder="En az 8 karakter" style="flex:1">'
+    +       '<button class="mv" style="white-space:nowrap" onclick="sifreUret(\'yySifre\')">🎲 Üret</button>'
+    +     '</div></div>'
+    +   '<div class="hint">Şifreyi sen belirleyip kişiye iletiyorsun. Sonradan buradan değiştirebilirsin.</div>'
+    +   '<button class="btn btn-primary" style="margin-top:12px" onclick="yoneticiEkle()">Hesabı Aç</button>'
+    + '</div>'
+    + '<div id="yoneticiListe"><div class="bos">Yükleniyor…</div></div>';
+
   if(b.id==='gecmis') return baslik(b,'Her kayıttan ÖNCEKİ hâl otomatik saklanır. Yanlış bir değişikliği buradan geri alabilirsin.')
     + '<div class="hint" style="margin-bottom:14px">Geri yükleme de geçmişe düşer — yani geri almayı da geri alabilirsin. '
     + 'Sürümler yalnızca sana görünür, siteyi açan ziyaretçi göremez.</div>'
@@ -729,6 +807,101 @@ function ensureIletisim(){
    SÜRÜM GEÇMİŞİ
    Liste asenkron gelir; bölüm çizildikten SONRA doldurulur.
    ============================================================ */
+/* ============================================================
+   YÖNETİCİLER
+   Hesap açma/silme sunucudaki `yoneticiler` fonksiyonuna gider;
+   orası çağıranın gerçekten süper yönetici olduğunu jetondan
+   doğrular. Buradaki kontroller sadece kullanıcıyı boş yere
+   uğraştırmamak için.
+   ============================================================ */
+function yoneticiYukle(){
+  const kutu=document.getElementById('yoneticiListe');
+  if(!kutu) return;
+  BULUT.yoneticiListe().then(function(liste){
+    if(!liste.length){ kutu.innerHTML='<div class="bos">Kayıt yok.</div>'; return; }
+    kutu.innerHTML = liste.map(function(y){
+      const sahip = y.rol==='sahip';
+      const ad = y.ad || y.eposta.split('@')[0];
+      return '<div class="item">'
+        + '<div class="ihead"><span class="n">'
+        +   (sahip?'★ ':'') + att(ad)
+        +   '<span style="font-weight:600;opacity:.55;font-size:12px">'
+        +   (sahip?'Süper Yönetici · her şeye erişir':'Yönetici · içerik düzenler') + '</span></span>'
+        + '<div class="ctrl">'
+        +   '<button class="mv" onclick="yoneticiSifreDegistir(\'' + y.uid + '\',\'' + att(y.eposta) + '\')">🔑 Şifre</button>'
+        +   (sahip ? '' : '<button class="mv" style="background:#ffe2e0;color:#c31" onclick="yoneticiCikar(\'' + y.uid + '\',\'' + att(y.eposta) + '\')">Erişimi Kaldır</button>')
+        + '</div></div>'
+        + '<div style="font-size:13px;opacity:.7">' + att(y.eposta) + '</div>'
+        + '<div class="hint">' + yoneticiSonGiris(y.son_giris) + '</div>'
+        + '</div>';
+    }).join('');
+  }).catch(function(e){
+    kutu.innerHTML='<div class="bos">Liste okunamadı: '+att(e.message)+'</div>';
+  });
+}
+
+function yoneticiSonGiris(t){
+  if(!t) return 'Henüz hiç giriş yapmadı.';
+  const d=new Date(t), g=Math.floor((Date.now()-d)/86400000);
+  const damga=d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+  if(g<=0) return 'Son giriş: bugün';
+  if(g===1) return 'Son giriş: dün';
+  return 'Son giriş: '+damga+' ('+g+' gün önce)';
+}
+
+/* Okunabilir ama tahmin edilmesi zor şifre. Karışan karakterler
+   (0/O, 1/l/I) telefonda okuturken hata yarattığı için dışarıda. */
+function sifreUret(hedefId){
+  const harf='abcdefghijkmnpqrstuvwxyz', buyuk='ABCDEFGHJKLMNPQRSTUVWXYZ', rakam='23456789';
+  const havuz=harf+buyuk+rakam;
+  let s='';
+  const r=new Uint32Array(12); crypto.getRandomValues(r);
+  for(let i=0;i<12;i++) s+=havuz[r[i]%havuz.length];
+  const k=document.getElementById(hedefId);
+  if(k){ k.value=s; k.select && k.select(); }
+  return s;
+}
+window.sifreUret=sifreUret;
+
+function yoneticiEkle(){
+  const ad=document.getElementById('yyAd').value.trim();
+  const eposta=document.getElementById('yyEposta').value.trim();
+  const sifre=document.getElementById('yySifre').value;
+  if(!eposta){ alert('E-posta adresi gerekli.'); return; }
+  if(sifre.length<8){ alert('Şifre en az 8 karakter olmalı.'); return; }
+  if(!confirm('Yeni yönetici hesabı açılacak:\n\n'+eposta+'\nŞifre: '+sifre+'\n\n'
+    + 'Bu kişi içeriği düzenleyip yayına alabilecek. Sürüm geçmişi, ziyaretler ve '
+    + 'yedek işlemleri sende kalıyor.\n\nŞifreyi bu ekrandan sonra bir daha göremezsin — '
+    + 'şimdi kopyala.')) return;
+
+  BULUT.yoneticiEkle(eposta, sifre, ad).then(function(){
+    alert('Hesap açıldı.\n\nGiriş adresi: '+SITE_KOK+'/admin.html\nE-posta: '+eposta+'\nŞifre: '+sifre);
+    document.getElementById('yyAd').value='';
+    document.getElementById('yyEposta').value='';
+    document.getElementById('yySifre').value='';
+    yoneticiYukle();
+  }).catch(function(e){ alert('Hesap açılamadı: '+e.message); });
+}
+window.yoneticiEkle=yoneticiEkle;
+
+function yoneticiCikar(uid, eposta){
+  if(!confirm(eposta+'\n\nBu hesabın panele erişimi tamamen kaldırılacak ve giriş hesabı silinecek.\n'
+    + 'Sitedeki içerik etkilenmez.\n\nDevam edilsin mi?')) return;
+  BULUT.yoneticiSil(uid).then(function(){ yoneticiYukle(); })
+    .catch(function(e){ alert('Kaldırılamadı: '+e.message); });
+}
+window.yoneticiCikar=yoneticiCikar;
+
+function yoneticiSifreDegistir(uid, eposta){
+  const yeni=prompt(eposta+' için yeni şifre (en az 8 karakter):', sifreUret('__yok__'));
+  if(yeni===null) return;
+  if(yeni.length<8){ alert('Şifre en az 8 karakter olmalı.'); return; }
+  BULUT.yoneticiSifre(uid, yeni).then(function(){
+    alert('Şifre değiştirildi.\n\nE-posta: '+eposta+'\nYeni şifre: '+yeni);
+  }).catch(function(e){ alert('Değiştirilemedi: '+e.message); });
+}
+window.yoneticiSifreDegistir=yoneticiSifreDegistir;
+
 function gecmisYukle(){
   const kutu=document.getElementById('gecmisListe');
   if(!kutu) return;
