@@ -161,6 +161,38 @@ ve **yalnızca süper yönetici** geri alabiliyor.
 
 ---
 
+## 5.1 Sayfa metinleri nereden geliyor?
+
+Bölüm başlıkları, menü bağlantıları, telif satırı ve arama/paylaşım
+bilgileri artık HTML'e gömülü değil — panelden yönetiliyor:
+
+| Panel bölümü | Neyi yönetir | Kime açık |
+|---|---|---|
+| **Sayfa Metinleri** | Bölüm başlıkları, alt yazılar, menü bağlantıları, telif satırı | Herkese |
+| **Paylaşım & Arama** | Sekme adı, Google açıklaması, WhatsApp ön izlemesi | Yalnız süper yönetici |
+
+Sayfalarda karşılığı `<h2 data-metin="radyo.akisBaslik">Yayın Akışı</h2>`
+biçiminde duruyor. HTML'deki yazı bilerek yerinde bırakıldı: bulut yavaşsa
+ziyaretçi boş kutu değil o yazıyı görür, veri gelince üstüne yazılır.
+
+- **Telif yılı:** metindeki `{yil}` içinde bulunulan yılla değişir. Her Ocak
+  ayında dosya düzenlemek gerekmez.
+- **Boş bırakılan alan varsayılana döner** — silinen bir başlık sayfada
+  boşluk bırakmaz (`getSiteData()` birleştirmesi).
+- **Yeni alan eklerken:** `data.js` içindeki `metinler` / `seo` bloğuna yaz,
+  sayfada `data-metin="grup.alan"` ver, panelde `admin.html`deki listeye ekle.
+- **DİKKAT:** `DEFAULT_DATA` nesnesinin içine yorum satırı YAZILAMAZ —
+  `araclar/statik-uret.py` onu düz JSON olarak ayrıştırıyor.
+
+### Paylaşım ön izlemesi neden ertesi gün?
+
+WhatsApp, Facebook ve X'in ön izleme botları JavaScript çalıştırmaz. Panelden
+değiştirilen başlık, sayfanın içine yazılana kadar kartlarda eski görünür. Bu
+işi günlük bakım görevi yapıyor (`araclar/statik-uret.py`, her sabah 09:10).
+Sekme adı ve Google açıklaması ise kaydedildiği anda geçerlidir.
+
+---
+
 ## 6. Ücretsiz plan sınırları
 
 | Servis | Sınır | Aşılırsa |

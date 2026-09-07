@@ -119,14 +119,14 @@
   .icindekiler a:hover{opacity:1;background:rgba(255,255,255,.1)}
 </style>
 </head>
-<body>
+<body data-seo="yasal">
 <div class="ust">
   <a href="index.html"><img src="logo/bayrakstar-beyaz.png" alt="Bayrakstar"></a>
-  <a href="index.html">← Ana sayfaya dön</a>
+  <a href="index.html" data-metin="yasal.geriLink">← Ana sayfaya dön</a>
 </div>
 
 <main class="sar">
-  <h1>Künye ve KVKK</h1>
+  <h1 data-metin="yasal.baslik">Künye ve KVKK</h1>
   <div class="alt" id="ustAlt"></div>
   <div class="icindekiler" id="icindekiler"></div>
 
@@ -144,8 +144,8 @@
     <p class="not" id="vNot"></p>
   </section>
 
-  <div id="bosluk" class="bos-uyari" hidden>Bu sayfa hazırlanıyor.</div>
-  <a class="geri" href="index.html">← Ana sayfaya dön</a>
+  <div id="bosluk" class="bos-uyari" hidden><span data-metin="yasal.bosMesaj">Bu sayfa hazırlanıyor.</span></div>
+  <a class="geri" href="index.html" data-metin="yasal.geriLink">← Ana sayfaya dön</a>
 </main>
 
 <script src="data.js"></script>

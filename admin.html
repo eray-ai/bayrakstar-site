@@ -390,6 +390,8 @@ const B_SITE=[
   {id:'iletisim',ad:'İletişim',          ikon:'✉', renk:'#00bac5', say:()=>((D.contact&&D.contact.items)||[]).length},
   {id:'grafik',  ad:'Grafik Elementleri',ikon:'◈', renk:'#f75843'},
   {id:'yasal',   ad:'Künye & KVKK',     ikon:'§', renk:'#4d4d4d'},
+  {id:'metinler',ad:'Sayfa Metinleri',   ikon:'✎', renk:'#0081ba'},
+  {id:'seo',     ad:'Paylaşım & Arama',  ikon:'🔎', renk:'#989a9d', sahip:true},
   {id:'footer',  ad:'Alt Bilgi',         ikon:'☰', renk:'#4d4d4d'},
   /* sahip:true olanlar YALNIZCA süper yöneticiye görünür.
      Görünmemesi tek başına engel değil; asıl kilit veritabanında. */
@@ -758,6 +760,116 @@ function panelSite(b){
     + 'Yönetim paneli sayıma dahil değil.</div>'
     + '<div id="ziyaretKutu"><div class="bos">Yükleniyor…</div></div>';
 
+  if(b.id==='metinler'){
+    ensureMetinler();
+    var G = [
+      ['ana','Ana Sayfa & Alt Bilgi', [
+        ['radyolarBaslik','Radyolar bölümü başlığı',60],
+        ['radyolarAlt','Radyolar bölümü alt yazısı',160],
+        ['webSiteSerit','Üstteki turuncu şerit',120],
+        ['footRadyolar','Alt bilgi — "Radyolarımız" sütunu',40],
+        ['footKurumsal','Alt bilgi — "Kurumsal" sütunu',40],
+        ['footHakkimizda','Bağlantı: Hakkımızda',40],
+        ['footUygulamalar','Bağlantı: Uygulamalarımız',40],
+        ['footReklam','Bağlantı: Reklam & İş Birliği',40],
+        ['footBasin','Bağlantı: Basın',40],
+        ['footIletisim','Bağlantı: İletişim',40],
+        ['footYasal','Alt bilgi — "Yasal" sütunu',40],
+        ['telif','Telif satırı (ana sayfa)',90],
+        ['telifKisa','Telif satırı (diğer sayfalar)',90],
+        ['imza','Sağ alttaki imza',40]
+      ]],
+      ['radyo','Radyo Sayfası', [
+        ['geriLink','Sol üstteki geri bağlantısı',40],
+        ['hakkindaBaslik','"Radyo Hakkında" etiketi',40],
+        ['ozellik1','1. rozet — başlık',30],['ozellik1Alt','1. rozet — alt yazı',40],
+        ['ozellik2','2. rozet — başlık',30],['ozellik2Alt','2. rozet — alt yazı',40],
+        ['ozellik3','3. rozet — başlık',30],['ozellik3Alt','3. rozet — alt yazı',40],
+        ['yayincilarBaslik','Yayıncılar bölümü başlığı',50],
+        ['yayincilarAlt','Yayıncılar alt yazısı',90],
+        ['akisBaslik','Yayın akışı başlığı',50],
+        ['akisAlt','Yayın akışı alt yazısı',90],
+        ['kanallarBaslik','Kanallar başlığı',50],
+        ['kanallarAlt','Kanallar alt yazısı',90],
+        ['frekansBaslik','Frekanslar başlığı',50],
+        ['frekansAlt','Frekanslar alt yazısı',90],
+        ['sosyalBaslik','Sosyal medya başlığı',50],
+        ['sosyalAlt','Sosyal medya alt yazısı',90],
+        ['uygulamaBaslik','Uygulamalar başlığı',50],
+        ['uygulamaAlt','Uygulamalar alt yazısı',90],
+        ['digerBaslik','"Diğer Radyolarımız" başlığı',50],
+        ['webSitesiButon','Web sitesi düğmesi',30]
+      ]],
+      ['uygulamalar','Uygulamalar Sayfası', [
+        ['geriLink','Geri bağlantısı',40],
+        ['baslik','Üst etiket',60],
+        ['alt','Büyük başlık',80]
+      ]],
+      ['websiteler','Web Siteleri Sayfası', [
+        ['geriLink','Geri bağlantısı',40],
+        ['baslik','Üst etiket',60],
+        ['alt','Büyük başlık',80],
+        ['aciklama','Açıklama',180]
+      ]],
+      ['yasal','Künye & KVKK Sayfası', [
+        ['geriLink','Geri bağlantısı',40],
+        ['baslik','Sayfa başlığı',60],
+        ['bosMesaj','İçerik yayında değilken görünen yazı',90]
+      ]],
+      ['hata404','Sayfa Bulunamadı (404)', [
+        ['baslik','Başlık',60],
+        ['anaSayfa','1. düğme',40],
+        ['webSiteler','2. düğme',40]
+      ]]
+    ];
+    var h = baslik(b,'Sitedeki sabit yazılar: bölüm başlıkları, menü bağlantıları ve telif satırı.')
+      + '<div class="hint" style="margin-bottom:14px">Bir alanı <b>boş bırakırsan</b> eski hâline döner — '
+      + 'yanlışlıkla silinen başlık sayfada boşluk bırakmaz. Telif satırındaki <b>{yil}</b> '
+      + 'yazısına dokunma: içinde bulunulan yılı kendisi yazar, her Ocak ayında güncellemen gerekmez.</div>';
+    G.forEach(function(g){
+      var grup=g[0], ad=g[1], alanlar=g[2];
+      h += '<div class="item"><div class="ihead"><span class="n">'+ad+'</span></div><div class="grid2">';
+      alanlar.forEach(function(a){
+        var yol = 'D.metinler.'+grup+'.'+a[0];
+        h += alan(a[1], txtInput(yolOku(yol), yol, a[2]), a[2], yolOku(yol));
+      });
+      h += '</div></div>';
+    });
+    return h;
+  }
+
+  if(b.id==='seo'){
+    ensureMetinler();
+    var SG = [
+      ['ana','Ana Sayfa'],
+      ['uygulamalar','Uygulamalar Sayfası'],
+      ['websiteler','Web Siteleri Sayfası'],
+      ['yasal','Künye & KVKK Sayfası']
+    ];
+    var hs = baslik(b,'Sekmede görünen ad, Google\'daki açıklama ve linki WhatsApp\'a yapıştırınca çıkan ön izleme.')
+      + '<div class="hint" style="margin-bottom:14px">Burası içerik değil, sitenin <b>dış dünyaya görünen yüzü</b>. '
+      + 'Yanlış doldurulursa arama sonuçlarında kayıp yaşanır — bu yüzden yalnızca sana açık.<br>'
+      + 'Paylaşım ön izlemeleri <b>ertesi gün 09:10\'da</b> tazelenir: WhatsApp ve Facebook botları sayfayı '
+      + 'JavaScript çalıştırmadan okuduğu için değişiklik dosyaya yazılmayı bekler. Sekme adı ve Google '
+      + 'açıklaması ise kaydettiğin anda geçerli olur.<br>'
+      + '<b>Radyo sayfaları burada yok</b> — onların başlığı radyonun kendi adı ve sloganından kuruluyor.</div>';
+    SG.forEach(function(g){
+      var grup=g[0];
+      hs += '<div class="item"><div class="ihead"><span class="n">'+g[1]+'</span></div>'
+        + alan('Sekme adı / arama başlığı', txtInput(yolOku('D.seo.'+grup+'.baslik'),'D.seo.'+grup+'.baslik',65), 65, yolOku('D.seo.'+grup+'.baslik'),
+               'Google\'da mavi başlık olarak çıkar. 60 karakteri geçerse sonu kesilir.')
+        + alan('Arama açıklaması', txtInput(yolOku('D.seo.'+grup+'.aciklama'),'D.seo.'+grup+'.aciklama',200), 200, yolOku('D.seo.'+grup+'.aciklama'),
+               'Google\'da başlığın altındaki gri yazı.')
+        + '<div class="grid2">'
+        + alan('Paylaşım başlığı', txtInput(yolOku('D.seo.'+grup+'.paylasimBaslik'),'D.seo.'+grup+'.paylasimBaslik',65), 65, yolOku('D.seo.'+grup+'.paylasimBaslik'))
+        + alan('Paylaşım açıklaması', txtInput(yolOku('D.seo.'+grup+'.paylasimAciklama'),'D.seo.'+grup+'.paylasimAciklama',120), 120, yolOku('D.seo.'+grup+'.paylasimAciklama'))
+        + '</div>'
+        + '<div class="hint">Boş bırakılırsa üstteki iki alan kullanılır.</div>'
+        + '</div>';
+    });
+    return hs;
+  }
+
   if(b.id==='yonetim') return baslik(b,'Panele kimler girebilir? Buradan yeni yönetici hesabı açar, erişimi kaldırır ya da şifre sıfırlarsın.')
     + '<div class="hint" style="margin-bottom:14px">Yönetici hesapları içeriği düzenleyip yayına alabilir. '
     + 'Sürüm geçmişi, ziyaret sayıları, JSON yedekleme ve sıfırlama YALNIZCA sana açık — '
@@ -786,6 +898,23 @@ function panelSite(b){
     + '<div id="gecmisListe"><div class="bos">Yükleniyor…</div></div>';
 
   return '';
+}
+
+/* ==== SAYFA METİNLERİ / SEO: eski kayıtlarda blok hiç olmayabilir ====
+   getSiteData() zaten varsayılanla birleştiriyor, ama panel doğrudan
+   D üzerinde çalıştığı için burada da güvenceye alınıyor. */
+function ensureMetinler(){
+  var V = (window.DEFAULT_DATA||{});
+  ['metinler','seo'].forEach(function(blok){
+    if(!D[blok] || typeof D[blok]!=='object') D[blok]={};
+    var vb = V[blok] || {};
+    Object.keys(vb).forEach(function(grup){
+      if(!D[blok][grup] || typeof D[blok][grup]!=='object') D[blok][grup]={};
+      Object.keys(vb[grup]).forEach(function(alan){
+        if(typeof D[blok][grup][alan]!=='string') D[blok][grup][alan]=vb[grup][alan];
+      });
+    });
+  });
 }
 
 /* ==== İLETİŞİM: eski kayıtlarda blok hiç olmayabilir ==== */

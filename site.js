@@ -467,3 +467,87 @@
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', baslat);
   else baslat();
 })();
+
+/* ============================================================
+   SAYFA METİNLERİ + PAYLAŞIM BİLGİLERİ
+   Eskiden HTML dosyalarına gömülü olan başlıklar, menü yazıları ve
+   telif satırı artık panelden geliyor.
+
+   Kullanımı: sayfada  <h2 data-metin="radyo.akisBaslik">Yayın Akışı</h2>
+   HTML'deki yazı olduğu yerde kalır — bulut yavaşsa ya da hiç
+   açılmazsa ziyaretçi boş kutu değil, o yazıyı görür. Veri gelince
+   üstüne yazılır.
+
+   "{yil}" yer tutucusu içinde bulunulan yılla değiştirilir; telif
+   satırı her Ocak ayında kendiliğinden güncellenir.
+   ============================================================ */
+(function () {
+  function oku(veri, yol) {
+    var p = String(yol || '').split('.'), o = veri;
+    for (var i = 0; i < p.length; i++) {
+      if (!o || typeof o !== 'object') return null;
+      o = o[p[i]];
+    }
+    return (typeof o === 'string') ? o : null;
+  }
+
+  function yerTutucu(metin) {
+    return metin.replace(/\{yil\}/g, new Date().getFullYear());
+  }
+
+  function doldur() {
+    var S = (window.getSiteData && window.getSiteData()) || {};
+    var M = S.metinler || {};
+
+    var hedefler = document.querySelectorAll('[data-metin]');
+    for (var i = 0; i < hedefler.length; i++) {
+      var el = hedefler[i];
+      var deger = oku(M, el.getAttribute('data-metin'));
+      if (deger === null) {
+        /* Panelde karşılığı yoksa HTML'deki yazıya dokunma; ama telif
+           gibi yer tutuculu satırlar yine de çözülsün. */
+        if (el.textContent.indexOf('{yil}') >= 0) el.textContent = yerTutucu(el.textContent);
+        continue;
+      }
+      deger = yerTutucu(deger);
+      if (deger === '') { el.hidden = true; continue; }
+      /* Fenomen ve Fenomen Türk sayfalarında başlıkların içine
+         paketler/kurumsal.js bir "yankı" katmanı sarıyor. Doğrudan
+         textContent yazmak o katmanı siler ve efekt bir daha kurulmaz
+         (kurumsal.js aynı başlığı ikinci kez sarmıyor). */
+      var yanki = el.querySelector && el.querySelector('.kk-yanki');
+      if (yanki) {
+        yanki.textContent = deger;
+        yanki.setAttribute('data-yanki', deger);
+      } else {
+        el.textContent = deger;
+      }
+      el.hidden = false;
+    }
+
+    /* --- Paylaşım & arama bilgileri --- */
+    var anahtar = document.body && document.body.getAttribute('data-seo');
+    if (!anahtar) return;
+    var G = (S.seo || {})[anahtar];
+    if (!G) return;
+
+    function yaz(secici, ozellik, deger) {
+      if (!deger) return;
+      var el = document.querySelector(secici);
+      if (el) el.setAttribute(ozellik, deger);
+    }
+    if (G.baslik) document.title = G.baslik;
+    yaz('meta[name="description"]', 'content', G.aciklama);
+    yaz('meta[property="og:title"]', 'content', G.paylasimBaslik || G.baslik);
+    yaz('meta[property="og:description"]', 'content', G.paylasimAciklama || G.aciklama);
+    yaz('meta[name="twitter:title"]', 'content', G.paylasimBaslik || G.baslik);
+    yaz('meta[name="twitter:description"]', 'content', G.paylasimAciklama || G.aciklama);
+  }
+
+  function baslat() {
+    if (window.bulutHazir && window.bulutHazir.then) window.bulutHazir.then(doldur, doldur);
+    else doldur();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', baslat);
+  else baslat();
+})();

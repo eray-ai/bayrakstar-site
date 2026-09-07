@@ -21,6 +21,33 @@ window.URLYayinci = function (radyoSlug, hostSlug) {
   return 'y/' + encodeURIComponent(radyoSlug) + '-' + encodeURIComponent(hostSlug) + '/';
 };
 
+/* ============================================================
+   SAYFA METİNLERİ ve PAYLAŞIM BİLGİLERİ  ("metinler" / "seo")
+   ------------------------------------------------------------
+   Sayfa başlıkları, menü yazıları ve telif satırı eskiden HTML
+   dosyalarının içine gömülüydü; değiştirmek kod düzenlemek demekti.
+   Artık panelden yönetiliyor (Sayfa Metinleri / Paylaşım bölümleri).
+
+   Sayfalarda karşılığı  <h2 data-metin="radyo.akisBaslik">…</h2>
+   biçiminde duruyor; site.js gelen değeri yazının üstüne basar.
+   HTML'deki yazı olduğu yerde bırakıldı: bulut yavaşsa ziyaretçi boş
+   kutu değil o yazıyı görür.
+
+   "{yil}" yer tutucusu içinde bulunulan yılla değiştirilir — telif
+   satırı her Ocak ayında kendiliğinden güncellenir.
+
+   Boş bırakılan alan varsayılana döner (getSiteData birleştirmesi),
+   böylece yanlışlıkla silinen bir başlık sayfada boşluk bırakmaz.
+
+   "seo" sitenin dış dünyaya görünen yüzü: sekme adı, Google
+   açıklaması, WhatsApp ön izlemesi. Panelde YALNIZCA süper yöneticiye
+   açık. Ön izleme botları JavaScript çalıştırmadığı için bu değerler
+   ayrıca araclar/statik-uret.py tarafından dosyaların içine de yazılır
+   (günlük bakım görevinde).
+
+   NOT: bu nesnenin içine yorum YAZILAMAZ — araclar/statik-uret.py
+   DEFAULT_DATA'yı düz JSON olarak ayrıştırıyor.
+   ============================================================ */
 window.DEFAULT_DATA = {
   "hero": {
     "kicker": "BAYRAKSTAR MEDYA GRUBU",
@@ -1619,6 +1646,97 @@ window.DEFAULT_DATA = {
       ],
       "not": ""
     }
+  },
+
+  "metinler": {
+    "ana": {
+      "radyolarBaslik": "Radyolarımız",
+      "radyolarAlt": "Çatımız altındaki radyolar. Kartın üzerine tıkla, radyonun web sitesine git.",
+      "webSiteSerit": "🌐 Radyoların resmî web sitesine gitmek için tıklayın →",
+      "footRadyolar": "Radyolarımız",
+      "footKurumsal": "Kurumsal",
+      "footHakkimizda": "Hakkımızda",
+      "footUygulamalar": "Uygulamalarımız",
+      "footReklam": "Reklam & İş Birliği",
+      "footBasin": "Basın",
+      "footIletisim": "İletişim",
+      "footYasal": "Yasal",
+      "telif": "© {yil} Bayrakstar. Tüm hakları saklıdır.",
+      "telifKisa": "© {yil} Bayrakstar — colorful life",
+      "imza": "colorful life"
+    },
+    "radyo": {
+      "hakkindaBaslik": "Radyo Hakkında",
+      "ozellik1": "7/24 Yayın",
+      "ozellik1Alt": "Kesintisiz canlı",
+      "ozellik2": "Dijital Kalite",
+      "ozellik2Alt": "Net ses",
+      "ozellik3": "Her Cihazda",
+      "ozellik3Alt": "Web & mobil",
+      "yayincilarBaslik": "Yayıncılarımız",
+      "yayincilarAlt": "Mikrofonun ardındaki isimler",
+      "akisBaslik": "Yayın Akışı",
+      "akisAlt": "Gün boyu ekranında ne var?",
+      "kanallarBaslik": "Kanallarımız",
+      "kanallarAlt": "Her zevke uygun alt yayın kanalları",
+      "frekansBaslik": "Frekanslar",
+      "frekansAlt": "Türkiye genelinde FM üzerinden yayındayız",
+      "sosyalBaslik": "Takip Et",
+      "sosyalAlt": "Sosyal medyada bizi kaçırma",
+      "uygulamaBaslik": "Uygulamalar",
+      "uygulamaAlt": "Nerede olursan ol, cebinde ve arabanda yanında",
+      "digerBaslik": "Diğer Radyolarımız",
+      "webSitesiButon": "Web Sitesi ↗",
+      "geriLink": "← Bayrakstar"
+    },
+    "uygulamalar": {
+      "baslik": "Mobil Uygulamalar",
+      "alt": "Radyolarımız cebinde",
+      "geriLink": "← Ana Sayfa"
+    },
+    "websiteler": {
+      "baslik": "Resmî Web Siteleri",
+      "alt": "Hangi radyoya gitmek istersin?",
+      "aciklama": "Aşağıdan bir radyo seç; o radyonun resmî web sitesine yönlendirileceksin.",
+      "geriLink": "← Ana Sayfa"
+    },
+    "yasal": {
+      "baslik": "Künye ve KVKK",
+      "geriLink": "← Ana sayfaya dön",
+      "bosMesaj": "Bu sayfa hazırlanıyor."
+    },
+    "hata404": {
+      "baslik": "Bu sayfa yayında değil",
+      "anaSayfa": "Ana sayfaya dön",
+      "webSiteler": "Radyo web siteleri"
+    }
+  },
+
+  "seo": {
+    "ana": {
+      "baslik": "Bayrakstar — colorful life",
+      "aciklama": "Bayrakstar; Radyo Fenomen, Fenomen Türk, Radyo Boombox ve İstanbul FM'i tek çatı altında buluşturan radyo ağı. Tüm radyoları canlı dinle, yayın akışlarını ve frekansları keşfet.",
+      "paylasimBaslik": "Bayrakstar — colorful life",
+      "paylasimAciklama": "Radyo Fenomen, Fenomen Türk, Radyo Boombox ve İstanbul FM tek çatı altında. Canlı dinle, keşfet."
+    },
+    "uygulamalar": {
+      "baslik": "Uygulamalarımız — Bayrakstar",
+      "aciklama": "Bayrakstar radyolarının mobil uygulamaları: Radyo Fenomen, Radyo Boombox ve İstanbul FM'i iPhone, iPad, Android telefon ve tabletten, Apple CarPlay ile Android Auto üzerinden dinle.",
+      "paylasimBaslik": "Uygulamalarımız — Bayrakstar",
+      "paylasimAciklama": "Radyolarımızı telefonundan, tabletinden ve aracının ekranından dinle. Uygulamalar ücretsiz."
+    },
+    "websiteler": {
+      "baslik": "Radyo Web Siteleri — Bayrakstar",
+      "aciklama": "Bayrakstar çatısı altındaki radyoların resmî web siteleri: Radyo Fenomen, Fenomen Türk, Radyo Boombox ve İstanbul FM. Gitmek istediğin radyoyu seç.",
+      "paylasimBaslik": "Radyo Web Siteleri — Bayrakstar",
+      "paylasimAciklama": "Bayrakstar radyolarının resmî web sitelerine buradan ulaş."
+    },
+    "yasal": {
+      "baslik": "Künye ve KVKK — Bayrakstar",
+      "aciklama": "Bayrakstar Medya künye bilgileri ve KVKK aydınlatma metni.",
+      "paylasimBaslik": "Künye ve KVKK — Bayrakstar",
+      "paylasimAciklama": "Künye bilgileri ve KVKK aydınlatma metni."
+    }
   }
 };
 
@@ -1654,6 +1772,21 @@ window.getSiteData = function () {
     });
     out.yasal = y;
   })();
+  /* sayfa metinleri + SEO: alt gruplar tek tek birleşir; kaydedilmiş
+     kopyada olmayan YENİ alan varsayılandan gelir. Boş metin de
+     varsayılana döner — silinen başlık sayfada boşluk bırakmasın. */
+  ["metinler", "seo"].forEach(function (blok) {
+    var db = def[blok] || {}, sb = saved[blok] || {}, cikti = {};
+    Object.keys(db).forEach(function (grup) {
+      var birlesik = Object.assign({}, db[grup], sb[grup] || {});
+      Object.keys(db[grup]).forEach(function (alan) {
+        if (birlesik[alan] === "" && db[grup][alan] !== "") birlesik[alan] = db[grup][alan];
+      });
+      cikti[grup] = birlesik;
+    });
+    out[blok] = cikti;
+  });
+
   /* iletişim kartları: kayıtlı liste varsa o, yoksa varsayılan */
   out.contact.items = (saved.contact && Array.isArray(saved.contact.items) && saved.contact.items.length)
     ? saved.contact.items : (def.contact ? def.contact.items : []);

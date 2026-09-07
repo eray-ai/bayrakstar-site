@@ -216,6 +216,58 @@ def uret(D, kok):
     return ciktilar, adresler
 
 
+def sabit_sayfa_seo(D, kok):
+    """Ana sayfa ve yan sayfaların paylaşım etiketlerini panelden gelen
+    değerlerle günceller.
+
+    NEDEN GEREKLİ: bu etiketleri site.js çalışma anında da yazıyor, ama
+    WhatsApp / Facebook / X ön izleme botları JavaScript ÇALIŞTIRMAZ.
+    Panelden değiştirilen başlık paylaşım kartına ancak buradan, dosyanın
+    içine yazılınca yansır. (Günlük bakım görevi çalıştığında.)
+
+    r/ ve y/ sayfaları bu işi zaten sayfa_uret() içinde hallediyor;
+    burası yalnızca kökteki elle yazılmış sayfalar için.
+    """
+    SAYFALAR = {
+        "index.html":       ("ana",         "%s/" % kok),
+        "uygulamalar.html": ("uygulamalar", "%s/uygulamalar.html" % kok),
+        "websiteler.html":  ("websiteler",  "%s/websiteler.html" % kok),
+        "yasal.html":       ("yasal",       "%s/yasal.html" % kok),
+    }
+    seo = D.get("seo") or {}
+    cikti = {}
+    for dosya, (anahtar, adres) in SAYFALAR.items():
+        G = seo.get(anahtar) or {}
+        baslik = (G.get("baslik") or "").strip()
+        aciklama = (G.get("aciklama") or "").strip()
+        if not baslik and not aciklama:
+            continue          # panelde boşsa dosyadaki yazıya dokunma
+        pbaslik = (G.get("paylasimBaslik") or baslik).strip()
+        paciklama = (G.get("paylasimAciklama") or aciklama).strip()
+
+        tam = os.path.join(KOK_DIZIN, dosya)
+        if not os.path.exists(tam):
+            continue
+        s = open(tam, encoding="utf-8").read()
+
+        def deg(desen, yeni_deger):
+            nonlocal s
+            if yeni_deger:
+                s = re.sub(desen, r"\g<1>" + oz(yeni_deger).replace("\\", "\\\\") + r"\g<2>",
+                           s, count=1)
+
+        if baslik:
+            s = re.sub(r"<title>.*?</title>", "<title>" + oz(baslik) + "</title>",
+                       s, count=1, flags=re.S)
+        deg(r'(<meta name="description"[^>]*content=")[^"]*(")', aciklama)
+        deg(r'(<meta property="og:title"[^>]*content=")[^"]*(")', pbaslik)
+        deg(r'(<meta property="og:description"[^>]*content=")[^"]*(")', paciklama)
+        deg(r'(<meta name="twitter:title"[^>]*content=")[^"]*(")', pbaslik)
+        deg(r'(<meta name="twitter:description"[^>]*content=")[^"]*(")', paciklama)
+        cikti[dosya] = s
+    return cikti
+
+
 def sitemap_uret(kok, adresler):
     satirlar = ['<?xml version="1.0" encoding="UTF-8"?>',
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
@@ -236,6 +288,7 @@ def main():
         raise SystemExit("radyo.html içindeki KOK adresi okunamadı.")
 
     ciktilar, adresler = uret(D, kok)
+    ciktilar.update(sabit_sayfa_seo(D, kok))
     ciktilar["sitemap.xml"] = sitemap_uret(kok, adresler)
 
     farkli = []
@@ -250,6 +303,8 @@ def main():
     print("Üretilen sayfa : %d radyo + %d yayıncı + sitemap"
           % (sum(1 for y in ciktilar if y.startswith("r/")),
              sum(1 for y in ciktilar if y.startswith("y/"))))
+    print("Kök sayfa SEO  : %d dosya tazelendi"
+          % sum(1 for y in ciktilar if y.endswith(".html") and "/" not in y))
 
     if kontrol:
         if farkli:
