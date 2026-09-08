@@ -204,8 +204,12 @@ img{display:block;max-width:100%}
 }
 
 /* radyo değiştirici şeridi */
+/* Şerit 4 radyoyu ekrana sığdıramıyor; sağ uçtaki yumuşak solma
+   "devamı var, kaydır" demek için — yarım kesik cips hata gibi duruyordu. */
 #degistir{display:flex;gap:8px;overflow-x:auto;padding:20px 0 4px;margin:0 -16px;
-  padding-left:16px;padding-right:16px;scrollbar-width:none}
+  padding-left:16px;padding-right:16px;scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 38px),transparent 100%);
+  mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 38px),transparent 100%)}
 #degistir::-webkit-scrollbar{display:none}
 .cip{
   flex:0 0 auto;display:flex;align-items:center;gap:7px;
