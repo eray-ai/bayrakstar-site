@@ -80,7 +80,23 @@ yenisini ezmez. Yine de aynı anda iki kişinin kaydetmemesi iyi olur.
 Boombox ve İstanbul FM `.m3u8` (HLS) yayınladığı için bu kütüphane şart —
 Chrome/Firefox HLS'i tek başına çalamıyor. Yılda bir güncellenmesi yeterli.
 
-### 3.6 Alan adı değişirse
+### 3.6 Yayın öncesi sürüm damgası (ZORUNLU)
+GitHub Pages, HTML dosyalarını `cache-control: max-age=600` ile servis eder ve
+bu başlığı değiştirmenin yolu yoktur. Bazı tarayıcılar süre dolduktan sonra bile
+eski kopyayı gösterip yayınlanan değişikliği yutuyor.
+
+Bu yüzden **her `git push`'tan önce**:
+
+```bash
+python3 araclar/surum-yaz.py
+```
+
+Bütün HTML dosyalarına aynı damgayı (`<meta name="site-surum">`) ve `surum.json`
+dosyasına aynı değeri yazar. `site.js` açılışta `surum.json`'u önbelleksiz okur;
+damga tutmuyorsa sayfayı bir kez yeniler, yenileme de kurtarmazsa adrese
+`?s=<damga>` ekleyerek önbelleği kesin atlar. Radyo çalıyorsa hiçbir şey yapmaz.
+
+### 3.7 Alan adı değişirse
 Paylaşım (OG) etiketleri, canonical adresler, `sitemap.xml` ve `robots.txt`
 site adresini **sabit yazılı** tutar — sosyal medya ön izleme botları
 JavaScript çalıştırmadığı için adresi tarayıcıdan öğrenemiyoruz.

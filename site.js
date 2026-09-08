@@ -562,3 +562,55 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', baslat);
   else baslat();
 })();
+
+/* ============================================================
+   SÜRÜM DENETİMİ — bayat sayfa kendini tazeler
+
+   GitHub Pages, HTML dosyalarını "cache-control: max-age=600" ile
+   servis ediyor ve bu başlığı değiştirmenin yolu yok. Bazı tarayıcılar
+   süre dolduktan sonra bile eski kopyayı yeniden doğrulamadan
+   gösterebiliyor; yayınlanan değişiklik kullanıcıya günlerce ulaşmıyor.
+
+   Burada sayfanın içindeki damga (<meta name="site-surum">) ile
+   sunucudaki surum.json karşılaştırılıyor:
+     1. adım — sayfayı yenile (tarayıcı sunucuya yeniden sorar)
+     2. adım — yenileme de kurtarmadıysa adrese ?s=<damga> ekleyip git;
+        yeni adres önbellekte hiç bulunmadığı için mutlaka sunucudan iner.
+
+   Damgayı  araclar/surum-yaz.py  yazıyor (yayından ÖNCE çalıştırılır).
+   ============================================================ */
+(function () {
+  /* Damgası olmayan sayfa = damgalama öncesinden kalma bayat kopya;
+     onu da tazelemeye çalışıyoruz (boş damga hiçbir sürümle eşleşmez). */
+  var meta = document.querySelector('meta[name="site-surum"]');
+  var BENIM = (meta && meta.content) || '', ANAHTAR = 'bayrakstar_surum_deneme';
+
+  function calanVarMi() {
+    var s = document.getElementsByTagName('audio');
+    for (var i = 0; i < s.length; i++) if (!s[i].paused && !s[i].ended) return true;
+    return false;
+  }
+
+  fetch('surum.json', { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (v) {
+      if (!v || !v.surum || v.surum === BENIM) return;
+      /* Radyo çalıyorsa dokunma; okuyan birinin altından sayfayı çekme. */
+      if (calanVarMi()) return;
+      if (typeof performance !== 'undefined' && performance.now() > 10000) return;
+
+      var denenen = null;
+      try { denenen = sessionStorage.getItem(ANAHTAR); } catch (e) { return; }
+
+      if (denenen !== v.surum) {
+        try { sessionStorage.setItem(ANAHTAR, v.surum); } catch (e) {}
+        location.reload();
+        return;
+      }
+      /* Yenileme işe yaramadı: adres değiştirerek önbelleği kesin atla. */
+      if (location.search.indexOf('s=' + v.surum) >= 0) return;   /* yine de olmadıysa dur */
+      var ayrac = location.search ? '&' : '?';
+      location.replace(location.pathname + location.search + ayrac + 's=' + v.surum + location.hash);
+    })
+    .catch(function () { /* sürüm dosyası okunamadıysa sessizce devam */ });
+})();
