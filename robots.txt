@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
+Disallow: /app/
 
 Sitemap: https://eray-ai.github.io/bayrakstar-site/sitemap.xml

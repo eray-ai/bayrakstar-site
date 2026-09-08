@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d0d12">
+<meta name="robots" content="noindex, nofollow">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="../favicon.ico">
+<title>Bayrakstar</title>
+<!--
+  BAYRAKSTAR — UYGULAMA ARAYÜZÜ
+  ==================================================================
+  NE BU
+  -----
+  APK'nın açtığı ekran. Tanıtım sitesinden AYRI bir yüz: kaydırılan uzun
+  sayfa yerine, altta sekme çubuğu olan klasik radyo uygulaması düzeni.
+
+  SİTEYE DOKUNMAZ. index.html / radyo.html / site.js hiç değişmedi.
+  Buradaki dosya yalnızca onların VERİ ve ÇALAR katmanını yeniden kullanır:
+
+      ../data.js         içerik (Supabase yoksa varsayılan)
+      ../bulut.js        Supabase okuma  → window.bulutHazir
+      ../yayin.js        HLS (.m3u8 yayınları için)
+      ../simdicaliyor.js anlık şarkı
+      ../calar.js        TEK kalıcı <audio> + Calar API'si
+
+  Yani panelden yapılan her içerik değişikliği burada da anında görünür.
+
+  YOL TUZAĞI
+  ----------
+  Bu dosya app/ altında, veri ise "logo/fenomen-beyaz.png" gibi KÖKE göre
+  yollar taşıyor. <base> koymak sayfanın kendi bağlantılarını da kaydırdığı
+  için kullanılmadı; onun yerine yol() yardımcısı başa ../ ekliyor.
+-->
+<style>
+/* ---- marka yazıyüzleri (site ile aynı dosyalar) ---- */
+@font-face{font-family:'Gosha Sans';src:url('../fontlar/GoshaSans-Bold.woff2') format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'Straight Fighter';src:url('../fontlar/StraightFighter.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Nebulica';src:url('../fontlar/Nebulica-Bold.woff2') format('woff2');font-weight:700;font-display:swap}
+
+*,*::before,*::after{box-sizing:border-box}
+
+:root{
+  --zemin:#0d0d12;
+  --kat:#16161d;
+  --kat2:#1e1e28;
+  --yazi:#ffffff;
+  --soluk:#9aa0ac;
+  --cizgi:rgba(255,255,255,.09);
+  --marka:#ff0007;          /* seçili radyonun rengiyle değişir */
+  --uzeri:#ffffff;          /* marka rengi üstündeki yazı rengi */
+  --ust:calc(env(safe-area-inset-top,0px) + 54px);
+  --alt:calc(env(safe-area-inset-bottom,0px) + 58px);
+}
+
+html,body{height:100%;margin:0;padding:0;background:var(--zemin)}
+
+body{
+  font-family:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  color:var(--yazi);
+  overflow:hidden;                       /* sayfa DEĞİL, içerik kayar */
+  overscroll-behavior:none;              /* kaydırma zıplaması yok */
+  -webkit-user-select:none;user-select:none;         /* metin seçilmez */
+  -webkit-tap-highlight-color:transparent;           /* mavi dokunma kutusu yok */
+  -webkit-touch-callout:none;                        /* uzun basma menüsü yok */
+}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+img{display:block;max-width:100%}
+
+/* ================= İSKELET ================= */
+#uyg{position:fixed;inset:0;display:flex;flex-direction:column}
+
+/* ---- üst başlık ---- */
+#ust{
+  position:relative;z-index:20;flex:0 0 auto;
+  padding-top:env(safe-area-inset-top,0px);
+  height:var(--ust);
+  display:flex;align-items:center;gap:10px;padding-left:16px;padding-right:16px;
+  background:rgba(13,13,18,.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--cizgi);
+}
+#ustLogo{height:22px;width:auto;opacity:.95}
+#ustBaslik{font-size:15px;font-weight:700;letter-spacing:.2px}
+#ustSag{margin-left:auto;display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--soluk);font-weight:600;letter-spacing:.3px}
+.canliNokta{width:7px;height:7px;border-radius:50%;background:var(--marka);
+  box-shadow:0 0 0 0 var(--marka);animation:nabiz 2s infinite}
+@keyframes nabiz{
+  0%{box-shadow:0 0 0 0 rgba(255,255,255,.45)}
+  70%{box-shadow:0 0 0 7px rgba(255,255,255,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}
+}
+
+/* ---- kayan gövde ---- */
+#govde{flex:1 1 auto;position:relative;overflow:hidden}
+.sekme{
+  position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  padding:16px 16px calc(var(--alt) + 78px);
+  opacity:0;visibility:hidden;transform:translateY(6px);
+  transition:opacity .18s ease,transform .18s ease,visibility .18s;
+}
+.sekme.acik{opacity:1;visibility:visible;transform:none}
+.sekme::-webkit-scrollbar{width:0}
+
+/* ================= RADYOLAR ================= */
+#izgara{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kart{
+  position:relative;min-width:0;border-radius:18px;overflow:hidden;
+  aspect-ratio:1/1.13;
+  background:var(--kat);border:1px solid var(--cizgi);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  padding:14px;text-align:center;
+  transition:transform .12s ease;
+}
+.kart:active{transform:scale(.97)}
+.kart .perde{position:absolute;inset:0;opacity:.16;
+  background:radial-gradient(circle at 50% 35%,var(--kr) 0%,transparent 70%)}
+.kart img{position:relative;height:34px;width:auto;object-fit:contain}
+.kart .ad{position:relative;font-size:12px;font-weight:700;letter-spacing:.2px}
+.kart .slg{position:relative;font-size:10px;color:var(--soluk);margin-top:-8px;
+  line-height:1.35;max-width:92%}
+.kart .oynat{
+  position:relative;width:42px;height:42px;border-radius:50%;
+  background:var(--kr);color:var(--ik);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.4);
+}
+.kart .oynat svg{width:17px;height:17px;margin-left:1px}
+.kart.aktif{border-color:var(--kr)}
+.kart.aktif .perde{opacity:.3}
+
+/* dalga çubukları — çalan radyonun kartında */
+.dalga{position:absolute;top:12px;right:12px;display:flex;gap:2px;align-items:flex-end;height:13px}
+.dalga[hidden]{display:none}
+.dalga i{width:2.5px;background:var(--kr);border-radius:2px;animation:zipla .9s ease-in-out infinite}
+.dalga i:nth-child(2){animation-delay:.15s}
+.dalga i:nth-child(3){animation-delay:.3s}
+.dalga i:nth-child(4){animation-delay:.45s}
+@keyframes zipla{0%,100%{height:4px}50%{height:13px}}
+
+.bolumBas{font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--soluk);margin:26px 2px 12px}
+
+/* ================= ÇALAN ================= */
+#calanBos{text-align:center;color:var(--soluk);padding:70px 24px;font-size:13px;line-height:1.7}
+#calanBos svg{width:46px;height:46px;opacity:.28;margin:0 auto 18px}
+
+#kapakKutu{
+  position:relative;width:min(74vw,290px);aspect-ratio:1;margin:8px auto 26px;
+  border-radius:22px;overflow:hidden;background:var(--kat);
+  border:1px solid var(--cizgi);
+  box-shadow:0 22px 52px rgba(0,0,0,.55);
+  display:flex;align-items:center;justify-content:center;
+}
+#kapakKutu .isik{position:absolute;inset:0;opacity:.34;
+  background:radial-gradient(circle at 50% 40%,var(--marka) 0%,transparent 72%)}
+#kapakGorsel{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#kapakLogo{position:relative;width:56%;height:auto;object-fit:contain;opacity:.95}
+
+#sarkiAd{text-align:center;font-size:19px;font-weight:800;line-height:1.3;
+  margin:0 6px 6px;letter-spacing:-.2px}
+#sanatciAd{text-align:center;font-size:13px;color:var(--soluk);margin:0 6px 4px}
+#radyoEtiket{text-align:center;font-size:10px;font-weight:700;letter-spacing:1.6px;
+  text-transform:uppercase;color:var(--marka);margin-bottom:22px}
+
+#ilerleme{height:3px;border-radius:3px;background:rgba(255,255,255,.11);
+  margin:0 4px 24px;overflow:hidden;display:none}
+#ilerlemeDolu{height:100%;width:0;background:var(--marka);
+  border-radius:3px;transition:width .9s linear}
+
+#kontrol{display:flex;align-items:center;justify-content:center;gap:30px;margin-bottom:30px}
+.kbtn{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;color:var(--soluk);transition:color .15s,transform .12s}
+.kbtn:active{transform:scale(.9)}
+.kbtn svg{width:23px;height:23px}
+#buyukOynat{
+  width:70px;height:70px;border-radius:50%;background:var(--marka);color:var(--uzeri);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 30px color-mix(in srgb,var(--marka) 45%,transparent);
+  transition:transform .12s ease;
+}
+#buyukOynat:active{transform:scale(.93)}
+#buyukOynat svg{width:27px;height:27px}
+#buyukOynat.yukleniyor svg{display:none}
+.donen{width:24px;height:24px;border:2.5px solid rgba(255,255,255,.3);
+  border-top-color:var(--uzeri);border-radius:50%;animation:don .7s linear infinite;display:none}
+#buyukOynat.yukleniyor .donen{display:block}
+@keyframes don{to{transform:rotate(360deg)}}
+
+#sesSatir{display:flex;align-items:center;gap:13px;margin:0 6px 8px;color:var(--soluk)}
+#sesSatir svg{width:17px;height:17px;flex:0 0 auto}
+#sesKaydirak{
+  -webkit-appearance:none;appearance:none;flex:1;height:3px;border-radius:3px;
+  background:rgba(255,255,255,.14);outline:none;
+}
+#sesKaydirak::-webkit-slider-thumb{
+  -webkit-appearance:none;width:15px;height:15px;border-radius:50%;
+  background:var(--yazi);box-shadow:0 2px 7px rgba(0,0,0,.5);cursor:pointer;
+}
+
+/* radyo değiştirici şeridi */
+#degistir{display:flex;gap:8px;overflow-x:auto;padding:20px 0 4px;margin:0 -16px;
+  padding-left:16px;padding-right:16px;scrollbar-width:none}
+#degistir::-webkit-scrollbar{display:none}
+.cip{
+  flex:0 0 auto;display:flex;align-items:center;gap:7px;
+  padding:8px 14px;border-radius:999px;background:var(--kat);
+  border:1px solid var(--cizgi);font-size:12px;font-weight:600;white-space:nowrap;
+  transition:transform .12s;
+}
+.cip:active{transform:scale(.95)}
+.cip img{height:14px;width:auto}
+.cip.on{background:var(--kc);border-color:var(--kc);color:var(--ki)}
+
+/* ================= AKIŞ ================= */
+#gunler{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:18px}
+#gunler button{
+  padding:8px 0;border-radius:11px;font-size:11.5px;font-weight:700;
+  background:var(--kat);border:1px solid var(--cizgi);color:var(--soluk);
+}
+#gunler button.on{background:var(--marka);border-color:var(--marka);color:var(--uzeri)}
+
+.prg{display:flex;gap:13px;align-items:center;padding:11px 0;border-bottom:1px solid var(--cizgi)}
+.prg:last-child{border-bottom:0}
+.prg .gor{flex:0 0 auto;width:50px;height:50px;border-radius:13px;overflow:hidden;
+  background:var(--kat2);display:flex;align-items:center;justify-content:center}
+.prg .gor img{width:100%;height:100%;object-fit:cover}
+.prg .gor.bos img{width:60%;height:auto;object-fit:contain;opacity:.4}
+.prg .bilgi{flex:1 1 auto;min-width:0}
+.prg .sa{font-size:10px;font-weight:700;color:var(--soluk);letter-spacing:.6px;margin-bottom:3px}
+.prg .pa{font-size:13.5px;font-weight:700;line-height:1.3;
+  overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.prg .sn{font-size:11px;color:var(--soluk);margin-top:2px}
+.prg.simdi .pa{color:var(--marka)}
+.simdiRozet{flex:0 0 auto;font-size:9px;font-weight:800;letter-spacing:.7px;
+  padding:3px 8px;border-radius:999px;background:var(--marka);color:var(--uzeri)}
+
+/* ================= HAKKINDA ================= */
+#hkLogo{height:40px;width:auto;margin:6px auto 16px}
+#hkSlogan{text-align:center;font-size:12px;color:var(--soluk);margin-bottom:22px;
+  letter-spacing:.4px}
+#hkMetin{font-size:13.5px;line-height:1.75;color:#d6dae0;margin-bottom:4px}
+
+.frekIzgara{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.frek{display:flex;justify-content:space-between;align-items:center;
+  padding:11px 13px;border-radius:12px;background:var(--kat);border:1px solid var(--cizgi)}
+.frek b{font-size:12px;font-weight:600;color:#cfd4da}
+.frek span{font-size:13px;font-weight:800;color:var(--marka);font-variant-numeric:tabular-nums}
+
+.kanallar{display:flex;flex-wrap:wrap;gap:7px}
+.kanal{padding:7px 12px;border-radius:999px;background:var(--kat);
+  border:1px solid var(--cizgi);font-size:11.5px;color:#cfd4da}
+
+.sosyal{display:flex;gap:9px;flex-wrap:wrap}
+.sos{width:44px;height:44px;border-radius:14px;background:var(--kat);
+  border:1px solid var(--cizgi);display:flex;align-items:center;justify-content:center;
+  color:#cfd4da;transition:transform .12s}
+.sos:active{transform:scale(.92)}
+.sos svg{width:19px;height:19px}
+
+.buyukBtn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
+  padding:14px;border-radius:15px;background:var(--marka);color:var(--uzeri);
+  font-size:13.5px;font-weight:700;margin-top:10px;transition:transform .12s}
+.buyukBtn:active{transform:scale(.98)}
+.buyukBtn svg{width:16px;height:16px}
+
+/* ================= MİNİ ÇALAR ================= */
+#mini{
+  position:absolute;left:8px;right:8px;bottom:calc(var(--alt) + 8px);z-index:30;
+  display:flex;align-items:center;gap:11px;padding:9px 12px;
+  border-radius:16px;background:rgba(30,30,40,.93);backdrop-filter:blur(18px);
+  border:1px solid var(--cizgi);box-shadow:0 10px 30px rgba(0,0,0,.5);
+  transform:translateY(140%);opacity:0;transition:transform .26s cubic-bezier(.3,1,.5,1),opacity .2s;
+}
+#mini.gorun{transform:none;opacity:1}
+#miniLogo{flex:0 0 auto;width:38px;height:38px;border-radius:11px;background:var(--kat2);
+  display:flex;align-items:center;justify-content:center;overflow:hidden}
+#miniLogo img{width:74%;height:auto;object-fit:contain}
+#miniLogo img.kapak{width:100%;height:100%;object-fit:cover}
+#miniYazi{flex:1 1 auto;min-width:0}
+#miniSarki{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+#miniAlt{font-size:10.5px;color:var(--soluk);white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;margin-top:1px}
+#miniOynat{flex:0 0 auto;width:36px;height:36px;border-radius:50%;
+  background:var(--marka);color:var(--uzeri);display:flex;align-items:center;justify-content:center}
+#miniOynat svg{width:15px;height:15px}
+#miniKapat{flex:0 0 auto;width:28px;height:28px;display:flex;align-items:center;
+  justify-content:center;color:var(--soluk)}
+#miniKapat svg{width:14px;height:14px}
+
+/* ================= ALT SEKMELER ================= */
+#sekmeler{
+  position:relative;z-index:40;flex:0 0 auto;
+  height:var(--alt);padding-bottom:env(safe-area-inset-bottom,0px);
+  display:flex;background:rgba(13,13,18,.96);backdrop-filter:blur(18px);
+  border-top:1px solid var(--cizgi);
+}
+#sekmeler button{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  color:var(--soluk);transition:color .16s;
+}
+#sekmeler button svg{width:21px;height:21px}
+#sekmeler button .et{font-size:9.5px;font-weight:700;letter-spacing:.2px}
+#sekmeler button.on{color:var(--marka)}
+
+/* ---- açılış perdesi ---- */
+#acilis{position:fixed;inset:0;z-index:100;background:var(--zemin);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
+  transition:opacity .35s ease}
+#acilis.git{opacity:0;pointer-events:none}
+#acilis img{width:120px;height:auto}
+#acilis .cizgi{width:36px;height:2.5px;border-radius:3px;background:rgba(255,255,255,.18);
+  overflow:hidden;position:relative}
+#acilis .cizgi::after{content:'';position:absolute;inset:0;background:#ff0007;
+  transform:translateX(-100%);animation:kay 1.1s ease-in-out infinite}
+@keyframes kay{50%{transform:none}100%{transform:translateX(100%)}}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001s!important;transition-duration:.001s!important}
+}
+</style>
+</head>
+<body>
+
+<div id="acilis">
+  <img src="../logo/bayrakstar-beyaz.png" alt="Bayrakstar">
+  <div class="cizgi"></div>
+</div>
+
+<div id="uyg">
+
+  <header id="ust">
+    <img id="ustLogo" src="../logo/bayrakstar-beyaz.png" alt="Bayrakstar">
+    <div id="ustBaslik">Radyolar</div>
+    <div id="ustSag"><span class="canliNokta"></span>CANLI</div>
+  </header>
+
+  <main id="govde">
+
+    <!-- ============ RADYOLAR ============ -->
+    <section class="sekme acik" data-sekme="radyolar">
+      <div id="izgara"></div>
+      <div class="bolumBas">Bayrakstar</div>
+      <div id="tanitim" style="font-size:13px;line-height:1.7;color:#c9ced5"></div>
+    </section>
+
+    <!-- ============ ÇALAN ============ -->
+    <section class="sekme" data-sekme="calan">
+      <div id="calanBos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 18V5l12-2v13" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+        </svg>
+        Henüz bir radyo seçmedin.<br>Radyolar sekmesinden birine dokun.
+      </div>
+      <div id="calanIcerik" hidden>
+        <div id="kapakKutu">
+          <div class="isik"></div>
+          <img id="kapakGorsel" alt="" hidden>
+          <img id="kapakLogo" alt="">
+        </div>
+        <h1 id="sarkiAd">—</h1>
+        <div id="sanatciAd"></div>
+        <div id="radyoEtiket"></div>
+        <div id="ilerleme"><div id="ilerlemeDolu"></div></div>
+        <div id="kontrol">
+          <button class="kbtn" id="oncekiRadyo" aria-label="Önceki radyo">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+          </button>
+          <button id="buyukOynat" aria-label="Oynat / duraklat">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <div class="donen"></div>
+          </button>
+          <button class="kbtn" id="sonrakiRadyo" aria-label="Sonraki radyo">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
+          </button>
+        </div>
+        <div id="sesSatir">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 9v6h4l5 4V5L9 9H5z"/></svg>
+          <input id="sesKaydirak" type="range" min="0" max="100" value="85" aria-label="Ses seviyesi">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 9v6h4l5 4V5L9 9H5zm11.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 2.2v2.1c3 .9 5 3.5 5 6.7s-2 5.8-5 6.7v2.1c4.1-.9 7-4.5 7-8.8s-2.9-7.9-7-8.8z"/></svg>
+        </div>
+        <div id="degistir"></div>
+      </div>
+    </section>
+
+    <!-- ============ AKIŞ ============ -->
+    <section class="sekme" data-sekme="akis">
+      <div id="gunler"></div>
+      <div id="akisListe"></div>
+      <div id="akisNot" style="font-size:11px;color:var(--soluk);margin-top:16px;line-height:1.6"></div>
+    </section>
+
+    <!-- ============ HAKKINDA ============ -->
+    <section class="sekme" data-sekme="hakkinda">
+      <img id="hkLogo" alt="">
+      <div id="hkSlogan"></div>
+      <div id="hkMetin"></div>
+      <div class="bolumBas">Frekanslar</div>
+      <div class="frekIzgara" id="hkFrek"></div>
+      <div class="bolumBas" id="hkKanalBas">Alt Kanallar</div>
+      <div class="kanallar" id="hkKanal"></div>
+      <div class="bolumBas">Sosyal Medya</div>
+      <div class="sosyal" id="hkSosyal"></div>
+      <button class="buyukBtn" id="hkSite">
+        Resmî Web Sitesi
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 17 17 7M8 7h9v9"/>
+        </svg>
+      </button>
+    </section>
+
+  </main>
+
+  <!-- ============ MİNİ ÇALAR ============ -->
+  <div id="mini">
+    <div id="miniLogo"><img id="miniGorsel" alt=""></div>
+    <div id="miniYazi">
+      <div id="miniSarki">—</div>
+      <div id="miniAlt"></div>
+    </div>
+    <button id="miniOynat" aria-label="Oynat / duraklat">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <button id="miniKapat" aria-label="Kapat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ============ ALT SEKMELER ============ -->
+  <nav id="sekmeler">
+    <button data-git="radyolar" class="on">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+           stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2.5" y="8.5" width="19" height="12" rx="2.5"/>
+        <path d="M7 4.5 16 2"/><circle cx="16.5" cy="14.5" r="3"/><path d="M6 12.5h4M6 16.5h3"/>
+      </svg>
+      <span class="et">Radyolar</span>
+    </button>
+    <button data-git="calan">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+      </svg>
+      <span class="et">Çalan</span>
+    </button>
+    <button data-git="akis">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+           stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4.5" width="18" height="16" rx="2.5"/>
+        <path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>
+      </svg>
+      <span class="et">Akış</span>
+    </button>
+    <button data-git="hakkinda">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+           stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9.2"/><path d="M12 11v5.5M12 7.6v.1"/>
+      </svg>
+      <span class="et">Hakkında</span>
+    </button>
+  </nav>
+
+</div>
+
+<script src="../data.js"></script>
+<script src="../bulut.js"></script>
+<script src="../yayin.js"></script>
+<script src="../simdicaliyor.js"></script>
+<script src="../calar.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  var $ = function(s){ return document.querySelector(s); };
+
+  /* Veri yolları köke göre yazılmış ("logo/x.png"); bu sayfa app/ altında. */
+  function yol(p){
+    if(!p) return '';
+    if(/^(https?:|data:|blob:|\/)/.test(p)) return p;
+    return '../' + p;
+  }
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  /* Açık marka renginde (Boombox sarısı gibi) yazı siyah olmalı. */
+  function uzeriRengi(hex){
+    var m=/^#?([0-9a-f]{6})$/i.exec(hex||''); if(!m) return '#ffffff';
+    var n=parseInt(m[1],16), r=n>>16, g=(n>>8)&255, b=n&255;
+    return (0.299*r+0.587*g+0.114*b) > 150 ? '#111111' : '#ffffff';
+  }
+
+  var D=null, RADYOLAR=[], secili=0, aktifSekme='radyolar', calanDurum=null;
+
+  /* ============================================================
+     VERİ — bulut hazır olunca çiz
+     ============================================================ */
+  function basla(){
+    D = window.getSiteData ? window.getSiteData() : (window.DEFAULT_DATA||{});
+    RADYOLAR = (D.radios||[]).filter(function(r){ return r && r.slug; });
+    if(!RADYOLAR.length){ return; }
+
+    /* Son dinlenen radyo hatırlanır — uygulama hissi için önemli. */
+    try{
+      var s=localStorage.getItem('bs_app_radyo');
+      var i=RADYOLAR.map(function(r){return r.slug;}).indexOf(s);
+      if(i>=0) secili=i;
+    }catch(e){}
+
+    cizIzgara();
+    cizDegistir();
+    seciliUygula();
+    var it=D.intro||{};
+    $('#tanitim').innerHTML =
+      (it.headline?'<div style="font-size:17px;font-weight:800;line-height:1.35;'+
+        'margin-bottom:12px;color:#fff">'+it.headline+'</div>':'')+
+      [it.p1,it.p2].filter(Boolean).map(function(t){
+        return '<p style="margin:0 0 11px">'+t+'</p>'; }).join('');
+
+    setTimeout(function(){ $('#acilis').classList.add('git'); },260);
+    setTimeout(function(){ var a=$('#acilis'); if(a&&a.parentNode) a.parentNode.removeChild(a); },900);
+  }
+
+  if(window.bulutHazir && window.bulutHazir.then) window.bulutHazir.then(basla, basla);
+  else basla();
+
+  /* ============================================================
+     RADYO SEÇİMİ — tema rengi + bağımlı sekmeler
+     ============================================================ */
+  function R(){ return RADYOLAR[secili] || {}; }
+
+  function seciliUygula(){
+    var r=R();
+    var ust = r.ink || uzeriRengi(r.color);
+    document.documentElement.style.setProperty('--marka', r.color||'#ff0007');
+    document.documentElement.style.setProperty('--uzeri', ust);
+    var tema=document.querySelector('meta[name="theme-color"]');
+    if(tema) tema.setAttribute('content','#0d0d12');
+    try{ localStorage.setItem('bs_app_radyo', r.slug||''); }catch(e){}
+    cizAkis();
+    cizHakkinda();
+    cizCalanSabit();
+    guncelleDegistir();
+    guncelleIzgara();
+  }
+
+  function seciliYap(i){
+    if(i<0) i=RADYOLAR.length-1;
+    if(i>=RADYOLAR.length) i=0;
+    secili=i;
+    seciliUygula();
+  }
+
+  /* ============================================================
+     SEKME 1 — RADYOLAR
+     ============================================================ */
+  function cizIzgara(){
+    $('#izgara').innerHTML = RADYOLAR.map(function(r,i){
+      var ik = r.ink || uzeriRengi(r.color);
+      return '<button class="kart" data-i="'+i+'" style="--kr:'+esc(r.color||'#ff0007')+';--ik:'+ik+'">'+
+        '<div class="perde"></div>'+
+        '<div class="dalga" hidden><i></i><i></i><i></i><i></i></div>'+
+        '<img src="'+esc(yol(r.logo))+'" alt="'+esc(r.name)+'">'+
+        '<div class="ad">'+esc(r.name)+'</div>'+
+        '<div class="slg">'+esc(r.slogan||'')+'</div>'+
+        '<div class="oynat">'+
+          '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'+
+        '</div>'+
+      '</button>';
+    }).join('');
+
+    Array.prototype.forEach.call($('#izgara').querySelectorAll('.kart'), function(k){
+      k.addEventListener('click', function(){
+        var i=+k.dataset.i;
+        var ayni = calanDurum && calanDurum.radyo && calanDurum.radyo.slug===RADYOLAR[i].slug;
+        seciliYap(i);
+        if(ayni && calanDurum.caliyor) window.Calar.duraklat();
+        else window.Calar.cal(RADYOLAR[i]);
+        sekmeGit('calan');
+      });
+    });
+  }
+
+  /* Çalan radyonun kartında dalga çubukları, seçilide çerçeve. */
+  function guncelleIzgara(){
+    var calanSlug = calanDurum && calanDurum.radyo ? calanDurum.radyo.slug : null;
+    Array.prototype.forEach.call($('#izgara').querySelectorAll('.kart'), function(k){
+      var r=RADYOLAR[+k.dataset.i];
+      k.classList.toggle('aktif', r.slug===calanSlug);
+      var d=k.querySelector('.dalga');
+      d.hidden = !(r.slug===calanSlug && calanDurum.caliyor);
+      var o=k.querySelector('.oynat svg path');
+      if(o) o.setAttribute('d', (r.slug===calanSlug && calanDurum.caliyor)
+        ? 'M7 5h3.5v14H7zm6.5 0H17v14h-3.5z' : 'M8 5v14l11-7z');
+    });
+  }
+
+  /* ============================================================
+     SEKME 2 — ÇALAN
+     ============================================================ */
+  function cizDegistir(){
+    $('#degistir').innerHTML = RADYOLAR.map(function(r,i){
+      var ik = r.ink || uzeriRengi(r.color);
+      return '<button class="cip" data-i="'+i+'" style="--kc:'+esc(r.color||'#ff0007')+';--ki:'+ik+'">'+
+        '<img src="'+esc(yol(r.logo))+'" alt="">'+esc(r.name)+'</button>';
+    }).join('');
+    Array.prototype.forEach.call($('#degistir').querySelectorAll('.cip'), function(c){
+      c.addEventListener('click', function(){
+        var i=+c.dataset.i;
+        seciliYap(i);
+        window.Calar.cal(RADYOLAR[i]);
+      });
+    });
+  }
+  function guncelleDegistir(){
+    Array.prototype.forEach.call($('#degistir').querySelectorAll('.cip'), function(c){
+      c.classList.toggle('on', +c.dataset.i===secili);
+    });
+  }
+
+  /* Radyo değişince sabit kısımlar (logo, etiket) yenilenir. */
+  function cizCalanSabit(){
+    var r=R();
+    $('#kapakLogo').src = yol(r.logo);
+    $('#radyoEtiket').textContent = r.name || '';
+    $('#hkSite').style.display = r.url ? '' : 'none';
+  }
+
+  /* Çalar durumu değişince tüm yüzler güncellenir. */
+  window.Calar.dinle(function(d){
+    calanDurum = d;
+    var r = d.radyo;
+
+    /* çalan radyo, seçili radyo olsun */
+    if(r){
+      var i = RADYOLAR.map(function(x){return x.slug;}).indexOf(r.slug);
+      if(i>=0 && i!==secili){ secili=i; seciliUygula(); }
+    }
+
+    $('#calanBos').hidden = !!r;
+    $('#calanIcerik').hidden = !r;
+
+    var mini=$('#mini');
+    mini.classList.toggle('gorun', !!r && aktifSekme!=='calan');
+
+    if(!r){ guncelleIzgara(); return; }
+
+    var s = d.sarki;
+    var baslik = s ? s.sarki : (d.durum || 'Canlı Yayın');
+    var alt    = s ? (s.sanatci||'') : r.name;
+
+    $('#sarkiAd').textContent = baslik;
+    $('#sanatciAd').textContent = alt===r.name ? '' : alt;
+    $('#miniSarki').textContent = baslik;
+    $('#miniAlt').textContent = s ? (s.sanatci ? s.sanatci+' · '+r.name : r.name) : r.name;
+
+    /* kapak görseli varsa göster, yoksa radyo logosuna dön */
+    var kg=$('#kapakGorsel'), ml=$('#miniGorsel');
+    if(s && s.kapak){
+      kg.src=s.kapak; kg.hidden=false; $('#kapakLogo').style.opacity='0';
+      ml.src=s.kapak; ml.className='kapak';
+    }else{
+      kg.hidden=true; $('#kapakLogo').style.opacity='.95';
+      ml.src=yol(r.logo); ml.className='';
+    }
+
+    /* ilerleme çubuğu — süresi bilinen şarkılarda */
+    var ilr=$('#ilerleme');
+    if(s && s.oran!=null){ ilr.style.display='block'; $('#ilerlemeDolu').style.width=(s.oran*100)+'%'; }
+    else ilr.style.display='none';
+
+    /* oynat/duraklat/yükleniyor */
+    var yukleniyor = !!d.durum && !d.caliyor;
+    var ikon = d.caliyor ? 'M7 5h3.5v14H7zm6.5 0H17v14h-3.5z' : 'M8 5v14l11-7z';
+    $('#buyukOynat').classList.toggle('yukleniyor', yukleniyor);
+    $('#buyukOynat').querySelector('svg path').setAttribute('d', ikon);
+    $('#miniOynat').querySelector('svg path').setAttribute('d', ikon);
+
+    guncelleIzgara();
+  });
+
+  $('#buyukOynat').addEventListener('click', function(){
+    if(!calanDurum || !calanDurum.radyo) return;
+    if(calanDurum.caliyor) window.Calar.duraklat();
+    else window.Calar.cal(calanDurum.radyo);
+  });
+  $('#miniOynat').addEventListener('click', function(e){
+    e.stopPropagation();
+    if(!calanDurum || !calanDurum.radyo) return;
+    if(calanDurum.caliyor) window.Calar.duraklat();
+    else window.Calar.cal(calanDurum.radyo);
+  });
+  $('#miniKapat').addEventListener('click', function(e){
+    e.stopPropagation(); window.Calar.kapat();
+  });
+  $('#mini').addEventListener('click', function(){ sekmeGit('calan'); });
+
+  $('#oncekiRadyo').addEventListener('click', function(){
+    seciliYap(secili-1); window.Calar.cal(R());
+  });
+  $('#sonrakiRadyo').addEventListener('click', function(){
+    seciliYap(secili+1); window.Calar.cal(R());
+  });
+
+  var sk=$('#sesKaydirak');
+  sk.value = Math.round(window.Calar.sesSeviyesi()*100);
+  sk.addEventListener('input', function(){ window.Calar.sesAyarla(sk.value/100); });
+
+  /* ============================================================
+     SEKME 3 — AKIŞ
+     ============================================================ */
+  var GUN_KISA=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+
+  /* Saat İstanbul'a göre; cihaz saati yanlışsa akış kayar. */
+  function istanbulSimdi(){
+    try{
+      var p=new Intl.DateTimeFormat('tr-TR',{timeZone:'Europe/Istanbul',
+        weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date());
+      var o={}; p.forEach(function(x){ o[x.type]=x.value; });
+      var g=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].indexOf(o.weekday.replace('.',''));
+      if(g<0 || isNaN(+o.hour)) throw 0;
+      return { saat:(+o.hour)+(+o.minute)/60, gun:g };
+    }catch(e){
+      var d=new Date();
+      return { saat:d.getHours()+d.getMinutes()/60, gun:(d.getDay()+6)%7 };
+    }
+  }
+  function gununAkisi(r,g){
+    var oz = r.scheduleGun && (r.scheduleGun[g] || r.scheduleGun[String(g)]);
+    return (oz && oz.length) ? oz : (r.schedule||[]);
+  }
+  function baslangicSaati(t){
+    var m=(t||'').match(/(\d{1,2}):(\d{2})/);
+    return m ? (+m[1] + (+m[2])/60) : -1;
+  }
+
+  var akisGun = istanbulSimdi().gun;
+
+  function cizAkis(){
+    var r=R();
+    $('#gunler').innerHTML = GUN_KISA.map(function(g,i){
+      return '<button data-d="'+i+'"'+(i===akisGun?' class="on"':'')+'>'+g+'</button>';
+    }).join('');
+    Array.prototype.forEach.call($('#gunler').querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ akisGun=+b.dataset.d; cizAkis(); });
+    });
+
+    var simdi=istanbulSimdi();
+    var liste=gununAkisi(r,akisGun);
+    var bugun=(akisGun===simdi.gun);
+
+    var canliIdx=-1;
+    if(bugun){
+      for(var i=0;i<liste.length;i++){
+        var b=baslangicSaati(liste[i].t);
+        var s=(i+1<liste.length)?baslangicSaati(liste[i+1].t):24;
+        if(s<=b) s=24;
+        if(simdi.saat>=b && simdi.saat<s){ canliIdx=i; break; }
+      }
+    }
+
+    if(!liste.length){
+      $('#akisListe').innerHTML='<div style="color:var(--soluk);font-size:13px;'+
+        'text-align:center;padding:40px 0">Bu radyo için yayın akışı girilmemiş.</div>';
+    }else{
+      $('#akisListe').innerHTML = liste.map(function(p,i){
+        var gor = p.img
+          ? '<div class="gor"><img src="'+esc(yol(p.img))+'" alt="" loading="lazy"></div>'
+          : '<div class="gor bos"><img src="'+esc(yol(r.logo))+'" alt="" loading="lazy"></div>';
+        return '<div class="prg'+(i===canliIdx?' simdi':'')+'">'+gor+
+          '<div class="bilgi">'+
+            '<div class="sa">'+esc(p.t||'')+'</div>'+
+            '<div class="pa">'+esc(p.name||'')+'</div>'+
+            (p.host?'<div class="sn">'+esc(p.host)+'</div>':'')+
+          '</div>'+
+          (i===canliIdx?'<span class="simdiRozet">ŞİMDİ</span>':'')+
+        '</div>';
+      }).join('');
+    }
+    $('#akisNot').textContent = r.weekendNote || '';
+  }
+
+  /* ============================================================
+     SEKME 4 — HAKKINDA
+     ============================================================ */
+  var SOSYAL_IKON={
+    ig:'<path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2a3.9 3.9 0 0 1-2.3 2.3c-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4a3.9 3.9 0 0 1-2.3-2.3c-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2A3.9 3.9 0 0 1 5 2.6c.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.2a6.6 6.6 0 1 0 0 13.2 6.6 6.6 0 0 0 0-13.2zm0 10.9a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm6.8-11.1a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>',
+    x:'<path d="M17.5 3h3.2l-7 8 8.2 10h-6.4l-5-6.1-5.8 6.1H1.5l7.5-8.6L1.2 3h6.6l4.5 5.6L17.5 3zm-1.1 16.2h1.8L7.7 4.7H5.8l10.6 14.5z"/>',
+    yt:'<path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8A26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15.1V8.9l5.2 3.1-5.2 3.1z"/>',
+    tiktok:'<path d="M16.6 5.8a4.8 4.8 0 0 1-1.1-3.1h-3.3v12.9a2.7 2.7 0 1 1-2-2.6V9.4a6 6 0 1 0 5.3 6V9.1a8 8 0 0 0 4.6 1.5V7.3a4.8 4.8 0 0 1-3.5-1.5z"/>',
+    fb:'<path d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2.5V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/>',
+    web:'<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-3a15.6 15.6 0 0 0-1.3-3.4A8 8 0 0 1 18.9 8zM12 4.2c.6.9 1.2 2.1 1.6 3.8h-3.2c.4-1.7 1-2.9 1.6-3.8zM4.3 14a8 8 0 0 1 0-4h3.4a17 17 0 0 0 0 4H4.3zm.8 2h3a15.6 15.6 0 0 0 1.3 3.4A8 8 0 0 1 5.1 16zm3-8h-3a8 8 0 0 1 4.3-3.4A15.6 15.6 0 0 0 8.1 8zM12 19.8c-.6-.9-1.2-2.1-1.6-3.8h3.2c-.4 1.7-1 2.9-1.6 3.8zm2-5.8h-4a15 15 0 0 1 0-4h4a15 15 0 0 1 0 4zm.6 5.4a15.6 15.6 0 0 0 1.3-3.4h3a8 8 0 0 1-4.3 3.4zm1.7-5.4a17 17 0 0 0 0-4h3.4a8 8 0 0 1 0 4h-3.4z"/>'
+  };
+
+  function cizHakkinda(){
+    var r=R();
+    $('#hkLogo').src = yol(r.logo);
+    $('#hkSlogan').textContent = [r.slogan, r.genre].filter(Boolean).join(' · ');
+    $('#hkMetin').textContent = r.about || '';
+
+    var fr = r.frequencies || [];
+    $('#hkFrek').innerHTML = fr.map(function(f){
+      return '<div class="frek"><b>'+esc(f.c)+'</b><span>'+esc(f.f)+'</span></div>';
+    }).join('');
+    $('#hkFrek').previousElementSibling.style.display = fr.length ? '' : 'none';
+    $('#hkFrek').style.display = fr.length ? '' : 'none';
+
+    var kn = r.channels || [];
+    $('#hkKanal').innerHTML = kn.map(function(k){
+      return '<span class="kanal">'+esc(k)+'</span>';
+    }).join('');
+    $('#hkKanalBas').style.display = kn.length ? '' : 'none';
+    $('#hkKanal').style.display = kn.length ? '' : 'none';
+
+    var so = r.social || {};
+    var sirali = ['ig','yt','x','tiktok','fb'];
+    $('#hkSosyal').innerHTML = sirali.filter(function(k){ return so[k]; }).map(function(k){
+      return '<a class="sos" href="'+esc(so[k])+'" target="_blank" rel="noopener" aria-label="'+k+'">'+
+        '<svg viewBox="0 0 24 24" fill="currentColor">'+SOSYAL_IKON[k]+'</svg></a>';
+    }).join('');
+    $('#hkSosyal').previousElementSibling.style.display =
+      $('#hkSosyal').innerHTML ? '' : 'none';
+
+    $('#hkSite').onclick = function(){
+      if(r.url) window.open(r.url,'_blank','noopener');
+    };
+  }
+
+  /* ============================================================
+     SEKME GEZİNMESİ — sayfa yenilenmez, anlık geçiş
+     ============================================================ */
+  var BASLIK={radyolar:'Radyolar',calan:'Şimdi Çalıyor',akis:'Yayın Akışı',hakkinda:'Hakkında'};
+
+  function sekmeGit(ad){
+    aktifSekme=ad;
+    Array.prototype.forEach.call(document.querySelectorAll('.sekme'), function(s){
+      s.classList.toggle('acik', s.dataset.sekme===ad);
+      if(s.dataset.sekme===ad) s.scrollTop = s.scrollTop; /* konumu koru */
+    });
+    Array.prototype.forEach.call($('#sekmeler').querySelectorAll('button'), function(b){
+      b.classList.toggle('on', b.dataset.git===ad);
+    });
+    var r=R();
+    $('#ustBaslik').textContent = (ad==='akis'||ad==='hakkinda')
+      ? (r.name||BASLIK[ad]) : BASLIK[ad];
+    $('#ustSag').style.display = ad==='radyolar' ? '' : 'none';
+    /* mini çalar, tam çalar ekranındayken gizlenir */
+    $('#mini').classList.toggle('gorun',
+      !!(calanDurum && calanDurum.radyo) && ad!=='calan');
+  }
+
+  Array.prototype.forEach.call($('#sekmeler').querySelectorAll('button'), function(b){
+    b.addEventListener('click', function(){ sekmeGit(b.dataset.git); });
+  });
+
+  /* Android geri tuşu: alt sekmelerden Radyolar'a döner, oradan çıkar. */
+  history.replaceState({sekme:'radyolar'},'');
+  window.addEventListener('popstate', function(){
+    if(aktifSekme!=='radyolar'){ history.pushState({sekme:'radyolar'},''); sekmeGit('radyolar'); }
+  });
+  var _git=sekmeGit;
+  sekmeGit=function(ad){
+    _git(ad);
+    if(ad!=='radyolar') history.pushState({sekme:ad},'');
+  };
+
+  /* Çift dokunuşla yakınlaştırmayı engelle (uygulama hissi). */
+  var sonDokunus=0;
+  document.addEventListener('touchend', function(e){
+    var t=Date.now();
+    if(t-sonDokunus<320) e.preventDefault();
+    sonDokunus=t;
+  }, {passive:false});
+
+})();
+</script>
+</body>
+</html>
