@@ -291,7 +291,9 @@
   .socrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
   .socrow a svg,.hero-soc a svg{width:22px;height:22px;display:block}
   /* Hero'daki sosyal medya sırası — adres düğmesinin hemen altında */
-  .hero-soc{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px;animation:rise .8s .6s both}
+  .hero-soc-lbl{margin-top:20px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    opacity:.72;text-shadow:0 2px 10px rgba(0,0,0,.5);animation:rise .8s .55s both}
+  .hero-soc{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px;animation:rise .8s .6s both}
   .hero-soc a{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
     background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(6px);
     color:#fff;transition:transform .25s,background .25s,border-color .25s}
@@ -363,6 +365,7 @@
     <div class="hero-btns">
       <a class="btn btn-ghost" id="siteBtn" target="_blank" rel="noopener"></a>
     </div>
+    <div class="hero-soc-lbl" id="heroSocLbl" hidden>Sosyal Medyalarımız</div>
     <div class="hero-soc" id="heroSoc" aria-label="Sosyal medya hesapları"></div>
   </div>
 </section>
@@ -404,7 +407,7 @@
 <!-- ALT KANALLAR -->
 <section class="sec darker reveal" id="secChan" style="display:none">
   <div class="wrapc">
-    <h2 class="head-font" data-metin="radyo.kanallarBaslik">Kanallarımız</h2>
+    <h2 class="head-font" data-metin="radyo.kanallarBaslik">Dijital Radyolarımız</h2>
     <div class="lead" data-metin="radyo.kanallarAlt">Her zevke uygun alt yayın kanalları</div>
     <div class="chans" id="chanList"></div>
   </div>
@@ -621,7 +624,10 @@ function socLinkleri(s){
 
 (function(){
   var hs = socLinkleri(R.social||{});
-  if(hs.length) document.getElementById('heroSoc').innerHTML = hs.join('');
+  if(hs.length){
+    document.getElementById('heroSoc').innerHTML = hs.join('');
+    document.getElementById('heroSocLbl').hidden = false;
+  }
 })();
 
 /* about */

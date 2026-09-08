@@ -1677,7 +1677,7 @@ window.DEFAULT_DATA = {
       "yayincilarAlt": "Mikrofonun ardındaki isimler",
       "akisBaslik": "Yayın Akışı",
       "akisAlt": "Gün boyu ekranında ne var?",
-      "kanallarBaslik": "Kanallarımız",
+      "kanallarBaslik": "Dijital Radyolarımız",
       "kanallarAlt": "Her zevke uygun alt yayın kanalları",
       "frekansBaslik": "Frekanslar",
       "frekansAlt": "Türkiye genelinde FM üzerinden yayındayız",
