@@ -491,8 +491,13 @@
     return (typeof o === 'string') ? o : null;
   }
 
+  /* "{yil}" içinde bulunulan yılla değişir. Panelde yer tutucunun içine
+     doğrudan yıl yazılırsa ("{2026}") süslü parantezler sayfada
+     görünüyordu — o hâli de yılla değiştiriyoruz, telif satırı her
+     durumda düzgün ve kendiliğinden güncel kalsın. */
+  var YER_TUTUCU_YIL = /\{\s*(?:yil|y\u0131l|\d{4})\s*\}/gi;
   function yerTutucu(metin) {
-    return metin.replace(/\{yil\}/g, new Date().getFullYear());
+    return metin.replace(YER_TUTUCU_YIL, new Date().getFullYear());
   }
 
   function doldur() {
@@ -506,7 +511,8 @@
       if (deger === null) {
         /* Panelde karşılığı yoksa HTML'deki yazıya dokunma; ama telif
            gibi yer tutuculu satırlar yine de çözülsün. */
-        if (el.textContent.indexOf('{yil}') >= 0) el.textContent = yerTutucu(el.textContent);
+        if (YER_TUTUCU_YIL.test(el.textContent)) { YER_TUTUCU_YIL.lastIndex = 0; el.textContent = yerTutucu(el.textContent); }
+        YER_TUTUCU_YIL.lastIndex = 0;
         continue;
       }
       deger = yerTutucu(deger);

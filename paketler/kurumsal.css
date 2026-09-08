@@ -128,10 +128,7 @@ body.pb[data-marka="boombox"] .about h2 span.kk-vurgu{
   transform:rotate(-1.2deg);display:inline-block}
 
 /* --- Fenomen / FT: başlık ayna yankısı --- */
-body.pb .kk-yanki{position:relative;display:inline-block}
-body.pb .kk-yanki::after{content:attr(data-yanki);position:absolute;left:0;top:100%;
-  transform:scaleY(-1);transform-origin:top;color:var(--brand);opacity:.2;
-  pointer-events:none;white-space:nowrap}
+/* .kk-yanki (başlık ayna yankısı) 8 Eyl 2026'da kaldırıldı — göz yoruyordu. */
 
 /* --- PROGRAM GÖRSELİ marka biçimine girer (yayın akışı) ---
    Yayıncı afişlerine DOKUNULMAZ: afişin kendi yazısı kırpılmamalı. */

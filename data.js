@@ -100,6 +100,7 @@ window.DEFAULT_DATA = {
     {
       "name": "Radyo Fenomen",
       "slug": "fenomen",
+      "dab": true,
       "caliyor": "fenomen",
       "logo": "logo/fenomen-beyaz.png",
       "logoColor": "logo/fenomen-renkli.png",
@@ -578,6 +579,7 @@ window.DEFAULT_DATA = {
     {
       "name": "Fenomen Türk",
       "slug": "fenomenturk",
+      "dab": true,
       "caliyor": "fenomenturk",
       "logo": "logo/fenomenturk-beyaz.png",
       "logoColor": "logo/fenomenturk-renkli.png",
@@ -1673,6 +1675,8 @@ window.DEFAULT_DATA = {
       "ozellik2Alt": "Net ses",
       "ozellik3": "Her Cihazda",
       "ozellik3Alt": "Web & mobil",
+      "ozellik4": "DAB+ Yayını",
+      "ozellik4Alt": "Dijital karasal yayın",
       "yayincilarBaslik": "Yayıncılarımız",
       "yayincilarAlt": "Mikrofonun ardındaki isimler",
       "akisBaslik": "Yayın Akışı",

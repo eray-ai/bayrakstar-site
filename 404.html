@@ -113,7 +113,7 @@
       var yol=h[i].getAttribute('data-metin').split('.'), o=M;
       for(var j=0;j<yol.length&&o;j++) o=o[yol[j]];
       var t=(typeof o==='string'&&o)?o:h[i].textContent;
-      h[i].textContent=t.replace(/\{yil\}/g,yil);
+      h[i].textContent=t.replace(/\{\s*(?:yil|y\u0131l|\d{4})\s*\}/gi,yil);
     }
   }catch(e){}
 })();

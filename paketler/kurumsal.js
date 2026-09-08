@@ -174,16 +174,10 @@
         var s=el('span','kk-vurgu'); s.textContent=son; h.appendChild(s);
       });
     }
-    /* Fenomen / FT: başlıkların altına ayna yankısı */
-    if(slug==='fenomen'||slug==='fenomenturk'){
-      Array.prototype.forEach.call(document.querySelectorAll('.sec h2'), function(h){
-        if(h.querySelector('.kk-yanki')) return;
-        var t=h.textContent.trim(); if(!t) return;
-        h.textContent='';
-        var s=el('span','kk-yanki'); s.textContent=t; s.setAttribute('data-yanki',t);
-        h.appendChild(s);
-      });
-    }
+    /* Fenomen / FT: bölüm başlıklarının altındaki kırmızı ayna yankısı
+       KALDIRILDI (8 Eyl 2026, kullanıcı isteği): başlığın altına düşen
+       ters kopya gözü yoruyordu. site.js'teki .kk-yanki dalı, eski
+       kayıtlı sayfalar için zararsız biçimde duruyor. */
   }
 
   /* =====================================================================

@@ -380,6 +380,8 @@
       <div class="feat"><div class="ic">📻</div><div class="ft" data-metin="radyo.ozellik1">7/24 Yayın</div><div class="fd" data-metin="radyo.ozellik1Alt">Kesintisiz canlı</div></div>
       <div class="feat"><div class="ic">🎧</div><div class="ft" data-metin="radyo.ozellik2">Dijital Kalite</div><div class="fd" data-metin="radyo.ozellik2Alt">Net ses</div></div>
       <div class="feat"><div class="ic">📱</div><div class="ft" data-metin="radyo.ozellik3">Her Cihazda</div><div class="fd" data-metin="radyo.ozellik3Alt">Web & mobil</div></div>
+      <!-- 4. rozet yalnız DAB+ yayını olan radyolarda görünür (data.js'te dab:true). -->
+      <div class="feat" id="featDab" style="display:none"><div class="ic">🛰️</div><div class="ft" data-metin="radyo.ozellik4">DAB+ Yayını</div><div class="fd" data-metin="radyo.ozellik4Alt">Dijital karasal yayın</div></div>
     </div>
   </div>
 </section>
@@ -632,6 +634,9 @@ function socLinkleri(s){
 
 /* about */
 document.getElementById('aboutTitle').textContent = R.name;
+/* DAB+ rozeti: yalnız DAB+ yayını olan radyolarda (şimdilik Radyo Fenomen
+   ve Fenomen Türk). Panelden "Genel Bilgiler" altındaki kutucukla açılır. */
+if(R.dab) document.getElementById('featDab').style.display='';
 document.getElementById('aboutText').textContent = R.about || '';
 
 /* --- YAYINCILAR --- */

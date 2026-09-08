@@ -785,12 +785,13 @@ function panelSite(b){
         ['ozellik1','1. rozet — başlık',30],['ozellik1Alt','1. rozet — alt yazı',40],
         ['ozellik2','2. rozet — başlık',30],['ozellik2Alt','2. rozet — alt yazı',40],
         ['ozellik3','3. rozet — başlık',30],['ozellik3Alt','3. rozet — alt yazı',40],
+        ['ozellik4','4. rozet — başlık (yalnız DAB+ açık radyolarda)',30],['ozellik4Alt','4. rozet — alt yazı',40],
         ['yayincilarBaslik','Yayıncılar bölümü başlığı',50],
         ['yayincilarAlt','Yayıncılar alt yazısı',90],
         ['akisBaslik','Yayın akışı başlığı',50],
         ['akisAlt','Yayın akışı alt yazısı',90],
-        ['kanallarBaslik','Kanallar başlığı',50],
-        ['kanallarAlt','Kanallar alt yazısı',90],
+        ['kanallarBaslik','Dijital radyolar başlığı',50],
+        ['kanallarAlt','Dijital radyolar alt yazısı',90],
         ['frekansBaslik','Frekanslar başlığı',50],
         ['frekansAlt','Frekanslar alt yazısı',90],
         ['sosyalBaslik','Sosyal medya başlığı',50],
@@ -1160,6 +1161,13 @@ function panelRadyo(b,i){
            'Tarayıcıda çalması için <b>https</b> ve doğrudan ses akışı olmalı. <b>.m3u8</b> linkler Safari’de çalar, Chrome’da ek kod gerekir.')
     + alan('Detay Sayfası Adresi (slug)', txtInput(r.slug,P+'.slug',20), 20, r.slug,
            'Sayfa adresi: <b>/r/'+att(r.slug||'')+'/</b> · boşluk ve Türkçe karakter kullanma.')
+    + '<label class="item" style="display:flex;gap:12px;align-items:flex-start;cursor:pointer;margin:14px 0">'
+    +   '<input type="checkbox" '+(r.dab?'checked':'')+' oninput="'+P+'.dab=this.checked"'
+    +     ' style="margin-top:3px;width:18px;height:18px;accent-color:#ff0007;cursor:pointer;flex-shrink:0">'
+    +   '<span><b style="display:block;font-size:15px">DAB+ yayını var</b>'
+    +   '<span style="display:block;opacity:.62;font-size:13px;line-height:1.5;margin-top:3px">'
+    +   'Açıkken radyo sayfasındaki tanıtım bölümüne <b>“DAB+ Yayını”</b> rozeti eklenir. '
+    +   'Rozetin yazısı “Sayfa Metinleri → Radyo Sayfası” altından değiştirilir.</span></span></label>'
     + alan('🎵 Şimdi Çalıyor Kaynağı', caliyorSecim(r,P), 0, '',
            'Çalarda o an çalan şarkının adını, sanatçısını ve albüm kapağını gösterir. '
            + '<b>Kapalı</b> seçersen sadece radyonun adı ve logosu yazar. '
