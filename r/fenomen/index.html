@@ -292,7 +292,9 @@
   .socrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
   .socrow a svg,.hero-soc a svg{width:22px;height:22px;display:block}
   /* Hero'daki sosyal medya sırası — adres düğmesinin hemen altında */
-  .hero-soc{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px;animation:rise .8s .6s both}
+  .hero-soc-lbl{margin-top:20px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    opacity:.72;text-shadow:0 2px 10px rgba(0,0,0,.5);animation:rise .8s .55s both}
+  .hero-soc{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px;animation:rise .8s .6s both}
   .hero-soc a{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
     background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(6px);
     color:#fff;transition:transform .25s,background .25s,border-color .25s}
@@ -364,6 +366,7 @@
     <div class="hero-btns">
       <a class="btn btn-ghost" id="siteBtn" target="_blank" rel="noopener"></a>
     </div>
+    <div class="hero-soc-lbl" id="heroSocLbl" hidden>Sosyal Medyalarımız</div>
     <div class="hero-soc" id="heroSoc" aria-label="Sosyal medya hesapları"></div>
   </div>
 </section>
@@ -378,6 +381,8 @@
       <div class="feat"><div class="ic">📻</div><div class="ft" data-metin="radyo.ozellik1">7/24 Yayın</div><div class="fd" data-metin="radyo.ozellik1Alt">Kesintisiz canlı</div></div>
       <div class="feat"><div class="ic">🎧</div><div class="ft" data-metin="radyo.ozellik2">Dijital Kalite</div><div class="fd" data-metin="radyo.ozellik2Alt">Net ses</div></div>
       <div class="feat"><div class="ic">📱</div><div class="ft" data-metin="radyo.ozellik3">Her Cihazda</div><div class="fd" data-metin="radyo.ozellik3Alt">Web & mobil</div></div>
+      <!-- 4. rozet yalnız DAB+ yayını olan radyolarda görünür (data.js'te dab:true). -->
+      <div class="feat" id="featDab" style="display:none"><div class="ic">🛰️</div><div class="ft" data-metin="radyo.ozellik4">DAB+ Yayını</div><div class="fd" data-metin="radyo.ozellik4Alt">Dijital karasal yayın</div></div>
     </div>
   </div>
 </section>
@@ -405,7 +410,7 @@
 <!-- ALT KANALLAR -->
 <section class="sec darker reveal" id="secChan" style="display:none">
   <div class="wrapc">
-    <h2 class="head-font" data-metin="radyo.kanallarBaslik">Kanallarımız</h2>
+    <h2 class="head-font" data-metin="radyo.kanallarBaslik">Dijital Radyolarımız</h2>
     <div class="lead" data-metin="radyo.kanallarAlt">Her zevke uygun alt yayın kanalları</div>
     <div class="chans" id="chanList"></div>
   </div>
@@ -622,11 +627,41 @@ function socLinkleri(s){
 
 (function(){
   var hs = socLinkleri(R.social||{});
-  if(hs.length) document.getElementById('heroSoc').innerHTML = hs.join('');
+  if(hs.length){
+    document.getElementById('heroSoc').innerHTML = hs.join('');
+    document.getElementById('heroSocLbl').hidden = false;
+  }
 })();
 
 /* about */
+/* --- RADYOYA ÖZEL BÖLÜM BAŞLIKLARI ---
+   Bölüm başlıkları normalde 4 radyoda ortaktır (panelde "Sayfa Metinleri").
+   Bir radyo kendi başlığını istiyorsa panelden "Bölüm Başlıkları" bölümüne
+   yazıyor; buradaki eşleme site.js'e "bu sayfada şu yolları şununla
+   değiştir" diyor. Boş bırakılan alan genel metne düşer. */
+(function(){
+  var B = R.basliklar || {};
+  var esleme = {
+    hakkinda:'hakkindaBaslik',
+    yayincilar:'yayincilarBaslik', yayincilarAlt:'yayincilarAlt',
+    akis:'akisBaslik',             akisAlt:'akisAlt',
+    kanallar:'kanallarBaslik',     kanallarAlt:'kanallarAlt',
+    frekans:'frekansBaslik',       frekansAlt:'frekansAlt',
+    sosyal:'sosyalBaslik',         sosyalAlt:'sosyalAlt',
+    uygulama:'uygulamaBaslik',     uygulamaAlt:'uygulamaAlt',
+    diger:'digerBaslik'
+  };
+  var ustune = {};
+  Object.keys(esleme).forEach(function(k){
+    if(typeof B[k]==='string' && B[k].trim()) ustune['radyo.'+esleme[k]] = B[k];
+  });
+  window.METIN_USTUNE = ustune;
+})();
+
 document.getElementById('aboutTitle').textContent = R.name;
+/* DAB+ rozeti: yalnız DAB+ yayını olan radyolarda (şimdilik Radyo Fenomen
+   ve Fenomen Türk). Panelden "Genel Bilgiler" altındaki kutucukla açılır. */
+if(R.dab) document.getElementById('featDab').style.display='';
 document.getElementById('aboutText').textContent = R.about || '';
 
 /* --- YAYINCILAR --- */
