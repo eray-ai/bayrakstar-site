@@ -410,6 +410,7 @@ const B_RADYO=[
   {id:'yayinci', ad:'Yayıncılar',     ikon:'🎙', renk:'#ff0007', say:i=>(D.radios[i].hosts||[]).length},
   {id:'akis',    ad:'Yayın Akışı',    ikon:'🗓', renk:'#ffca11', say:i=>(D.radios[i].schedule||[]).length},
   {id:'kanal',   ad:'Alt Kanallar',   ikon:'📻', renk:'#00bac5', say:i=>(D.radios[i].channels||[]).length},
+  {id:'basliklar',ad:'Bölüm Başlıkları',ikon:'🏷', renk:'#f75843', say:i=>Object.keys(D.radios[i].basliklar||{}).filter(k=>String((D.radios[i].basliklar||{})[k]||'').trim()).length},
   {id:'sosyal',  ad:'Sosyal & İletişim',ikon:'🔗',renk:'#0081ba'},
   {id:'uygulama',ad:'Mobil Uygulama',  ikon:'📱', renk:'#00bac5'}
 ];
@@ -829,7 +830,9 @@ function panelSite(b){
     var h = baslik(b,'Sitedeki sabit yazılar: bölüm başlıkları, menü bağlantıları ve telif satırı.')
       + '<div class="hint" style="margin-bottom:14px">Bir alanı <b>boş bırakırsan</b> eski hâline döner — '
       + 'yanlışlıkla silinen başlık sayfada boşluk bırakmaz. Telif satırındaki <b>{yil}</b> '
-      + 'yazısına dokunma: içinde bulunulan yılı kendisi yazar, her Ocak ayında güncellemen gerekmez.</div>';
+      + 'yazısına dokunma: içinde bulunulan yılı kendisi yazar, her Ocak ayında güncellemen gerekmez.<br>'
+      + '“Radyo Sayfası” başlıkları <b>dört radyoda birden</b> geçerlidir. Tek bir radyoda farklı '
+      + 'yazsın istiyorsan o radyonun <b>“Bölüm Başlıkları”</b> bölümüne yaz — orası burayı ezer.</div>';
     G.forEach(function(g){
       var grup=g[0], ad=g[1], alanlar=g[2];
       h += '<div class="item"><div class="ihead"><span class="n">'+ad+'</span></div><div class="grid2">';
@@ -1347,6 +1350,35 @@ function panelRadyo(b,i){
           + '<button class="del" onclick="silOge(\''+P+'.channels\','+j+','+P+'.channels['+j+'])">Sil</button></div>';
       }).join('')
     + '<button class="add" onclick="ensureArr('+i+',\'channels\');'+P+'.channels.push(\'\');yenile()">+ Kanal Ekle</button>';
+
+  /* Bölüm başlıkları normalde 4 radyoda ORTAK ("Sayfa Metinleri" bölümü).
+     Bir radyonun kendi başlığı olsun isteniyorsa buradan yazılır; boş
+     bırakılan alan ortak metne düşer, iki yerde ayrı ayrı uğraşmak
+     gerekmesin diye kutuların içinde ortak metin soluk yazıyor. */
+  if(b.id==='basliklar'){
+    const B=r.basliklar||{}, G=(D.metinler&&D.metinler.radyo)||{};
+    const E='ensureObj('+i+',\'basliklar\');';
+    function bs(k,g,etiket,max){
+      return alan(etiket, txtInput(B[k],P+'.basliklar.'+k,max,G[g]||'',E), max, B[k]);
+    }
+    return baslik(b,'Bu radyonun sayfasındaki bölüm başlıkları. <b>Boş bırakırsan</b> dört radyoda ortak olan metin kullanılır (soluk yazan). Yalnız bu radyoda farklı bir şey yazsın istiyorsan doldur.')
+    + '<div class="grid2">'
+    +   bs('hakkinda','hakkindaBaslik','“Radyo Hakkında” etiketi',40)
+    +   bs('yayincilar','yayincilarBaslik','Yayıncılar başlığı',50)
+    +   bs('yayincilarAlt','yayincilarAlt','Yayıncılar alt yazısı',90)
+    +   bs('akis','akisBaslik','Yayın akışı başlığı',50)
+    +   bs('akisAlt','akisAlt','Yayın akışı alt yazısı',90)
+    +   bs('kanallar','kanallarBaslik','Dijital radyolar başlığı',50)
+    +   bs('kanallarAlt','kanallarAlt','Dijital radyolar alt yazısı',90)
+    +   bs('frekans','frekansBaslik','Frekanslar başlığı',50)
+    +   bs('frekansAlt','frekansAlt','Frekanslar alt yazısı',90)
+    +   bs('sosyal','sosyalBaslik','Sosyal medya başlığı',50)
+    +   bs('sosyalAlt','sosyalAlt','Sosyal medya alt yazısı',90)
+    +   bs('uygulama','uygulamaBaslik','Uygulamalar başlığı',50)
+    +   bs('uygulamaAlt','uygulamaAlt','Uygulamalar alt yazısı',90)
+    +   bs('diger','digerBaslik','“Diğer Radyolarımız” başlığı',50)
+    + '</div>';
+  }
 
   if(b.id==='sosyal'){
     const so=r.social||{};

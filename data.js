@@ -100,6 +100,7 @@ window.DEFAULT_DATA = {
     {
       "name": "Radyo Fenomen",
       "slug": "fenomen",
+      "basliklar": {},
       "dab": true,
       "caliyor": "fenomen",
       "logo": "logo/fenomen-beyaz.png",
@@ -579,6 +580,7 @@ window.DEFAULT_DATA = {
     {
       "name": "Fenomen Türk",
       "slug": "fenomenturk",
+      "basliklar": {},
       "dab": true,
       "caliyor": "fenomenturk",
       "logo": "logo/fenomenturk-beyaz.png",
@@ -1004,6 +1006,7 @@ window.DEFAULT_DATA = {
     {
       "name": "Radyo Boombox",
       "slug": "boombox",
+      "basliklar": {},
       "caliyor": "boombox",
       "logo": "logo/boombox-beyaz.png",
       "logoColor": "logo/boombox-renkli.png",
@@ -1191,6 +1194,7 @@ window.DEFAULT_DATA = {
     {
       "name": "İstanbul FM",
       "slug": "istanbulfm",
+      "basliklar": {},
       "caliyor": "istanbulfm",
       "logo": "logo/istanbulfm-beyaz.png",
       "logoColor": "logo/istanbulfm-renkli.png",

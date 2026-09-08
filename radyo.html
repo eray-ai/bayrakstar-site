@@ -633,6 +633,30 @@ function socLinkleri(s){
 })();
 
 /* about */
+/* --- RADYOYA ÖZEL BÖLÜM BAŞLIKLARI ---
+   Bölüm başlıkları normalde 4 radyoda ortaktır (panelde "Sayfa Metinleri").
+   Bir radyo kendi başlığını istiyorsa panelden "Bölüm Başlıkları" bölümüne
+   yazıyor; buradaki eşleme site.js'e "bu sayfada şu yolları şununla
+   değiştir" diyor. Boş bırakılan alan genel metne düşer. */
+(function(){
+  var B = R.basliklar || {};
+  var esleme = {
+    hakkinda:'hakkindaBaslik',
+    yayincilar:'yayincilarBaslik', yayincilarAlt:'yayincilarAlt',
+    akis:'akisBaslik',             akisAlt:'akisAlt',
+    kanallar:'kanallarBaslik',     kanallarAlt:'kanallarAlt',
+    frekans:'frekansBaslik',       frekansAlt:'frekansAlt',
+    sosyal:'sosyalBaslik',         sosyalAlt:'sosyalAlt',
+    uygulama:'uygulamaBaslik',     uygulamaAlt:'uygulamaAlt',
+    diger:'digerBaslik'
+  };
+  var ustune = {};
+  Object.keys(esleme).forEach(function(k){
+    if(typeof B[k]==='string' && B[k].trim()) ustune['radyo.'+esleme[k]] = B[k];
+  });
+  window.METIN_USTUNE = ustune;
+})();
+
 document.getElementById('aboutTitle').textContent = R.name;
 /* DAB+ rozeti: yalnız DAB+ yayını olan radyolarda (şimdilik Radyo Fenomen
    ve Fenomen Türk). Panelden "Genel Bilgiler" altındaki kutucukla açılır. */

@@ -507,7 +507,12 @@
     var hedefler = document.querySelectorAll('[data-metin]');
     for (var i = 0; i < hedefler.length; i++) {
       var el = hedefler[i];
-      var deger = oku(M, el.getAttribute('data-metin'));
+      var yol = el.getAttribute('data-metin');
+      /* Sayfaya özel üstüne yazma: radyo.html, o radyonun kendi bölüm
+         başlıklarını (varsa) window.METIN_USTUNE ile buraya bırakıyor.
+         Boş bırakılan başlık genel metne düşer. */
+      var ustune = window.METIN_USTUNE && window.METIN_USTUNE[yol];
+      var deger = (typeof ustune === 'string' && ustune.trim()) ? ustune : oku(M, yol);
       if (deger === null) {
         /* Panelde karşılığı yoksa HTML'deki yazıya dokunma; ama telif
            gibi yer tutuculu satırlar yine de çözülsün. */
