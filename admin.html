@@ -315,6 +315,9 @@ function openPanel(){
   yetkiUygula();
   window.bulutHazir.then(function(){
     D = JSON.parse(JSON.stringify(window.getSiteData()));
+    /* Paneli hangi kaydın üzerine açtığımızı not ediyoruz; kaydederken
+       araya başka bir kayıt girdiyse üzerine yazmadan önce soracağız. */
+    ACILIS_ZAMANI = window.BULUT.onbellekZamani();
     render();
   });
 }
@@ -1828,7 +1831,12 @@ function guncelleBoyutRozeti(){
     : 'Supabase\'e giden içeriğin toplam boyutu. Her ziyaretçi bunu indiriyor — 500 KB altında tut.';
 }
 
-/* ==== KAYDET ==== */
+/* ==== KAYDET ====
+   Panel açıkken başka biri (ya da başka bir sekme) kaydederse, buradaki
+   kopya bayatlar ve "Kaydet" onun değişikliklerini sessizce siler.
+   Bu bir kez gerçekten yaşandı; artık yazmadan önce buluttaki zaman
+   damgasına bakıp kullanıcıya soruyoruz. */
+let ACILIS_ZAMANI = '';
 function collect(){}   /* tüm alanlar anlık bağlı — toplamaya gerek yok */
 function save(){
   var boyut=icerikBoyutu();
@@ -1840,8 +1848,20 @@ function save(){
     + 'Yine de kaydedilsin mi?')) { return Promise.resolve(false); }
   try{ localStorage.setItem('bayrakstar_data',JSON.stringify(D)); }catch(err){}
   toast('Buluta gönderiliyor…');
-  return window.BULUT.yaz(D).then(function(){
-    toast('Buluta kaydedildi ✓ — site güncellendi'); return true;
+  return window.BULUT.zaman().catch(function(){ return ACILIS_ZAMANI; }).then(function(simdiki){
+    if(ACILIS_ZAMANI && simdiki && simdiki!==ACILIS_ZAMANI && !confirm(
+        'Bu panel açıkken içerik başka bir yerden değiştirilmiş\n'
+      + '(son kayıt: '+new Date(simdiki).toLocaleString('tr-TR')+').\n\n'
+      + 'Şimdi kaydedersen o değişiklikler SİLİNİR.\n\n'
+      + 'Önerilen: İptal et, sayfayı yenile, düzenlemeni tekrar yap.\n\n'
+      + 'Yine de üzerine yazılsın mı?')) { toast('Kaydedilmedi — sayfayı yenile'); return false; }
+    return window.BULUT.yaz(D).then(function(){
+      ACILIS_ZAMANI = '';
+      return window.BULUT.zaman().catch(function(){ return ''; }).then(function(z){
+        ACILIS_ZAMANI = z;
+        toast('Buluta kaydedildi ✓ — site güncellendi'); return true;
+      });
+    });
   }).catch(function(e){
     alert('Buluta kaydedilemedi:\n\n'+e.message+'\n\nDeğişikliklerin kaybolmadı, bu tarayıcıda duruyor. '
         + 'İnternetini kontrol edip tekrar "Kaydet" de.');

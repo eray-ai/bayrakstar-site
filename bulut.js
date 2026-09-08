@@ -15,6 +15,7 @@
   var KEY  = "sb_publishable_vRdeq7GR8RblkbUe60SrSw_aFkl6xhe";
 
   var ONBELLEK   = "bayrakstar_data";      // data.js'in okuduğu anahtar
+  var ONBELLEK_Z = "bayrakstar_data_zaman"; // ön belleğin hangi kayda ait olduğu (updated_at)
   var OTURUM     = "bayrakstar_token";     // yönetici erişim jetonu
   var ROL        = "bayrakstar_rol";       // 'sahip' | 'yonetici'
   var EPOSTA_SON = "bayrakstar_eposta";    // giriş kutusuna hatırlatma
@@ -39,6 +40,27 @@
     ]);
   }
 
+  /* Son okunan kaydın zaman damgası (updated_at). Panel, kaydetmeden
+     önce buna bakıp araya başka bir kaydın girip girmediğini anlıyor. */
+  var sonZaman_ = "";
+  function onbellekZamani() {
+    try { return localStorage.getItem(ONBELLEK_Z) || ""; } catch (e) { return ""; }
+  }
+  /* Yalnız zaman damgasını çeker — içeriği indirmez, ön belleğe dokunmaz. */
+  function bulutZamani() {
+    return zamanAsimli(
+      fetch(URL_ + "/rest/v1/site_icerik?id=eq.1&select=updated_at", {
+        headers: basliklar(), cache: "no-store"
+      }).then(function (r) {
+        if (!r.ok) throw new Error("Bulut okunamadı (" + r.status + ")");
+        return r.json();
+      }),
+      ZAMAN_ASIMI
+    ).then(function (satirlar) {
+      return (satirlar && satirlar[0] && satirlar[0].updated_at) || "";
+    });
+  }
+
   /* ---- OKU: bulutdaki içeriği çek, ön belleğe yaz ---- */
   function bulutOku() {
     return zamanAsimli(
@@ -50,10 +72,15 @@
       }),
       ZAMAN_ASIMI
     ).then(function (satirlar) {
-      var d = satirlar && satirlar[0] && satirlar[0].data;
+      var satir = satirlar && satirlar[0];
+      var d = satir && satir.data;
       // Bulut boşsa (henüz hiç kaydedilmemişse) data.js varsayılanları geçerli
       if (d && typeof d === "object" && Object.keys(d).length) {
-        try { localStorage.setItem(ONBELLEK, JSON.stringify(d)); } catch (e) {}
+        try {
+          localStorage.setItem(ONBELLEK, JSON.stringify(d));
+          localStorage.setItem(ONBELLEK_Z, satir.updated_at || "");
+        } catch (e) {}
+        sonZaman_ = satir.updated_at || "";
         return d;
       }
       return null;
@@ -277,9 +304,40 @@
      düzenleme yapıp yeni içeriği ezmesin diye HER ZAMAN taze okur.
      (admin.html, bulut.js'ten önce window.BULUT_TAZE_SART = true der.)
      ------------------------------------------------------------ */
+  /* Arka planda tazeleyip DEĞİŞMİŞ içerik bulursak sayfayı bir kez
+     yeniliyoruz. Yoksa panelden yapılan değişiklik ziyaretçiye ancak
+     BİR SONRAKİ açılışta ulaşıyordu — "kaydettim ama sayfa değişmedi"
+     şikâyetinin sebebi buydu.
+     · Aynı kayıt için ikinci kez yenilemeyiz (sessionStorage bayrağı).
+     · Radyo çalıyorsa yenilemeyiz — sesi kesmek metin güncellemesinden
+       daha rahatsız edici olur; içerik bir sonraki açılışta gelir. */
+  function calanVarMi() {
+    var sesler = document.getElementsByTagName("audio");
+    for (var i = 0; i < sesler.length; i++) {
+      if (!sesler[i].paused && !sesler[i].ended) return true;
+    }
+    return false;
+  }
+  function tazeIcerikGelince(oncekiZaman) {
+    if (!sonZaman_ || sonZaman_ === oncekiZaman) return;
+    var bayrak = "bayrakstar_tazelendi";
+    try {
+      if (sessionStorage.getItem(bayrak) === sonZaman_) return;
+      sessionStorage.setItem(bayrak, sonZaman_);
+    } catch (e) { return; }
+    if (calanVarMi()) return;
+    /* Yalnız açılışın ilk saniyelerinde: ağ çok yavaşsa cevap geç gelir ve
+       o sırada sayfayı okuyan birinin altından sayfa çekilmiş olur. */
+    if (typeof performance !== "undefined" && performance.now() > 10000) return;
+    location.reload();
+  }
+
   var hazir;
   if (onbellekVar() && !window.BULUT_TAZE_SART) {
-    bulutOku().catch(function (e) {
+    var oncekiZaman_ = onbellekZamani();
+    bulutOku().then(function () {
+      tazeIcerikGelince(oncekiZaman_);
+    }).catch(function (e) {
       console.warn("[bulut] arka plan tazeleme başarısız: " + e.message);
     });
     hazir = Promise.resolve(null);
@@ -293,6 +351,8 @@
 
   window.BULUT = {
     oku: bulutOku,
+    zaman: bulutZamani,
+    onbellekZamani: onbellekZamani,
     giris: bulutGiris,
     yaz: bulutYaz,
     gecmis: bulutGecmis,
