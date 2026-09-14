@@ -266,7 +266,7 @@ window.DEFAULT_DATA = {
         "ig": "https://instagram.com/radyofenomen",
         "x": "https://twitter.com/radyofenomen",
         "yt": "https://www.youtube.com/@radyofenomenmaksimum",
-        "tiktok": "https://tiktok.com/@radyofenomen",
+        "tiktok": "https://www.tiktok.com/@radyo.fenomen",
         "fb": "https://facebook.com/radyofenomen"
       },
       "scheduleGun": {
