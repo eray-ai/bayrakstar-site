@@ -9,6 +9,9 @@ name: Günlük bakım
 #      diyordu. Günlük istek bunu kalıcı olarak önler.
 #   3. Site ve 4 canlı yayın adresini denetler; biri ölmüşse GitHub'da
 #      "issue" açar (deponun sahibine e-posta gider).
+#   4. GitHub, 60 gün commit görmeyen depoda zamanlanmış görevleri kendiliğinden
+#      kapatıyor. Görev her gün kendini API ile "etkin" işaretleyip bu sayacı
+#      sıfırlıyor — sahte commit atmadan.
 on:
   schedule:
     - cron: "10 6 * * *"
@@ -17,6 +20,7 @@ on:
 permissions:
   contents: write           # üretilen sayfaları geri commit'lemek için
   issues: write             # kesinti bildirimi açmak için
+  actions: write            # görevin 60 günde kapanmaması için
 
 concurrency:
   group: gunluk-bakim
@@ -27,6 +31,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # --- 4: 60 günlük hareketsizlik kapatmasına karşı ---
+      - name: Zamanlanmış görevi etkin tut
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/gunluk-bakim.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - uses: actions/setup-python@v5
         with:
