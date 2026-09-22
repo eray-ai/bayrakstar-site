@@ -3,3 +3,11 @@
 node_modules/
 saglik-raporu.txt
 __pycache__/
+
+# Yerelde kalır, herkese açık depoya gitmez
+_mail/
+DEVIR.md
+supabase/
+araclar/alan-adi-degistir.py
+araclar/surum-yaz.py
+araclar/yayin-akisi-cek.py
