@@ -186,7 +186,11 @@ window.DEFAULT_DATA = {
           "img": "yayincilar/fenomen-serdar.jpg"
         },
         {
-          "t": "10:00 – 13:00",
+          "t": "10:00 – 12:00",
+          "name": "Pop Stop"
+        },
+        {
+          "t": "12:00 – 13:00",
           "name": "Maksimum Hit Müzik"
         },
         {
@@ -282,7 +286,11 @@ window.DEFAULT_DATA = {
             "img": "yayincilar/fenomen-serdar.jpg"
           },
           {
-            "t": "10:00 – 13:00",
+            "t": "10:00 – 12:00",
+            "name": "Pop Stop"
+          },
+          {
+            "t": "12:00 – 13:00",
             "name": "Maksimum Hit Müzik"
           },
           {
@@ -318,7 +326,11 @@ window.DEFAULT_DATA = {
             "img": "yayincilar/fenomen-serdar.jpg"
           },
           {
-            "t": "10:00 – 13:00",
+            "t": "10:00 – 12:00",
+            "name": "Pop Stop"
+          },
+          {
+            "t": "12:00 – 13:00",
             "name": "Maksimum Hit Müzik"
           },
           {
@@ -354,7 +366,11 @@ window.DEFAULT_DATA = {
             "img": "yayincilar/fenomen-serdar.jpg"
           },
           {
-            "t": "10:00 – 13:00",
+            "t": "10:00 – 12:00",
+            "name": "Pop Stop"
+          },
+          {
+            "t": "12:00 – 13:00",
             "name": "Maksimum Hit Müzik"
           },
           {
@@ -390,7 +406,11 @@ window.DEFAULT_DATA = {
             "img": "yayincilar/fenomen-serdar.jpg"
           },
           {
-            "t": "10:00 – 13:00",
+            "t": "10:00 – 12:00",
+            "name": "Pop Stop"
+          },
+          {
+            "t": "12:00 – 13:00",
             "name": "Maksimum Hit Müzik"
           },
           {
@@ -426,7 +446,11 @@ window.DEFAULT_DATA = {
             "img": "yayincilar/fenomen-serdar.jpg"
           },
           {
-            "t": "10:00 – 13:00",
+            "t": "10:00 – 12:00",
+            "name": "Pop Stop"
+          },
+          {
+            "t": "12:00 – 13:00",
             "name": "Maksimum Hit Müzik"
           },
           {
@@ -680,22 +704,20 @@ window.DEFAULT_DATA = {
         },
         {
           "t": "10:00 – 12:00",
-          "name": "Doğanay’ın Dünyası",
-          "host": "Doğanay Cireli",
-          "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+          "name": "Serdar'la Ne Var Ne Yok"
         },
         {
-          "t": "12:00 – 13:00",
+          "t": "12:00 – 14:00",
           "name": "Eğlence ve Müzik"
         },
         {
-          "t": "13:00 – 15:00",
+          "t": "14:00 – 16:00",
           "name": "Ömer Erişmen’le Extra",
           "host": "Ömer Erişmen",
           "img": "yayincilar/fenomenturk-omer-erismen.jpg"
         },
         {
-          "t": "15:00 – 18:00",
+          "t": "16:00 – 18:00",
           "name": "Eğlence ve Müzik"
         },
         {
@@ -748,22 +770,20 @@ window.DEFAULT_DATA = {
           },
           {
             "t": "10:00 – 12:00",
-            "name": "Doğanay’ın Dünyası",
-            "host": "Doğanay Cireli",
-            "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+            "name": "Serdar'la Ne Var Ne Yok"
           },
           {
-            "t": "12:00 – 13:00",
+            "t": "12:00 – 14:00",
             "name": "Eğlence ve Müzik"
           },
           {
-            "t": "13:00 – 15:00",
+            "t": "14:00 – 16:00",
             "name": "Ömer Erişmen’le Extra",
             "host": "Ömer Erişmen",
             "img": "yayincilar/fenomenturk-omer-erismen.jpg"
           },
           {
-            "t": "15:00 – 18:00",
+            "t": "16:00 – 18:00",
             "name": "Eğlence ve Müzik"
           },
           {
@@ -790,22 +810,20 @@ window.DEFAULT_DATA = {
           },
           {
             "t": "10:00 – 12:00",
-            "name": "Doğanay’ın Dünyası",
-            "host": "Doğanay Cireli",
-            "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+            "name": "Serdar'la Ne Var Ne Yok"
           },
           {
-            "t": "12:00 – 13:00",
+            "t": "12:00 – 14:00",
             "name": "Eğlence ve Müzik"
           },
           {
-            "t": "13:00 – 15:00",
+            "t": "14:00 – 16:00",
             "name": "Ömer Erişmen’le Extra",
             "host": "Ömer Erişmen",
             "img": "yayincilar/fenomenturk-omer-erismen.jpg"
           },
           {
-            "t": "15:00 – 18:00",
+            "t": "16:00 – 18:00",
             "name": "Eğlence ve Müzik"
           },
           {
@@ -832,22 +850,20 @@ window.DEFAULT_DATA = {
           },
           {
             "t": "10:00 – 12:00",
-            "name": "Doğanay’ın Dünyası",
-            "host": "Doğanay Cireli",
-            "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+            "name": "Serdar'la Ne Var Ne Yok"
           },
           {
-            "t": "12:00 – 13:00",
+            "t": "12:00 – 14:00",
             "name": "Eğlence ve Müzik"
           },
           {
-            "t": "13:00 – 15:00",
+            "t": "14:00 – 16:00",
             "name": "Ömer Erişmen’le Extra",
             "host": "Ömer Erişmen",
             "img": "yayincilar/fenomenturk-omer-erismen.jpg"
           },
           {
-            "t": "15:00 – 18:00",
+            "t": "16:00 – 18:00",
             "name": "Eğlence ve Müzik"
           },
           {
@@ -874,22 +890,20 @@ window.DEFAULT_DATA = {
           },
           {
             "t": "10:00 – 12:00",
-            "name": "Doğanay’ın Dünyası",
-            "host": "Doğanay Cireli",
-            "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+            "name": "Serdar'la Ne Var Ne Yok"
           },
           {
-            "t": "12:00 – 13:00",
+            "t": "12:00 – 14:00",
             "name": "Eğlence ve Müzik"
           },
           {
-            "t": "13:00 – 15:00",
+            "t": "14:00 – 16:00",
             "name": "Ömer Erişmen’le Extra",
             "host": "Ömer Erişmen",
             "img": "yayincilar/fenomenturk-omer-erismen.jpg"
           },
           {
-            "t": "15:00 – 18:00",
+            "t": "16:00 – 18:00",
             "name": "Eğlence ve Müzik"
           },
           {
@@ -916,22 +930,20 @@ window.DEFAULT_DATA = {
           },
           {
             "t": "10:00 – 12:00",
-            "name": "Doğanay’ın Dünyası",
-            "host": "Doğanay Cireli",
-            "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+            "name": "Serdar'la Ne Var Ne Yok"
           },
           {
-            "t": "12:00 – 13:00",
+            "t": "12:00 – 14:00",
             "name": "Eğlence ve Müzik"
           },
           {
-            "t": "13:00 – 15:00",
+            "t": "14:00 – 16:00",
             "name": "Ömer Erişmen’le Extra",
             "host": "Ömer Erişmen",
             "img": "yayincilar/fenomenturk-omer-erismen.jpg"
           },
           {
-            "t": "15:00 – 18:00",
+            "t": "16:00 – 18:00",
             "name": "Eğlence ve Müzik"
           },
           {
@@ -941,35 +953,43 @@ window.DEFAULT_DATA = {
             "img": "yayincilar/fenomenturk-murat-ozsoy.jpg"
           },
           {
-            "t": "20:00 – 21:00",
-            "name": "Deniz Görkem’le Sahnedekiler",
-            "host": "Deniz Görkem Kaya",
-            "img": "yayincilar/fenomenturk-deniz-gorkem-kaya.jpg"
-          },
-          {
-            "t": "21:00 – 23:00",
+            "t": "20:00 – 22:00",
             "name": "Eğlence ve Müzik"
           },
           {
-            "t": "23:00 – 00:00",
+            "t": "22:00 – 23:00",
             "name": "Retro Hit (Tansu Çağlayan DJ Set)",
             "host": "Tansu Çağlayan",
             "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
+          },
+          {
+            "t": "23:00 – 00:00",
+            "name": "Ümit Akdeniz İle Momentum"
           }
         ],
         "5": [
           {
-            "t": "00:00 – 11:00",
+            "t": "00:00 – 09:00",
             "name": "Eğlence ve Müzik"
           },
           {
-            "t": "11:00 – 13:00",
-            "name": "Doğanay’ın Dünyası",
-            "host": "Doğanay Cireli",
-            "img": "yayincilar/fenomenturk-doganay-cireli.jpg"
+            "t": "09:00 – 10:00",
+            "name": "Murat Özsoy'la Şarzzz (en İyiler)"
           },
           {
-            "t": "13:00 – 16:00",
+            "t": "10:00 – 11:00",
+            "name": "Stalk"
+          },
+          {
+            "t": "11:00 – 14:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "14:00 – 15:00",
+            "name": "Fenomen Cafe"
+          },
+          {
+            "t": "15:00 – 16:00",
             "name": "Eğlence ve Müzik"
           },
           {
@@ -977,19 +997,35 @@ window.DEFAULT_DATA = {
             "name": "Fenomen Türk İlk 20"
           },
           {
-            "t": "17:00 – 23:00",
+            "t": "17:00 – 18:00",
+            "name": "Pop Hit"
+          },
+          {
+            "t": "18:00 – 22:00",
             "name": "Eğlence ve Müzik"
           },
           {
-            "t": "23:00 – 00:00",
+            "t": "22:00 – 23:00",
             "name": "Retro Hit (Tansu Çağlayan DJ Set)",
             "host": "Tansu Çağlayan",
             "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
+          },
+          {
+            "t": "23:00 – 00:00",
+            "name": "Ümit Akdeniz İle Momentum"
           }
         ],
         "6": [
           {
-            "t": "00:00 – 15:00",
+            "t": "00:00 – 11:00",
+            "name": "Eğlence ve Müzik"
+          },
+          {
+            "t": "11:00 – 12:00",
+            "name": "Stalk"
+          },
+          {
+            "t": "12:00 – 15:00",
             "name": "Eğlence ve Müzik"
           },
           {
@@ -997,7 +1033,15 @@ window.DEFAULT_DATA = {
             "name": "Fenomen Türk İlk 20"
           },
           {
-            "t": "16:00 – 00:00",
+            "t": "16:00 – 17:00",
+            "name": "Pop Hit"
+          },
+          {
+            "t": "17:00 – 18:00",
+            "name": "Fenomen Cafe"
+          },
+          {
+            "t": "18:00 – 00:00",
             "name": "Eğlence ve Müzik"
           }
         ]
@@ -1033,17 +1077,7 @@ window.DEFAULT_DATA = {
       "hosts": [],
       "schedule": [
         {
-          "t": "00:00 – 10:00",
-          "name": "Freestyle",
-          "img": "programlar/boombox-freestyle.jpg"
-        },
-        {
-          "t": "10:00 – 16:00",
-          "name": "Acil İstek Hattı",
-          "img": "programlar/boombox-acil-istek-hatti.jpg"
-        },
-        {
-          "t": "16:00 – 00:00",
+          "t": "00:00 – 00:00",
           "name": "Freestyle",
           "img": "programlar/boombox-freestyle.jpg"
         }
@@ -1065,85 +1099,35 @@ window.DEFAULT_DATA = {
       "scheduleGun": {
         "0": [
           {
-            "t": "00:00 – 10:00",
-            "name": "Freestyle",
-            "img": "programlar/boombox-freestyle.jpg"
-          },
-          {
-            "t": "10:00 – 16:00",
-            "name": "Acil İstek Hattı",
-            "img": "programlar/boombox-acil-istek-hatti.jpg"
-          },
-          {
-            "t": "16:00 – 00:00",
+            "t": "00:00 – 00:00",
             "name": "Freestyle",
             "img": "programlar/boombox-freestyle.jpg"
           }
         ],
         "1": [
           {
-            "t": "00:00 – 10:00",
-            "name": "Freestyle",
-            "img": "programlar/boombox-freestyle.jpg"
-          },
-          {
-            "t": "10:00 – 16:00",
-            "name": "Acil İstek Hattı",
-            "img": "programlar/boombox-acil-istek-hatti.jpg"
-          },
-          {
-            "t": "16:00 – 00:00",
+            "t": "00:00 – 00:00",
             "name": "Freestyle",
             "img": "programlar/boombox-freestyle.jpg"
           }
         ],
         "2": [
           {
-            "t": "00:00 – 10:00",
-            "name": "Freestyle",
-            "img": "programlar/boombox-freestyle.jpg"
-          },
-          {
-            "t": "10:00 – 16:00",
-            "name": "Acil İstek Hattı",
-            "img": "programlar/boombox-acil-istek-hatti.jpg"
-          },
-          {
-            "t": "16:00 – 00:00",
+            "t": "00:00 – 00:00",
             "name": "Freestyle",
             "img": "programlar/boombox-freestyle.jpg"
           }
         ],
         "3": [
           {
-            "t": "00:00 – 10:00",
-            "name": "Freestyle",
-            "img": "programlar/boombox-freestyle.jpg"
-          },
-          {
-            "t": "10:00 – 16:00",
-            "name": "Acil İstek Hattı",
-            "img": "programlar/boombox-acil-istek-hatti.jpg"
-          },
-          {
-            "t": "16:00 – 00:00",
+            "t": "00:00 – 00:00",
             "name": "Freestyle",
             "img": "programlar/boombox-freestyle.jpg"
           }
         ],
         "4": [
           {
-            "t": "00:00 – 10:00",
-            "name": "Freestyle",
-            "img": "programlar/boombox-freestyle.jpg"
-          },
-          {
-            "t": "10:00 – 16:00",
-            "name": "Acil İstek Hattı",
-            "img": "programlar/boombox-acil-istek-hatti.jpg"
-          },
-          {
-            "t": "16:00 – 00:00",
+            "t": "00:00 – 00:00",
             "name": "Freestyle",
             "img": "programlar/boombox-freestyle.jpg"
           }
@@ -1159,24 +1143,16 @@ window.DEFAULT_DATA = {
             "name": "Boombox İlk 20"
           },
           {
-            "t": "14:00 – 15:00",
-            "name": "Specialbox"
-          },
-          {
-            "t": "15:00 – 00:00",
+            "t": "14:00 – 00:00",
             "name": "Freestyle",
             "img": "programlar/boombox-freestyle.jpg"
           }
         ],
         "6": [
           {
-            "t": "00:00 – 15:00",
+            "t": "00:00 – 16:00",
             "name": "Freestyle",
             "img": "programlar/boombox-freestyle.jpg"
-          },
-          {
-            "t": "15:00 – 16:00",
-            "name": "Specialbox"
           },
           {
             "t": "16:00 – 17:00",
@@ -1653,7 +1629,6 @@ window.DEFAULT_DATA = {
       "not": ""
     }
   },
-
   "metinler": {
     "ana": {
       "radyolarBaslik": "Radyolarımız",
@@ -1719,7 +1694,6 @@ window.DEFAULT_DATA = {
       "webSiteler": "Radyo web siteleri"
     }
   },
-
   "seo": {
     "ana": {
       "baslik": "Bayrakstar — colorful life",
