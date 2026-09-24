@@ -1223,7 +1223,7 @@ function panelRadyo(b,i){
         const Y = P+'.hosts['+j+']';
         const foto = isUp(h.photo)
           ? '<div class="chip">✓ Foto yüklendi</div><button class="btn-x" onclick="silDeger(\''+Y+'.photo\',\'\',\'Fotoğraf\')">Kaldır</button>'
-          : '<input type="text" value="'+att(h.photo)+'" placeholder="Fotoğraf yolu veya URL" oninput="'+Y+'.photo=this.value;'+Y+'.afis=false">';
+          : '<input type="text" value="'+att(h.photo)+'" placeholder="Fotoğraf yolu veya URL" oninput="'+Y+'.photo=this.value">';
         const kapak = isUp(h.cover)
           ? '<div class="chip">✓ Kapak yüklendi</div><button class="btn-x" onclick="silDeger(\''+Y+'.cover\',\'\',\'Kapak görseli\')">Kaldır</button>'
           : '<input type="text" value="'+att(h.cover)+'" placeholder="Program/afiş görseli — boş bırakılabilir" oninput="'+Y+'.cover=this.value">';
@@ -1242,7 +1242,6 @@ function panelRadyo(b,i){
           +   '<button class="del" onclick="silOge(\''+P+'.hosts\','+j+',('+Y+'||{}).name)">Sil</button>'
           + '</div>'
           + '<textarea data-max="130" placeholder="Kısa tanıtım (bio) — kartta görünür" oninput="'+Y+'.bio=this.value">'+att(h.bio)+'</textarea>'
-          + (h.afis?'<div class="hint" style="margin-bottom:6px">✓ Resmî program afişi kullanılıyor — kartta rozet ve karartma kapalı. Kendi fotoğrafını koyarsan normale döner.</div>':'')
           + '<div class="uprow">'+foto+'<button class="btn-up" onclick="pickHostPhoto('+i+','+j+')">⬆ Foto Yükle</button></div>'
           + '<img class="thumb" style="height:78px;width:78px;object-fit:cover;border-radius:12px" src="'+att(h.photo)+'" onerror="this.style.opacity=.2">'
 
@@ -1674,7 +1673,14 @@ function sayaclariKur(){
 /* ==== ORTAK ==== */
 function mv(arr,i,dir,fn){const j=i+dir;if(j<0||j>=arr.length)return;const t=arr[i];arr[i]=arr[j];arr[j]=t;fn();}
 function att(s){return String(s==null?'':s).replace(/"/g,'&quot;');}
-function isUp(s){return typeof s==='string' && s.startsWith('data:');}
+/* panelden yüklenmiş görsel: depo adresi (yeni) ya da gömülü data: (eski kayıtlar) */
+var DEPO_ONEK='/storage/v1/object/public/gorseller/';
+function isUp(s){return typeof s==='string' && (s.startsWith('data:') || s.indexOf(DEPO_ONEK)>-1);}
+function dataUrlBlob(u){
+  var i=u.indexOf(','), tur=u.slice(5,u.indexOf(';')), ham=atob(u.slice(i+1)), b=new Uint8Array(ham.length);
+  for(var k=0;k<ham.length;k++) b[k]=ham.charCodeAt(k);
+  return new Blob([b],{type:tur});
+}
 function up_thumb(inp){const img=inp.closest('.item').querySelector('.thumb');if(img){img.src=inp.value;img.style.opacity=1;}}
 function up_thumb2(inp){const img=inp.closest('.field').querySelector('.thumb');if(img){img.src=inp.value;img.style.opacity=1;}}
 function ensureArr(i,key){ if(!Array.isArray(D.radios[i][key])) D.radios[i][key]=[]; }
@@ -1729,7 +1735,7 @@ function pickRadioImg(i){pickImage(function(u){D.radios[i].img=u;yenile();},1600
 function pickRadioHero(i){pickImage(function(u){D.radios[i].hero=u;yenile();},1900,false);}
 function pickSlide(i){pickImage(function(u){D.slides[i]=u;yenile();},1800,false);}
 function pickProgramImg(i,j,g){pickImage(function(u){var L=akisDizisi(i,g);if(L[j]){L[j].img=u;yenile();}},700,false);}
-function pickHostPhoto(i,j){pickImage(function(u){ensureArr(i,'hosts');D.radios[i].hosts[j].photo=u;D.radios[i].hosts[j].afis=false;yenile();},700,false);}
+function pickHostPhoto(i,j){pickImage(function(u){ensureArr(i,'hosts');D.radios[i].hosts[j].photo=u;yenile();},700,false);}
 
 /* ============================================================
    YAYINCI DETAY SAYFASI ALANLARI
@@ -1830,9 +1836,17 @@ function optimize(file,maxW,seffaf,cb){
       if(!seffaf){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);}  /* saydam PNG'ler siyah çıkmasın */
       ctx.drawImage(img,0,0,w,h);
       const url=enKucukKodla(c,seffaf);
-      cb(url);
-      toast('Görsel yüklendi ✓ '+w+'×'+h+' · '+bicimAdi(url)+' '+kbYazi(url.length)+' — Kaydet ile uygula');
-      guncelleBoyutRozeti();
+      /* Görsel içeriğe GÖMÜLMEZ: depoya dosya olarak yüklenir, içerikte
+         yalnız adresi durur. (Gömülü görseller içeriği 500 KB'ı aşırıyordu.) */
+      const bicim=bicimAdi(url), boyut=kbYazi(url.length);
+      toast('Görsel yükleniyor…');
+      BULUT.gorselYukle(dataUrlBlob(url), bicim==='JPEG'?'jpg':bicim.toLowerCase())
+        .then(function(adres){
+          cb(adres);
+          toast('Görsel yüklendi ✓ '+w+'×'+h+' · '+bicim+' '+boyut+' — Kaydet ile uygula');
+          guncelleBoyutRozeti();
+        })
+        .catch(function(err){ alert(err.message||'Görsel yüklenemedi.'); });
     };
     img.onerror=function(){alert('Görsel okunamadı.\n\niPhone HEIC dosyaları Chrome\'da açılmaz — JPG olarak kaydedip tekrar dene.');};
     img.src=rd.result;};

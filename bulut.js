@@ -191,6 +191,27 @@
     });
   }
 
+  /* ---- GÖRSEL: dosyayı 'gorseller' deposuna yükle (giriş şart) ----
+     Görseller içerik JSON'una gömülmez (her ziyaretçi o JSON'u indiriyor);
+     depoya dosya olarak gider, içerikte yalnız herkese açık adresi durur.
+     Yükleme izni yalnız yöneticide (storage RLS: yonetici_mi()). */
+  function gorselYukle(blob, uzanti) {
+    var t = jeton();
+    if (!t) return Promise.reject(new Error("Görsel yüklemek için önce giriş yapmalısın."));
+    var ad = new Date().toISOString().slice(0, 10) + "/" + Date.now().toString(36) +
+             Math.random().toString(36).slice(2, 8) + "." + uzanti;
+    return fetch(URL_ + "/storage/v1/object/gorseller/" + ad, {
+      method: "POST",
+      headers: { "apikey": KEY, "Authorization": "Bearer " + t,
+                 "Content-Type": blob.type, "cache-control": "max-age=31536000" },
+      body: blob
+    }).then(function (r) {
+      if (r.status === 401 || r.status === 403) throw new Error("Oturum süresi doldu ya da yükleme yetkin yok. Sayfayı yenileyip tekrar giriş yap.");
+      if (!r.ok) return r.text().then(function (t2) { throw new Error("Görsel yüklenemedi: " + (t2 || r.status)); });
+      return URL_ + "/storage/v1/object/public/gorseller/" + ad;
+    });
+  }
+
   /* ------------------------------------------------------------
      SÜRÜM GEÇMİŞİ
      Her kayıttan ÖNCEKİ hâl `site_icerik_gecmis` tablosuna düşer.
@@ -355,6 +376,7 @@
     onbellekZamani: onbellekZamani,
     giris: bulutGiris,
     yaz: bulutYaz,
+    gorselYukle: gorselYukle,
     gecmis: bulutGecmis,
     ziyaretOzet: ziyaretOzet,
     jeton: jeton,
