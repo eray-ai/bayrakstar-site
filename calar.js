@@ -90,7 +90,9 @@
   var olcum = { slug: null, bekleyen: 0, baslatma: 0, sonCt: null, sonZaman: 0, yeniBaglanti: false };
 
   function olcumTopla() {
-    if (!olcum.slug || ses.paused || olcum.sonCt === null) return;
+    /* ses.paused'a BAKILMAZ: 'pause' olayında ses zaten durmuş görünür ve son
+       dilim kaybolurdu. Duraklamada sonCt null'lanır, sayım orada kesilir. */
+    if (!olcum.slug || olcum.sonCt === null) return;
     var ct = ses.currentTime, simdi = Date.now();
     var fark = ct - olcum.sonCt;
     var duvar = (simdi - olcum.sonZaman) / 1000;
