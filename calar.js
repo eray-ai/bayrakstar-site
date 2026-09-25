@@ -81,6 +81,42 @@
     });
   }
 
+
+  /* ---- dinleme süresi ölçümü (yalnız panelde görünür) ----
+     Duvar saati değil, <audio>'nun currentTime ilerlemesi sayılır: ses
+     gerçekten aktığı sürece artar. Tamponlanma, duraklatma, bilgisayarın
+     uykuya geçmesi sayıma girmez. Birikenler duraklatınca, radyo değişince,
+     sayfa gizlenince/kapanınca ve çalarken 10 dakikada bir buluta gider. */
+  var olcum = { slug: null, bekleyen: 0, baslatma: 0, sonCt: null, sonZaman: 0, yeniBaglanti: false };
+
+  function olcumTopla() {
+    if (!olcum.slug || ses.paused || olcum.sonCt === null) return;
+    var ct = ses.currentTime, simdi = Date.now();
+    var fark = ct - olcum.sonCt;
+    var duvar = (simdi - olcum.sonZaman) / 1000;
+    /* HLS canlıya yetişirken ileri atlayabilir: duvar saatinden fazlası sayılmaz */
+    if (fark > 0) olcum.bekleyen += Math.min(fark, duvar + 5);
+    olcum.sonCt = ct; olcum.sonZaman = simdi;
+  }
+  function olcumSifirla() {
+    olcum.sonCt = ses.paused ? null : ses.currentTime;
+    olcum.sonZaman = Date.now();
+  }
+  function olcumGonder() {
+    olcumTopla();
+    var sn = Math.floor(olcum.bekleyen);
+    if (olcum.slug && (sn > 0 || olcum.baslatma) && window.BULUT && window.BULUT.dinlemeGonder) {
+      window.BULUT.dinlemeGonder(olcum.slug, sn, olcum.baslatma);
+      olcum.bekleyen -= sn; olcum.baslatma = 0;
+    }
+  }
+  setInterval(function () { olcumTopla(); }, 15000);
+  setInterval(function () { if (!ses.paused) olcumGonder(); }, 600000);
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') olcumGonder();
+  });
+  window.addEventListener('pagehide', olcumGonder);
+
   function cal(radyo) {
     if (!radyo) return;
     var ayniRadyo = durum.radyo && durum.radyo.slug === radyo.slug;
@@ -97,7 +133,10 @@
   }
 
   function baglan(radyo) {
+    olcumGonder();                                /* önceki radyonun süresi kendi hanesine */
     window.yayinDurdur && window.yayinDurdur(ses);
+    olcum.slug = radyo.slug || null; olcum.bekleyen = 0; olcum.sonCt = null;
+    olcum.yeniBaglanti = true;
     durum.radyo = radyo;
     sarkiTakibi(radyo);
 
@@ -117,15 +156,23 @@
   function duraklat() { ses.pause(); }
 
   function kapat() {
+    olcumGonder();
+    olcum.slug = null; olcum.sonCt = null;
     window.yayinDurdur && window.yayinDurdur(ses);
     if (scBirak) { scBirak(); scBirak = null; }
     durum.radyo = null; durum.caliyor = false; durum.sarki = null;
     durumYaz('');
   }
 
-  ses.addEventListener('playing', function () { durum.caliyor = true;  durumYaz(''); });
-  ses.addEventListener('pause',   function () { durum.caliyor = false; duyur(); });
-  ses.addEventListener('waiting', function () { durumYaz('Tamponlanıyor…'); });
+  ses.addEventListener('playing', function () {
+    /* Başlatma, bağlantı kurulup ses İLK KEZ aktığında sayılır —
+       tampon sonrası yeniden akışlar yeni dinleme değildir. */
+    if (olcum.yeniBaglanti && olcum.slug) { olcum.baslatma = 1; olcum.yeniBaglanti = false; }
+    olcumSifirla();
+    durum.caliyor = true;  durumYaz('');
+  });
+  ses.addEventListener('pause',   function () { olcumGonder(); olcum.sonCt = null; durum.caliyor = false; duyur(); });
+  ses.addEventListener('waiting', function () { olcumTopla(); olcum.sonCt = null; durumYaz('Tamponlanıyor…'); });
   /* hls.js bağlıyken hatayı yayin.js yönetiyor — genel dinleyici karışmasın */
   ses.addEventListener('error', function () {
     if (durum.radyo && !ses._hls) durumYaz('Yayına ulaşılamadı');

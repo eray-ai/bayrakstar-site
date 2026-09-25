@@ -307,6 +307,51 @@
       });
   }
 
+  /* ------------------------------------------------------------
+     DİNLEME SÜRESİ
+     Ziyaret sayacıyla aynı ilke: kimin dinlediği tutulmaz. Sunucuya giden
+     tek şey "şu radyo, şu kadar saniye, yeni başlatma mı". Veritabanında
+     gün × radyo başına toplam saniye ve başlatma sayısı birikir.
+     Saniyeyi calar.js biriktirir, duraklatınca / radyo değişince / sayfa
+     kapanırken (ve çalarken 10 dakikada bir) buraya yollar.
+     ------------------------------------------------------------ */
+  function dinlemeGonder(radyo, saniye, baslatma) {
+    try {
+      if (location.protocol === "file:") return;            // yerel deneme sayılmaz
+      if (/admin\.html$/.test(location.pathname)) return;
+      saniye = Math.max(0, Math.min(3600, Math.round(saniye || 0)));
+      baslatma = baslatma ? 1 : 0;
+      if (!radyo || (!saniye && !baslatma)) return;
+      fetch(URL_ + "/rest/v1/rpc/dinleme_kaydet", {
+        method: "POST",
+        headers: basliklar(null),
+        body: JSON.stringify({ p_radyo: radyo, p_saniye: saniye, p_baslatma: baslatma }),
+        keepalive: true                                     // sayfa kapanırken de gitsin
+      }).catch(function () {});
+    } catch (e) { /* ölçüm asla çaları bozmaz */ }
+  }
+
+  /* Panelin okuduğu ham satırlar. gunSayisi verilmezse TÜM geçmiş
+     (yıllık rapor için). Yalnız süper yönetici okuyabilir (RLS). */
+  function dinlemeOzet(gunSayisi) {
+    var t = jeton();
+    if (!t) return Promise.reject(new Error("Önce giriş yapmalısın."));
+    var filtre = "";
+    if (gunSayisi) {
+      var d = new Date();
+      d.setDate(d.getDate() - gunSayisi);
+      filtre = "&gun=gte." + d.toISOString().slice(0, 10);
+    }
+    return fetch(URL_ + "/rest/v1/dinleme_sayac?select=gun,radyo,saniye,baslatma" + filtre +
+                 "&order=gun.asc&limit=20000", { headers: basliklar(t) })
+      .then(function (r) {
+        if (!r.ok) {
+          return r.text().then(function (m) { throw new Error("Dinlemeler okunamadı: " + (m || r.status)); });
+        }
+        return r.json();
+      });
+  }
+
   function onbellekVar() {
     try { return !!localStorage.getItem(ONBELLEK); } catch (e) { return false; }
   }
@@ -379,6 +424,8 @@
     gorselYukle: gorselYukle,
     gecmis: bulutGecmis,
     ziyaretOzet: ziyaretOzet,
+    dinlemeGonder: dinlemeGonder,
+    dinlemeOzet: dinlemeOzet,
     jeton: jeton,
     rol: rol,
     rolOku: rolOku,

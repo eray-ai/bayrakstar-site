@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="site-surum" content="20260922-085528">
+<meta name="site-surum" content="20260925-105713">
 <!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
      kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
      yayın adresini media-src VE connect-src listelerine ekle. -->
@@ -401,6 +401,7 @@ const B_SITE=[
      Görünmemesi tek başına engel değil; asıl kilit veritabanında. */
   {id:'gecmis',  ad:'Sürüm Geçmişi',     ikon:'↺', renk:'#989a9d', sahip:true},
   {id:'ziyaret', ad:'Ziyaretler',        ikon:'📈', renk:'#00bac5', sahip:true},
+  {id:'dinleme', ad:'Dinlemeler',        ikon:'🎧', renk:'#ff0007', sahip:true},
   {id:'yonetim', ad:'Yöneticiler',       ikon:'👤', renk:'#0081ba', sahip:true}
 ];
 const B_RADYO=[
@@ -520,6 +521,7 @@ function cizPanel(){
   /* Sürüm geçmişi buluttan asenkron gelir — bölüm çizildikten sonra doldurulur. */
   if(st.varlik==='site' && b.id==='gecmis') gecmisYukle();
   if(st.varlik==='site' && b.id==='ziyaret') ziyaretYukle();
+  if(st.varlik==='site' && b.id==='dinleme') dinlemeYukle();
   if(st.varlik==='site' && b.id==='yonetim')  yoneticiYukle();
 }
 
@@ -764,6 +766,19 @@ function panelSite(b){
     + 'tarayıcı bilgisi yok. Yalnızca “hangi gün, hangi sayfa, kaç kez” sayılıyor. '
     + 'Yönetim paneli sayıma dahil değil.</div>'
     + '<div id="ziyaretKutu"><div class="bos">Yükleniyor…</div></div>';
+
+  if(b.id==='dinleme') return baslik(b,'Bayrakstar sitesinde ve uygulamasında radyoların ne kadar dinlendiği.')
+    + '<div class="hint" style="margin-bottom:14px">Yalnızca bu sitedeki çalarla yapılan dinlemeler sayılır — '
+    + 'FM, radyoların kendi siteleri ve uygulamaları buraya girmez. Kişisel veri yok: yalnızca “hangi gün, '
+    + 'hangi radyo, kaç dakika” tutuluyor. Sayılar günlük toplam olarak birikir.</div>'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">'
+    +   [['30','Son 30 gün'],['yil','Bu yıl'],['hepsi','Tüm zamanlar']].map(function(x){
+          return '<button class="btn btn-sm '+(dinlemeAralik===x[0]?'btn-dark':'btn-dark" style="opacity:.45')+'" '
+            + 'onclick="dinlemeAralik=\''+x[0]+'\';render()">'+x[1]+'</button>';
+        }).join('')
+    +   '<button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="dinlemeCsv()">⬇ Aylık rapor (Excel/CSV)</button>'
+    + '</div>'
+    + '<div id="dinlemeKutu"><div class="bos">Yükleniyor…</div></div>';
 
   if(b.id==='metinler'){
     ensureMetinler();
@@ -1145,6 +1160,111 @@ function ziyaretYukle(){
   }).catch(function(e){
     kutu.innerHTML='<div class="bos">Ziyaretler okunamadı: '+att(e.message)+'</div>';
   });
+}
+
+/* ============================================================
+   DİNLEMELER
+   Ham satırlar (gün × radyo × saniye) buluttan gelir; özet burada.
+   ============================================================ */
+let dinlemeAralik='30', dinlemeSon=[];
+function dinlemeRadyo(slug){
+  const r=(D.radios||[]).find(function(x){return x.slug===slug;});
+  return { ad: r ? r.name : slug, renk: (r && r.color) || '#989a9d' };
+}
+function sureYaz(sn){
+  const dk=Math.round(sn/60);
+  if(dk<60) return dk+' dk';
+  const sa=Math.floor(dk/60), k=dk%60;
+  return sa.toLocaleString('tr-TR')+' sa'+(k?' '+k+' dk':'');
+}
+function dinlemeSuz(satirlar){
+  if(dinlemeAralik==='yil'){
+    const yil=String(new Date().getFullYear());
+    return satirlar.filter(function(x){return x.gun.slice(0,4)===yil;});
+  }
+  return satirlar;
+}
+function dinlemeYukle(){
+  const kutu=document.getElementById('dinlemeKutu');
+  if(!kutu) return;
+  if(!window.BULUT || !BULUT.girisliMi()){
+    kutu.innerHTML='<div class="bos">Dinlemeleri görmek için giriş yapmalısın.</div>'; return;
+  }
+  BULUT.dinlemeOzet(dinlemeAralik==='30'?30:null).then(function(ham){
+    dinlemeSon=ham;
+    const satirlar=dinlemeSuz(ham);
+    if(!satirlar.length){
+      kutu.innerHTML='<div class="bos">Henüz kayıt yok. Sayaç yeni kuruldu — '
+        + 'sitede biri radyo dinledikçe burası dolacak.</div>'; return;
+    }
+    let toplam=0, basla=0; const radyo={}, gun={};
+    satirlar.forEach(function(x){
+      toplam+=x.saniye; basla+=x.baslatma;
+      radyo[x.radyo]=radyo[x.radyo]||{sn:0,b:0};
+      radyo[x.radyo].sn+=x.saniye; radyo[x.radyo].b+=x.baslatma;
+      gun[x.gun]=(gun[x.gun]||0)+x.saniye;
+    });
+    const sirali=Object.keys(radyo).sort(function(a,b){return radyo[b].sn-radyo[a].sn;});
+    const enBuyuk=sirali.length?radyo[sirali[0]].sn||1:1;
+    const gunler=Object.keys(gun).sort().slice(-14);
+    const enGun=Math.max.apply(null,gunler.map(function(g){return gun[g];}))||1;
+    const kutucuk=function(deger,etiket){
+      return '<div class="item" style="text-align:center"><div style="font-size:28px;font-weight:800">'+deger+'</div>'
+        + '<div class="hint" style="margin:0">'+etiket+'</div></div>';
+    };
+    kutu.innerHTML=
+      '<div class="grid2" style="margin-bottom:18px">'
+      + kutucuk(sureYaz(toplam),'toplam dinleme')
+      + kutucuk(basla.toLocaleString('tr-TR'),'kez oynat’a basıldı')
+      + kutucuk(basla?sureYaz(toplam/basla):'—','ortalama dinleme süresi')
+      + kutucuk(Object.keys(gun).length,'kayıtlı gün')
+      + '</div>'
+      + '<div class="field"><label>Radyolara göre</label>'
+      + sirali.map(function(k){
+          const m=dinlemeRadyo(k), v=radyo[k];
+          return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">'
+            + '<div style="flex:1;min-width:0"><div style="font-size:13px">'+att(m.ad)
+            +   ' <span style="opacity:.5">· '+v.b.toLocaleString('tr-TR')+' başlatma</span></div>'
+            +   '<div style="height:6px;border-radius:3px;background:'+att(m.renk)+';width:'+Math.max(2,Math.round(v.sn/enBuyuk*100))+'%"></div></div>'
+            + '<div style="font-weight:700;font-size:13px;min-width:90px;text-align:right">'+sureYaz(v.sn)+'</div></div>';
+        }).join('')
+      + '</div>'
+      + '<div class="field"><label>Son 14 gün</label>'
+      + '<div style="display:flex;align-items:flex-end;gap:4px;height:90px">'
+      + gunler.map(function(g){
+          return '<div style="flex:1;text-align:center" title="'+g+': '+sureYaz(gun[g])+'">'
+            + '<div style="background:#ff0007;border-radius:3px 3px 0 0;height:'+Math.max(3,Math.round(gun[g]/enGun*70))+'px"></div>'
+            + '<div style="font-size:9px;opacity:.5;margin-top:4px">'+g.slice(8)+'</div></div>';
+        }).join('')
+      + '</div></div>';
+  }).catch(function(e){
+    kutu.innerHTML='<div class="bos">Dinlemeler okunamadı: '+att(e.message)+'</div>';
+  });
+}
+/* Yıllık rapor için: ay × radyo tablosu, Excel'in Türkçe ayarında açılsın diye ; ve BOM'lu. */
+function dinlemeCsv(){
+  if(!window.BULUT || !BULUT.girisliMi()) return;
+  BULUT.dinlemeOzet(null).then(function(ham){
+    const ay={}, radyolar={};
+    ham.forEach(function(x){
+      const a=x.gun.slice(0,7), k=a+'|'+x.radyo;
+      radyolar[x.radyo]=1;
+      ay[k]=ay[k]||{sn:0,b:0}; ay[k].sn+=x.saniye; ay[k].b+=x.baslatma;
+    });
+    const satir=[['Ay','Radyo','Dinleme (dakika)','Dinleme (saat)','Başlatma','Ortalama (dakika)']];
+    Object.keys(ay).sort().forEach(function(k){
+      const p=k.split('|'), v=ay[k], dk=v.sn/60;
+      satir.push([p[0],dinlemeRadyo(p[1]).ad,Math.round(dk),(dk/60).toFixed(1).replace('.',','),
+                  v.b,v.b?(dk/v.b).toFixed(1).replace('.',','):'']);
+    });
+    const csv='\ufeff'+satir.map(function(r){
+      return r.map(function(h){h=String(h);return /[;"\n]/.test(h)?'"'+h.replace(/"/g,'""')+'"':h;}).join(';');
+    }).join('\r\n');
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+    a.download='bayrakstar-dinleme-raporu.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+  }).catch(function(e){ alert('Rapor alınamadı: '+e.message); });
 }
 
 /* ============================================================
