@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="site-surum" content="20260925-113352">
+<meta name="site-surum" content="20260928-075816">
 <!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
      kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
      yayın adresini media-src VE connect-src listelerine ekle. -->
@@ -42,11 +42,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;500;700;900&family=Montserrat:wght@400;500;600;700;800;900&family=Nunito:wght@400;600;700;800;900&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
 
-<script src="data.js?v=20260925-113352"></script>
-<script src="bulut.js?v=20260925-113352"></script>
-<script src="yayin.js?v=20260925-113352"></script>
-<script src="simdicaliyor.js?v=20260925-113352"></script>
-<script src="calar.js?v=20260925-113352"></script>
+<script src="data.js?v=20260928-075816"></script>
+<script src="bulut.js?v=20260928-075816"></script>
+<script src="yayin.js?v=20260928-075816"></script>
+<script src="simdicaliyor.js?v=20260928-075816"></script>
+<script src="calar.js?v=20260928-075816"></script>
 <style>
   /* ---- Marka başlık yazıyüzleri (kurumsal kimlik rehberlerinden) ----
      Rehberlerde "yardımcı yazıyüzü, yalnızca başlıklarda" diye tanımlı.
@@ -347,7 +347,7 @@
     .fx{display:none}
   }
 </style>
-<link rel="stylesheet" href="paketler/kurumsal.css?v=20260925-113352">
+<link rel="stylesheet" href="paketler/kurumsal.css?v=20260928-075816">
 </head>
 <body>
 <a class="skip" href="#secSched">İçeriğe atla</a>
@@ -701,7 +701,12 @@ document.getElementById('aboutText').textContent = R.about || '';
   function gununAkisi(g){
     var oz = R.scheduleGun && R.scheduleGun[g];
     if(!oz && R.scheduleGun) oz = R.scheduleGun[String(g)];
-    return (oz && oz.length) ? oz : (R.schedule || []);
+    var L = (oz && oz.length) ? oz : (R.schedule || []);
+    /* görseli olmayan satır, programın ortak görselini alır (data.js programGorseli) */
+    return L.map(function(s){
+      var img = window.programGorseli ? window.programGorseli(R,s) : s.img;
+      return img===s.img ? s : Object.assign({}, s, {img:img});
+    });
   }
   /* "Bu güne özel" rozeti: gün, VARSAYILAN akıştan farklıysa işaretlenir.
      Eskiden "o güne kayıt var mı" diye bakıyordu; artık 7 günün de kendi
@@ -1040,8 +1045,8 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 window.togglePlay=togglePlay;
 });
 </script>
-<script src="site.js?v=20260925-113352"></script>
-<script src="paketler/kurumsal.js?v=20260925-113352"></script>
+<script src="site.js?v=20260928-075816"></script>
+<script src="paketler/kurumsal.js?v=20260928-075816"></script>
 <div style="text-align:center;padding:0 6vw 42px;background:#111" data-yasal-blok hidden>
   <div data-yasal style="font-size:12.5px;opacity:.5;line-height:2.1"></div>
 </div>

@@ -479,11 +479,11 @@ img{display:block;max-width:100%}
 
 </div>
 
-<script src="../data.js?v=20260925-113352"></script>
-<script src="../bulut.js?v=20260925-113352"></script>
-<script src="../yayin.js?v=20260925-113352"></script>
-<script src="../simdicaliyor.js?v=20260925-113352"></script>
-<script src="../calar.js?v=20260925-113352"></script>
+<script src="../data.js?v=20260928-075816"></script>
+<script src="../bulut.js?v=20260928-075816"></script>
+<script src="../yayin.js?v=20260928-075816"></script>
+<script src="../simdicaliyor.js?v=20260928-075816"></script>
+<script src="../calar.js?v=20260928-075816"></script>
 <script>
 (function(){
   'use strict';
@@ -774,7 +774,12 @@ img{display:block;max-width:100%}
   }
   function gununAkisi(r,g){
     var oz = r.scheduleGun && (r.scheduleGun[g] || r.scheduleGun[String(g)]);
-    return (oz && oz.length) ? oz : (r.schedule||[]);
+    var L = (oz && oz.length) ? oz : (r.schedule||[]);
+    /* görseli olmayan satır, programın ortak görselini alır (data.js programGorseli) */
+    return L.map(function(s){
+      var img = window.programGorseli ? window.programGorseli(r,s) : s.img;
+      return img===s.img ? s : Object.assign({}, s, {img:img});
+    });
   }
   function baslangicSaati(t){
     var m=(t||'').match(/(\d{1,2}):(\d{2})/);

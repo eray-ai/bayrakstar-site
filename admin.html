@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="site-surum" content="20260925-113352">
+<meta name="site-surum" content="20260928-075816">
 <!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
      kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
      yayın adresini media-src VE connect-src listelerine ekle. -->
@@ -15,12 +15,12 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="data.js?v=20260925-113352"></script>
-<script src="simdicaliyor.js?v=20260925-113352"></script>
+<script src="data.js?v=20260928-075816"></script>
+<script src="simdicaliyor.js?v=20260928-075816"></script>
 <!-- Panel bayat kopya üzerinde düzenleme yapıp yeni içeriği ezmesin:
      ön bellek olsa bile bulut HER ZAMAN taze okunur. -->
 <script>window.BULUT_TAZE_SART = true;</script>
-<script src="bulut.js?v=20260925-113352"></script>
+<script src="bulut.js?v=20260928-075816"></script>
 <style>
   :root{--red:#ff0007;--coral:#f75843;--blue:#0081ba;--teal:#00bac5;--yellow:#ffca11;--ink:#1c1c1c;--line:#e6e4df;--bg:#f2f1ee}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -411,6 +411,7 @@ const B_RADYO=[
   {id:'frekans', ad:'Frekanslar',     ikon:'📡', renk:'#4d4d4d', say:i=>(D.radios[i].frequencies||[]).length},
   {id:'yayinci', ad:'Yayıncılar',     ikon:'🎙', renk:'#ff0007', say:i=>(D.radios[i].hosts||[]).length},
   {id:'akis',    ad:'Yayın Akışı',    ikon:'🗓', renk:'#ffca11', say:i=>(D.radios[i].schedule||[]).length},
+  {id:'progorsel',ad:'Program Görselleri',ikon:'🖼', renk:'#ff0007', say:i=>programListesi(D.radios[i]).length},
   {id:'kanal',   ad:'Alt Kanallar',   ikon:'📻', renk:'#00bac5', say:i=>(D.radios[i].channels||[]).length},
   {id:'basliklar',ad:'Bölüm Başlıkları',ikon:'🏷', renk:'#f75843', say:i=>Object.keys(D.radios[i].basliklar||{}).filter(k=>String((D.radios[i].basliklar||{})[k]||'').trim()).length},
   {id:'sosyal',  ad:'Sosyal & İletişim',ikon:'🔗',renk:'#0081ba'},
@@ -1429,7 +1430,8 @@ function panelRadyo(b,i){
       }
       var foto = isUp(sp.img)
         ? '<div class="chip">✓ Görsel yüklendi</div><button class="btn-x" onclick="silDeger(\'' + A + '[' + j + '].img\',\'\',\'Program görseli\')">Kaldır</button>'
-        : '<input type="text" value="'+att(sp.img)+'" placeholder="Görsel yolu veya URL (boşsa radyo logosu görünür)" oninput="'+A+'['+j+'].img=this.value">';
+        : '<input type="text" value="'+att(sp.img)+'" placeholder="Boş bırak → Program Görselleri\'ndeki görsel kullanılır" oninput="'+A+'['+j+'].img=this.value">';
+      var ortak = !sp.img && (r.programGorsel||{})[programAnahtari(sp.name)];
       return '<div class="subcard">'
         + '<div class="rowline">'
         +   '<input type="text" data-max="15" value="'+att(sp.t)+'" placeholder="08:00 – 10:00" style="max-width:140px;flex:0 0 140px" oninput="'+A+'['+j+'].t=this.value">'
@@ -1441,7 +1443,8 @@ function panelRadyo(b,i){
         + '</div>'
         + '<div class="uprow" style="margin-top:9px">'+foto
         +   '<button class="btn-up" onclick="pickProgramImg('+i+','+j+','+(g===null?'null':g)+')">⬆ Görsel Yükle</button></div>'
-        + (sp.img?'<img class="thumb" style="height:72px;width:72px;object-fit:cover;border-radius:11px" src="'+att(sp.img)+'" onerror="this.style.opacity=.2">':'')
+        + (sp.img?'<img class="thumb" style="height:72px;width:72px;object-fit:cover;border-radius:11px" src="'+att(sp.img)+'" onerror="this.style.opacity=.2">'
+           : ortak?'<div class="hint" style="display:flex;align-items:center;gap:10px;margin-top:8px"><img style="height:44px;width:44px;object-fit:cover;border-radius:8px;opacity:.7" src="'+att(ortak)+'">Program Görselleri\'nden geliyor</div>':'')
         + '</div>';
     }).join('');
 
@@ -1456,6 +1459,37 @@ function panelRadyo(b,i){
       + '<div style="height:18px"></div>'
       + alan('Hafta sonu notu', txtInput(r.weekendNote,P+'.weekendNote',160,'Hafta sonu özel programları…'), 160, r.weekendNote,
              'Akışın altında küçük not olarak görünür. Artık günlere özel akış tanımlayabildiğin için çoğu durumda gerekmez.');
+  }
+
+  /* Her program BİR KEZ görsel alır; akışta geçtiği her gün/saatte o görünür.
+     Liste akıştaki (varsayılan + güne özel) tüm programlardan kendiliğinden çıkar. */
+  if(b.id==='progorsel'){
+    var PL = programListesi(r);
+    var eksik = PL.filter(function(p){ return !p.gorsel; }).length;
+    var sirali = PL.map(function(p,j){ return {p:p,j:j}; })
+                   .sort(function(a,b){ return (a.p.gorsel?1:0)-(b.p.gorsel?1:0) || a.j-b.j; });
+    return baslik(b,'Her programa bir kez görsel yükle. O program hangi gün, hangi saatte yayında olursa olsun sitede bu görsel görünür.')
+      + (PL.length?'':'<div class="bos">Yayın akışında program yok. Önce Yayın Akışı\'na program ekle.</div>')
+      + (eksik?'<div class="hint" style="margin-bottom:12px;border-left:3px solid #ff0007;padding-left:10px"><b>'+eksik+'</b> programın görseli eksik — akışta radyo logosu görünüyor. Eksikler en üstte.</div>'
+              :(PL.length?'<div class="hint" style="margin-bottom:12px">✓ Bütün programların görseli var.</div>':''))
+      + oneriKutu(GORSEL.program) + '<div style="height:14px"></div>'
+      + sirali.map(function(x){
+          var p=x.p, j=x.j;
+          var kutu = p.gorsel
+            ? '<img src="'+att(p.gorsel)+'" style="width:72px;height:72px;flex:0 0 72px;object-fit:cover;border-radius:11px" onerror="this.style.opacity=.2">'
+            : '<div style="width:72px;height:72px;flex:0 0 72px;border-radius:11px;border:2px dashed #ff0007;display:flex;align-items:center;justify-content:center;font-size:11px;color:#ff0007;text-align:center;line-height:1.2">görsel<br>yok</div>';
+          var ozel = p.ozel
+            ? '<div class="hint" style="margin-top:8px">⚠ '+p.ozel+' saat diliminde kendi görseli var, orada o görünüyor. '
+              + '<button class="btn-x" style="margin-left:6px" onclick="pgOzelTemizle('+i+','+j+')">Hepsinde bunu kullan</button></div>'
+            : '';
+          return '<div class="subcard">'
+            + '<div class="rowline" style="align-items:center;gap:14px">'+kutu
+            +   '<div style="flex:1;min-width:0"><b>'+att(p.ad)+'</b>'
+            +     '<div style="opacity:.65;font-size:13px;margin-top:3px">'+(p.host?att(p.host)+' · ':'')+'akışta '+p.satir+' kez</div></div>'
+            +   (p.gorsel?'<button class="btn-x" onclick="pgKaldir('+i+','+j+')">Kaldır</button>':'')
+            +   '<button class="btn-up" onclick="pgYukle('+i+','+j+')">⬆ '+(p.gorsel?'Değiştir':'Görsel Yükle')+'</button>'
+            + '</div>' + ozel + '</div>';
+        }).join('');
   }
 
   if(b.id==='kanal') return baslik(b,'Radyonun alt kanalları (örn. Fenomen Pop, Fenomen Dans). Etiket olarak dizilir.')
@@ -1854,6 +1888,41 @@ function pickRadioImg(i){pickImage(function(u){D.radios[i].img=u;yenile();},1600
 function pickRadioHero(i){pickImage(function(u){D.radios[i].hero=u;yenile();},1900,false);}
 function pickSlide(i){pickImage(function(u){D.slides[i]=u;yenile();},1800,false);}
 function pickProgramImg(i,j,g){pickImage(function(u){var L=akisDizisi(i,g);if(L[j]){L[j].img=u;yenile();}},700,false);}
+/* ---- PROGRAM GÖRSELLERİ: akıştaki programların tekil listesi ---- */
+function programListesi(r){
+  var sira=[], ix={}, kut=(r&&r.programGorsel)||{};
+  function ekle(s){
+    if(!s || !String(s.name||'').trim()) return;
+    var k=programAnahtari(s.name);
+    if(!ix[k]){ ix[k]={ad:String(s.name).trim(), k:k, satir:0, ozel:0, host:''}; sira.push(ix[k]); }
+    var p=ix[k]; p.satir++;
+    if(s.host && !p.host) p.host=s.host;
+    if(s.img && s.img!==kut[k]) p.ozel++;
+  }
+  (r.schedule||[]).forEach(ekle);
+  Object.keys(r.scheduleGun||{}).forEach(function(g){ (r.scheduleGun[g]||[]).forEach(ekle); });
+  sira.forEach(function(p){ p.gorsel=kut[p.k]||''; });
+  return sira;
+}
+function pgYukle(i,j){
+  var p=programListesi(D.radios[i])[j]; if(!p) return;
+  pickImage(function(u){ ensureObj(i,'programGorsel'); D.radios[i].programGorsel[p.k]=u; yenile();
+    toast(p.ad+' görseli akıştaki '+p.satir+' satırın hepsine uygulandı'); },700,false);
+}
+function pgKaldir(i,j){
+  var p=programListesi(D.radios[i])[j]; if(!p) return;
+  if(!confirm(p.ad+' programının görseli kaldırılacak.\n\nAkışta yerine radyo logosu görünür. Emin misin?')) return;
+  delete D.radios[i].programGorsel[p.k]; yenile(); toast(p.ad+' görseli kaldırıldı');
+}
+/* saat dilimlerine tek tek yüklenmiş görselleri temizler → ortak görsel geçerli olur */
+function pgOzelTemizle(i,j){
+  var r=D.radios[i], p=programListesi(r)[j]; if(!p) return;
+  if(!confirm(p.ad+' için saat dilimlerine ayrı ayrı yüklenen '+p.ozel+' görsel kaldırılacak; hepsinde ortak program görseli görünecek. Emin misin?')) return;
+  function temizle(s){ if(s && s.img && programAnahtari(s.name)===p.k) s.img=''; }
+  (r.schedule||[]).forEach(temizle);
+  Object.keys(r.scheduleGun||{}).forEach(function(g){ (r.scheduleGun[g]||[]).forEach(temizle); });
+  yenile(); toast(p.ad+' artık her saatte ortak görseli gösteriyor');
+}
 function pickHostPhoto(i,j){pickImage(function(u){ensureArr(i,'hosts');D.radios[i].hosts[j].photo=u;yenile();},700,false);}
 
 /* ============================================================

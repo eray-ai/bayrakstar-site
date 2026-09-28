@@ -1331,3 +1331,25 @@ window.getSiteData = function () {
   });
   return out;
 };
+
+/* ---- PROGRAM GÖRSELLERİ ----
+   Bir program akışta her gün, her saat dilimi için ayrı satır olarak
+   duruyor (Maksimum Hit Müzik tek başına 15 satır). Görseli satır satır
+   yüklemek yerine radyo başına tek bir kütüphane tutulur:
+       R.programGorsel = { "<programAnahtari(ad)>": "görsel yolu" }
+   Satırın kendi görseli varsa o kazanır (o saate özel görsel);
+   yoksa kütüphanedeki görsel kullanılır. Eşleşme adla yapılır ama
+   büyük/küçük harf, fazla boşluk ve ’ / ' farkı önemsenmez. */
+window.programAnahtari = function (ad) {
+  return String(ad || "")
+    .replace(/[’‘`´]/g, "'")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLocaleLowerCase("tr");
+};
+window.programGorseli = function (R, s) {
+  if (!s) return "";
+  if (s.img) return s.img;
+  var k = R && R.programGorsel;
+  return (k && k[window.programAnahtari(s.name)]) || "";
+};
