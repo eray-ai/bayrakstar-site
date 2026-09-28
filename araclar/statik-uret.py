@@ -150,7 +150,11 @@ def sayfa_uret(sablon, derinlik, gomulu, baslik, aciklama, adres, gorsel):
 
     # 2) Sayfaya gömülü slug/host — sorgu parametresi olmadan da bilsin
     blok = "<script>" + gomulu + "</script>\n"
-    s = re.sub(r'(<script src="data\.js"></script>)', blok + r"\1", s, count=1)
+    # data.js bağlantısı sürüm etiketi taşıyabilir (data.js?v=...); etiketi
+    # tanımayan eski desen ON_SLUG'u sessizce atlıyor, r/boombox/ Fenomen'i açıyordu.
+    s, adet = re.subn(r'(<script src="data\.js(?:\?v=[^"]*)?"></script>)', blok + r"\1", s, count=1)
+    if adet != 1:
+        raise SystemExit("HATA: şablonda data.js betik etiketi bulunamadı — ON_SLUG gömülemedi")
 
     # 3) Paylaşım etiketleri. JS bunları çalışma anında yine güncelliyor;
     #    buradaki gömülü değerler yalnızca botlar için.
