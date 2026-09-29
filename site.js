@@ -283,6 +283,9 @@
     curSlug = new URLSearchParams(location.search).get('r') || window.ON_SLUG || null;
     ovlDoldur();
     burgerKur();
+    /* Künye/KVKK bağlantıları yeni gelen gövdede de doldurulsun — yoksa
+       sayfa değiştirince "Yasal" bölümü gizli kalıyordu. */
+    if(window.yasalDoldur) window.yasalDoldur();
   }
 
   /* DOMParser ile gelen <script> düğümleri ÇALIŞMAZ; yenisiyle değiştirilir.
@@ -476,6 +479,7 @@
       if(blok) blok.hidden = false;
     }
   }
+  window.yasalDoldur = doldur;   /* sayfa yenilemeden gezinmede site.js yeniden çağırır */
   function baslat(){
     if(window.bulutHazir && window.bulutHazir.then) window.bulutHazir.then(doldur, doldur);
     else doldur();

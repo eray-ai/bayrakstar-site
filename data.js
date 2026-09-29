@@ -1121,7 +1121,7 @@ window.DEFAULT_DATA = {
     "ana": {
       "radyolarBaslik": "Radyolarımız",
       "radyolarAlt": "Çatımız altındaki radyolar. Kartın üzerine tıkla, radyonun web sitesine git.",
-      "webSiteSerit": "🌐 Radyoların resmî web sitesine gitmek için tıklayın →",
+      "webSiteSerit": "🌐 Radyoların web sitesine gitmek için tıklayın →",
       "footRadyolar": "Radyolarımız",
       "footKurumsal": "Kurumsal",
       "footHakkimizda": "Hakkımızda",
@@ -1166,9 +1166,9 @@ window.DEFAULT_DATA = {
       "geriLink": "← Ana Sayfa"
     },
     "websiteler": {
-      "baslik": "Resmî Web Siteleri",
+      "baslik": "Web Siteleri",
       "alt": "Hangi radyoya gitmek istersin?",
-      "aciklama": "Aşağıdan bir radyo seç; o radyonun resmî web sitesine yönlendirileceksin.",
+      "aciklama": "Aşağıdan bir radyo seç; o radyonun web sitesine yönlendirileceksin.",
       "geriLink": "← Ana Sayfa"
     },
     "yasal": {
@@ -1197,9 +1197,9 @@ window.DEFAULT_DATA = {
     },
     "websiteler": {
       "baslik": "Radyo Web Siteleri — Bayrakstar",
-      "aciklama": "Bayrakstar çatısı altındaki radyoların resmî web siteleri: Radyo Fenomen, Fenomen Türk, Radyo Boombox ve İstanbul FM. Gitmek istediğin radyoyu seç.",
+      "aciklama": "Bayrakstar çatısı altındaki radyoların web siteleri: Radyo Fenomen, Fenomen Türk, Radyo Boombox ve İstanbul FM. Gitmek istediğin radyoyu seç.",
       "paylasimBaslik": "Radyo Web Siteleri — Bayrakstar",
-      "paylasimAciklama": "Bayrakstar radyolarının resmî web sitelerine buradan ulaş."
+      "paylasimAciklama": "Bayrakstar radyolarının web sitelerine buradan ulaş."
     },
     "yasal": {
       "baslik": "Künye ve KVKK — Bayrakstar",
