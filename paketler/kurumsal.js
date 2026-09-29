@@ -246,7 +246,7 @@
       var lv=el('span','kk-live'); lv.textContent='Live'; ust.appendChild(lv);
       k.appendChild(ust);
 
-      var n=el('div','ad'); n.textContent=(ad||'').toLocaleUpperCase('tr'); k.appendChild(n);
+      var n=el('div','ad'); n.textContent=(ad||''); k.appendChild(n);  // büyütmeyi CSS yapar; site.js İngilizce kelimeleri düzeltir
 
       var alt=el('div','alt');
       if(saat){ var s=el('span','saat'); s.textContent=saat.trim(); alt.appendChild(s); }

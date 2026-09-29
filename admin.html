@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="site-surum" content="20260928-075816">
+<meta name="site-surum" content="20260929-095133">
 <!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
      kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
      yayın adresini media-src VE connect-src listelerine ekle. -->
@@ -15,12 +15,12 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="data.js?v=20260928-075816"></script>
-<script src="simdicaliyor.js?v=20260928-075816"></script>
+<script src="data.js?v=20260929-095133"></script>
+<script src="simdicaliyor.js?v=20260929-095133"></script>
 <!-- Panel bayat kopya üzerinde düzenleme yapıp yeni içeriği ezmesin:
      ön bellek olsa bile bulut HER ZAMAN taze okunur. -->
 <script>window.BULUT_TAZE_SART = true;</script>
-<script src="bulut.js?v=20260928-075816"></script>
+<script src="bulut.js?v=20260929-095133"></script>
 <style>
   :root{--red:#ff0007;--coral:#f75843;--blue:#0081ba;--teal:#00bac5;--yellow:#ffca11;--ink:#1c1c1c;--line:#e6e4df;--bg:#f2f1ee}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -695,13 +695,16 @@ function panelSite(b){
     + alan('Alt not', taInput(V.not,'D.yasal.kvkk.not',260), 260, V.not);
   }
 
-  if(b.id==='footer') return baslik(b,'Sayfaların en altındaki bilgi ve sosyal medya bağlantıları.')
+  if(b.id==='footer') return baslik(b,'Sayfaların en altındaki bilgi ve Bayrakstar\'ın sosyal medya bağlantıları (ana sayfada logonun altında görünür).')
     + zenginAlan('z_footer','Hakkında metni', D.footer.about, 'D.footer.about', 180, ['renk','kalin','temiz'], true)
     + '<div class="grid2">'
     +   alan('Instagram linki', urlInput(D.footer.socials.ig,'D.footer.socials.ig'))
     +   alan('YouTube linki',   urlInput(D.footer.socials.yt,'D.footer.socials.yt'))
     +   alan('X (Twitter) linki',urlInput(D.footer.socials.x,'D.footer.socials.x'))
     +   alan('Spotify linki',   urlInput(D.footer.socials.sp,'D.footer.socials.sp'))
+    +   alan('Facebook linki',  urlInput(D.footer.socials.fb||'','D.footer.socials.fb'))
+    +   alan('TikTok linki',    urlInput(D.footer.socials.tiktok||'','D.footer.socials.tiktok'))
+    +   alan('LinkedIn linki',  urlInput(D.footer.socials['in']||'','D.footer.socials[\'in\']'))
     + '</div>';
 
   if(b.id==='iletisim'){

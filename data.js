@@ -753,7 +753,7 @@ window.DEFAULT_DATA = {
       "stream": "https://yayin.radyoboombox.com.tr/boombox/playlist.m3u8",
       "img": "gorseller/kart-boombox.jpg",
       "hero": "gorseller/genis-4.jpg",
-      "about": "Radyo BoomBox; Rap, Trap, R’n’B ve Hip-Hop’un adresidir. “Aç Sesini” diyerek sokağın enerjisini ve en taze beat’leri yayına taşır. EYPIO, LARK2020, ERAY067 ve daha nicesi BoomBox listelerinde. Rumeli Reklam ve Radyo Yayıncılık A.Ş. bünyesindedir.",
+      "about": "Radyo BoomBox; Rap, Trap, R’n’B ve Hip-Hop’un adresidir. “Aç Sesini” diyerek sokağın enerjisini ve en taze beat’leri yayına taşır. EYPIO, LARK2020, ERAY067 ve daha nicesi BoomBox listelerinde.",
       "hosts": [],
       "schedule": [
         {
@@ -979,7 +979,7 @@ window.DEFAULT_DATA = {
   "contact": {
     "tag": "Bize Ulaşın",
     "headline": "İletişim",
-    "text": "Reklam, iş birliği ve basın talepleri için iletişime geçebileceğiniz mail adreslerimiz",
+    "text": "",
     "items": [
       {
         "icon": "✉️",
@@ -1000,13 +1000,13 @@ window.DEFAULT_DATA = {
         "href": "mailto:basin@bayrakstar.com"
       }
     ],
-    "note": "Radyolara doğrudan ulaşmak için ilgili radyonun sayfasındaki iletişim bilgilerini kullanabilirsiniz.",
-    "istekBaslik": "İstek Hattı",
-    "istekText": "Şarkı isteklerin ve selamların için radyoların WhatsApp hatları",
+    "note": "",
+    "istekBaslik": "WhatsApp Hattı",
+    "istekText": "",
     "istekItems": [
       {
         "icon": "💬",
-        "label": "İstanbul FM İstek Hattı",
+        "label": "İstanbul FM",
         "value": "+90 544 886 18 86",
         "href": "https://wa.me/905448861886"
       }
@@ -1024,7 +1024,10 @@ window.DEFAULT_DATA = {
       "ig": "#",
       "yt": "#",
       "x": "#",
-      "sp": "#"
+      "sp": "#",
+      "fb": "#",
+      "tiktok": "#",
+      "in": "#"
     }
   },
   "yasal": {

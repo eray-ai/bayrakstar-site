@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="site-surum" content="20260928-075816">
+<meta name="site-surum" content="20260929-095133">
 <!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
      kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
      yayın adresini media-src VE connect-src listelerine ekle. -->
@@ -43,11 +43,11 @@
 
 
 <script>window.ON_SLUG="boombox";</script>
-<script src="data.js?v=20260928-075816"></script>
-<script src="bulut.js?v=20260928-075816"></script>
-<script src="yayin.js?v=20260928-075816"></script>
-<script src="simdicaliyor.js?v=20260928-075816"></script>
-<script src="calar.js?v=20260928-075816"></script>
+<script src="data.js?v=20260929-095133"></script>
+<script src="bulut.js?v=20260929-095133"></script>
+<script src="yayin.js?v=20260929-095133"></script>
+<script src="simdicaliyor.js?v=20260929-095133"></script>
+<script src="calar.js?v=20260929-095133"></script>
 <style>
   /* ---- Marka başlık yazıyüzleri (kurumsal kimlik rehberlerinden) ----
      Rehberlerde "yardımcı yazıyüzü, yalnızca başlıklarda" diye tanımlı.
@@ -136,7 +136,6 @@
   .about p{font-size:18px;line-height:1.85;opacity:.82;max-width:720px;margin:0 auto 18px}
   .feats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:44px}
   .feat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:22px;min-width:150px;transition:transform .25s,border-color .25s}
-  .feat:hover{transform:translateY(-5px);border-color:var(--brand)}
   .feat .ic{font-size:24px}
   .feat .ft{font-weight:800;margin-top:10px}
   .feat .fd{font-size:13px;opacity:.6;margin-top:3px}
@@ -201,14 +200,14 @@
   /* info sections */
   .sec{padding:80px 6vw;position:relative}
   .sec .wrapc{max-width:1100px;margin:0 auto}
-  .sec h2{font-family:var(--head);font-size:clamp(26px,4.4vw,46px);text-transform:uppercase;letter-spacing:.01em;margin-bottom:8px;text-align:center}
+  .sec h2{font-family:var(--head);font-size:clamp(26px,4.4vw,46px);text-transform:uppercase;letter-spacing:.01em;margin-bottom:36px;text-align:center}
   .sec .lead{text-align:center;opacity:.6;margin-bottom:40px;font-size:15px}
   .dark{background:#111}.darker{background:#0d0d0d}
 
   /* yayıncı kartları */
   .host-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
   .host{display:block;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;transition:transform .3s,border-color .3s}
-  .host:hover{transform:translateY(-6px);border-color:var(--brand)}
+  a.host:hover{transform:translateY(-6px);border-color:var(--brand)}
   /* detay sayfası olan kart tıklanabilir — küçük bir ok ipucu belirir */
   a.host .in{position:relative}
   a.host .in::after{content:"→";position:absolute;right:20px;bottom:20px;font-weight:800;font-size:17px;
@@ -216,7 +215,7 @@
   a.host:hover .in::after,a.host:focus-visible .in::after{opacity:1;transform:none}
   .host .ph{position:relative;aspect-ratio:1/1;overflow:hidden}
   .host .ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s;filter:saturate(.95)}
-  .host:hover .ph img{transform:scale(1.07)}
+  a.host:hover .ph img{transform:scale(1.07)}
   .host .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(10,10,10,.85))}
   /* resmî afiş kullanılan kart: afişin kendi yazısı okunsun diye karartma yok */
   .host.afisli .ph::after{display:none}
@@ -228,7 +227,7 @@
   .host .ph.fotosuz::after{display:none}
   .host .ph.fotosuz img{width:58%;height:auto;max-height:44%;object-fit:contain;
     filter:none;opacity:.45;transition:transform .5s,opacity .3s}
-  .host:hover .ph.fotosuz img{transform:scale(1.06);opacity:.65}
+  a.host:hover .ph.fotosuz img{transform:scale(1.06);opacity:.65}
   .host .ph .badge{position:absolute;left:14px;bottom:12px;z-index:2;background:var(--brand);font-size:11px;font-weight:800;letter-spacing:.05em;padding:5px 11px;border-radius:30px}
   .host .in{padding:18px 20px 22px}
   .host .hn{font-weight:800;font-size:19px}
@@ -247,7 +246,6 @@
   .days button.ozel.on::after{background:var(--onbrand)}
   .timeline{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
   .tl{display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 20px;transition:background .2s,border-color .2s}
-  .tl:hover{background:rgba(255,255,255,.07)}
   .tl.live{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 14%,transparent)}
   .tl .tm{font-family:var(--head);font-size:16px;color:var(--brand-yazi);min-width:118px;letter-spacing:.02em}
   /* program görseli — sabit kare, taşmaz, tıklayınca büyür */
@@ -281,7 +279,8 @@
 
   .freq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
   .freq-cell{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:18px;text-align:center;transition:border-color .25s}
-  .freq-cell:hover{border-color:var(--brand)}
+  .uydu{display:flex;align-items:center;justify-content:center;gap:10px;margin:22px auto 0;max-width:760px;text-align:center;font-size:14px;line-height:1.5;opacity:.8}
+  .uydu b{color:var(--brand-yazi)}
   .freq-cell .fc{font-size:13px;opacity:.6;margin-bottom:6px}
   .freq-cell .ff{font-family:var(--head);font-size:26px;color:var(--brand-yazi)}
   .freq-cell .fu{font-size:12px;opacity:.5}
@@ -310,7 +309,6 @@
   .app-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
   @media(max-width:760px){.app-grid{grid-template-columns:1fr}}
   .app-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:32px 26px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;transition:.3s}
-  .app-card:hover{background:rgba(255,255,255,.08);border-color:var(--brand);transform:translateY(-4px)}
   .app-card h3{font-family:var(--head);font-size:clamp(17px,2.2vw,22px);text-transform:uppercase;letter-spacing:.02em;margin-bottom:16px}
   .app-vis{width:132px;height:132px;border-radius:30px;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:20px;position:relative;
     background:linear-gradient(145deg,var(--brand),rgba(0,0,0,.55));box-shadow:0 14px 34px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.25)}
@@ -348,7 +346,7 @@
     .fx{display:none}
   }
 </style>
-<link rel="stylesheet" href="paketler/kurumsal.css?v=20260928-075816">
+<link rel="stylesheet" href="paketler/kurumsal.css?v=20260929-095133">
 </head>
 <body>
 <a class="skip" href="#secSched">İçeriğe atla</a>
@@ -367,7 +365,6 @@
     <div class="hero-btns">
       <a class="btn btn-ghost" id="siteBtn" target="_blank" rel="noopener"></a>
     </div>
-    <div class="hero-soc-lbl" id="heroSocLbl" hidden>Sosyal Medyalarımız</div>
     <div class="hero-soc" id="heroSoc" aria-label="Sosyal medya hesapları"></div>
   </div>
 </section>
@@ -378,13 +375,6 @@
     <span class="tag" id="aboutTag" data-metin="radyo.hakkindaBaslik">Radyo Hakkında</span>
     <h2 class="head-font" id="aboutTitle"></h2>
     <p id="aboutText"></p>
-    <div class="feats">
-      <div class="feat"><div class="ic">📻</div><div class="ft" data-metin="radyo.ozellik1">7/24 Yayın</div><div class="fd" data-metin="radyo.ozellik1Alt">Kesintisiz canlı</div></div>
-      <div class="feat"><div class="ic">🎧</div><div class="ft" data-metin="radyo.ozellik2">Dijital Kalite</div><div class="fd" data-metin="radyo.ozellik2Alt">Net ses</div></div>
-      <div class="feat"><div class="ic">📱</div><div class="ft" data-metin="radyo.ozellik3">Her Cihazda</div><div class="fd" data-metin="radyo.ozellik3Alt">Web & mobil</div></div>
-      <!-- 4. rozet yalnız DAB+ yayını olan radyolarda görünür (data.js'te dab:true). -->
-      <div class="feat" id="featDab" style="display:none"><div class="ic">🛰️</div><div class="ft" data-metin="radyo.ozellik4">DAB+ Yayını</div><div class="fd" data-metin="radyo.ozellik4Alt">Dijital karasal yayın</div></div>
-    </div>
   </div>
 </section>
 
@@ -392,7 +382,6 @@
 <section class="sec dark reveal" id="secHosts" style="display:none">
   <div class="wrapc">
     <h2 class="head-font" data-metin="radyo.yayincilarBaslik">Yayıncılarımız</h2>
-    <div class="lead" data-metin="radyo.yayincilarAlt">Mikrofonun ardındaki isimler</div>
     <div class="host-grid" id="hostGrid"></div>
   </div>
 </section>
@@ -401,10 +390,8 @@
 <section class="sec darker reveal" id="secSched" style="display:none">
   <div class="wrapc">
     <h2 class="head-font" data-metin="radyo.akisBaslik">Yayın Akışı</h2>
-    <div class="lead" data-metin="radyo.akisAlt">Gün boyu ekranında ne var?</div>
     <div class="days" id="days"></div>
     <div class="timeline" id="timeline"></div>
-    <div class="wnote" id="wnote"></div>
   </div>
 </section>
 
@@ -412,7 +399,6 @@
 <section class="sec darker reveal" id="secChan" style="display:none">
   <div class="wrapc">
     <h2 class="head-font" data-metin="radyo.kanallarBaslik">Dijital Radyolarımız</h2>
-    <div class="lead" data-metin="radyo.kanallarAlt">Her zevke uygun alt yayın kanalları</div>
     <div class="chans" id="chanList"></div>
   </div>
 </section>
@@ -421,18 +407,8 @@
 <section class="sec dark reveal" id="secFreq" style="display:none">
   <div class="wrapc">
     <h2 class="head-font" data-metin="radyo.frekansBaslik">Frekanslar</h2>
-    <div class="lead" data-metin="radyo.frekansAlt">Türkiye genelinde FM üzerinden yayındayız</div>
     <div class="freq-grid" id="freqGrid"></div>
-  </div>
-</section>
-
-<!-- SOSYAL & İLETİŞİM -->
-<section class="sec darker reveal" id="secSocial" style="display:none">
-  <div class="wrapc">
-    <h2 class="head-font" data-metin="radyo.sosyalBaslik">Takip Et</h2>
-    <div class="lead" data-metin="radyo.sosyalAlt">Sosyal medyada bizi kaçırma</div>
-    <div class="socrow" id="socRow"></div>
-    <div class="metaline" id="metaLine"></div>
+    <div id="freqUydu"></div>
   </div>
 </section>
 
@@ -440,7 +416,6 @@
 <section class="sec dark reveal" id="secApps" style="display:none">
   <div class="wrapc">
     <h2 class="head-font" data-metin="radyo.uygulamaBaslik">Uygulamalar</h2>
-    <div class="lead" data-metin="radyo.uygulamaAlt">Nerede olursan ol, cebinde ve arabanda yanında</div>
     <div class="app-grid" id="appGrid"></div>
   </div>
 </section>
@@ -465,7 +440,6 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02z"/></svg>
       <input type="range" id="vol" min="0" max="100" value="85" aria-label="Ses seviyesi" aria-valuetext="%85">
     </div>
-    <a class="siteb" id="bandSite" target="_blank" rel="noopener" data-metin="radyo.webSitesiButon">Web Sitesi ↗</a>
   </div>
 </div>
 
@@ -630,7 +604,6 @@ function socLinkleri(s){
   var hs = socLinkleri(R.social||{});
   if(hs.length){
     document.getElementById('heroSoc').innerHTML = hs.join('');
-    document.getElementById('heroSocLbl').hidden = false;
   }
 })();
 
@@ -662,7 +635,6 @@ function socLinkleri(s){
 document.getElementById('aboutTitle').textContent = R.name;
 /* DAB+ rozeti: yalnız DAB+ yayını olan radyolarda (şimdilik Radyo Fenomen
    ve Fenomen Türk). Panelden "Genel Bilgiler" altındaki kutucukla açılır. */
-if(R.dab) document.getElementById('featDab').style.display='';
 document.getElementById('aboutText').textContent = R.about || '';
 
 /* --- YAYINCILAR --- */
@@ -831,8 +803,6 @@ document.getElementById('aboutText').textContent = R.about || '';
   };
 
   render(jsDay);
-  var wn=document.getElementById('wnote');
-  if(R.weekendNote) wn.textContent='ℹ️ '+R.weekendNote;
   document.getElementById('secSched').style.display='';
 })();
 
@@ -848,24 +818,17 @@ document.getElementById('aboutText').textContent = R.about || '';
 /* --- FREKANSLAR --- */
 (function(){
   if(!R.frequencies || !R.frequencies.length) return;
-  document.getElementById('freqGrid').innerHTML = R.frequencies.map(function(f){
-    var isNum = /[0-9]/.test(f.f||'');
-    return '<div class="freq-cell"><div class="fc">'+esc(f.c)+'</div><div class="ff">'+esc(f.f)+'</div>'+(isNum?'<div class="fu">MHz</div>':'')+'</div>';
+  /* Uydu satırı (Türksat …) şehir kutusu gibi ızgaraya sıkışıyordu; frekans
+     değeri olmayan satırlar artık ızgaranın ALTINDA tek satır olarak yazılıyor. */
+  var uydu = R.frequencies.filter(function(f){ return !/[0-9]/.test(f.f||'') && (f.c||'').trim(); });
+  var fm   = R.frequencies.filter(function(f){ return /[0-9]/.test(f.f||''); });
+  document.getElementById('freqGrid').innerHTML = fm.map(function(f){
+    return '<div class="freq-cell"><div class="fc">'+esc(f.c)+'</div><div class="ff">'+esc(f.f)+'</div><div class="fu">MHz</div></div>';
+  }).join('');
+  document.getElementById('freqUydu').innerHTML = uydu.map(function(f){
+    return '<div class="uydu"><span class="ui" aria-hidden="true">🛰️</span><span><b>Uydu</b> · '+esc(f.c)+'</span></div>';
   }).join('');
   document.getElementById('secFreq').style.display='';
-})();
-
-/* --- SOSYAL & İLETİŞİM --- */
-(function(){
-  var s = R.social||{};
-  var links = socLinkleri(s);
-  var meta = [];
-  if(R.company) meta.push(esc(R.company));
-  if(R.whatsapp) meta.push('WhatsApp: '+esc(R.whatsapp));
-  if(!links.length && !meta.length) return;
-  document.getElementById('socRow').innerHTML = links.join('') || '<span style="opacity:.5">Sosyal medya bilgisi yakında</span>';
-  document.getElementById('metaLine').innerHTML = meta.join('<br>');
-  document.getElementById('secSocial').style.display='';
 })();
 
 /* --- UYGULAMALAR --- */
@@ -945,7 +908,6 @@ const bandCov=document.getElementById('bandCov'), bandLogo=document.getElementBy
       bandRoz=document.getElementById('bandRoz'), bandProg=document.getElementById('bandProg'),
       bandNameEl=document.getElementById('bandName'), bandSub=document.getElementById('bandSub'),
       volEl=document.getElementById('vol');
-document.getElementById('bandSite').href=R.url||'#';
 let isPlaying=false, scSarki=null, scT0=0;
 
 const viz=document.getElementById('viz');
@@ -1046,8 +1008,8 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 window.togglePlay=togglePlay;
 });
 </script>
-<script src="site.js?v=20260928-075816"></script>
-<script src="paketler/kurumsal.js?v=20260928-075816"></script>
+<script src="site.js?v=20260929-095133"></script>
+<script src="paketler/kurumsal.js?v=20260929-095133"></script>
 <div style="text-align:center;padding:0 6vw 42px;background:#111" data-yasal-blok hidden>
   <div data-yasal style="font-size:12.5px;opacity:.5;line-height:2.1"></div>
 </div>

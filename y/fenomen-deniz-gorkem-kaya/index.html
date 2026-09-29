@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="site-surum" content="20260928-075816">
+<meta name="site-surum" content="20260929-095133">
 <!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
      kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
      yayın adresini media-src VE connect-src listelerine ekle. -->
@@ -43,8 +43,8 @@
 
 
 <script>window.ON_SLUG="fenomen";window.ON_HOST="deniz-gorkem-kaya";</script>
-<script src="data.js?v=20260928-075816"></script>
-<script src="bulut.js?v=20260928-075816"></script>
+<script src="data.js?v=20260929-095133"></script>
+<script src="bulut.js?v=20260929-095133"></script>
 <style>
   /* ---- Marka başlık yazıyüzleri (kurumsal kimlik rehberlerinden) ----
      Rehberlerde "yardımcı yazıyüzü, yalnızca başlıklarda" diye tanımlı.
@@ -130,7 +130,7 @@
   .sec{padding:84px 6vw;position:relative}
   .sec .wrapc{max-width:900px;margin:0 auto}
   .sec h2{font-family:var(--head);font-size:clamp(26px,4.4vw,44px);text-transform:uppercase;
-        letter-spacing:.01em;margin-bottom:10px;text-align:center}
+        letter-spacing:.01em;margin-bottom:34px;text-align:center}
   .sec .lead{text-align:center;opacity:.55;margin-bottom:36px;font-size:15px}
   .sec p.metin{font-size:17px;line-height:1.9;opacity:.84;text-align:center}
   .dark{background:#151515}.darker{background:#0d0d0d}
@@ -140,6 +140,14 @@
         border:1px solid rgba(255,255,255,.1);cursor:zoom-in;transition:transform .3s,border-color .3s}
   .prog-kapak:hover{transform:translateY(-4px);border-color:var(--brand)}
   .prog-kapak img{width:100%;height:auto}
+  /* program listesi: ad + gün/saat (yayın akışından üretilir) */
+  .plist{display:flex;flex-direction:column;gap:10px;max-width:640px;margin:0 auto 26px}
+  .plist .pi{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+        background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-left:3px solid var(--brand);
+        border-radius:14px;padding:16px 20px;text-align:left}
+  .plist .pn{font-weight:800;font-size:17px}
+  .plist .pz{font-size:14px;opacity:.7;display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+  @media(max-width:560px){ .plist .pz{align-items:flex-start;text-align:left} }
 
   /* galeri */
   .galeri{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
@@ -203,7 +211,7 @@
     .reveal{opacity:1!important;transform:none!important}
   }
 </style>
-<link rel="stylesheet" href="paketler/kurumsal.css?v=20260928-075816">
+<link rel="stylesheet" href="paketler/kurumsal.css?v=20260929-095133">
 </head>
 <body>
 <a class="skip" href="#icerik">İçeriğe atla</a>
@@ -316,6 +324,51 @@ rs.setProperty('--onbrand', _lum(R.color) > 0.6 ? '#111111' : '#ffffff');
   if(tc && R.color) tc.setAttribute('content',R.color);
 })();
 
+/* Yayıncının programlarını yayın akışından çıkarır.
+   Akıştaki "host" alanı yayıncı adıyla eşleşir (panelde kısa ad "Serdar",
+   akışta "Serdar Koçak" olabiliyor → ön ek eşleşmesi de sayılır) ya da
+   program adı yayıncının program adıyla aynıdır (DJ K-Billy ↔ Onur Kaymak).
+   Dönen: [{ad, zamanlar:["Hafta içi 07:00 – 10:00", ...]}] */
+function yayinciProgramlari(R, Y){
+  function kucuk(s){ return String(s||'').replace(/[’']/g,"'").trim().toLocaleLowerCase('tr'); }
+  var ad = kucuk(Y.name), show = kucuk(Y.show);
+  if(!ad) return [];
+  function benim(s){
+    var h = kucuk(s.host), n = kucuk(s.name);
+    if(show && n === show) return true;
+    if(!h) return false;
+    if(h === ad || h.indexOf(ad+' ') === 0 || ad.indexOf(h+' ') === 0) return true;
+    return !!(show && show.indexOf(h) === 0);   // "dj k-billy'le …" ↔ host "DJ K-Billy"
+  }
+  var GUN = ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
+  var harita = {}, sira = [];
+  for(var g=0; g<7; g++){
+    var liste = (R.scheduleGun && (R.scheduleGun[g] || R.scheduleGun[String(g)])) || R.schedule || [];
+    liste.forEach(function(s){
+      if(!s || !s.name || !benim(s)) return;
+      var k = kucuk(s.name);
+      if(!harita[k]){ harita[k] = { ad:s.name, saatler:{} }; sira.push(k); }
+      var saat = String(s.t||'').trim();
+      (harita[k].saatler[saat] = harita[k].saatler[saat] || []).push(g);
+    });
+  }
+  function gunYazi(gs){
+    var j = gs.join(',');
+    if(j === '0,1,2,3,4,5,6') return 'Her gün';
+    if(j === '0,1,2,3,4') return 'Hafta içi';
+    if(j === '5,6') return 'Hafta sonu';
+    var ardisik = gs.every(function(x,i){ return i===0 || x === gs[i-1]+1; });
+    if(ardisik && gs.length >= 3) return GUN[gs[0]]+' – '+GUN[gs[gs.length-1]];
+    return gs.map(function(x){ return GUN[x]; }).join(', ');
+  }
+  return sira.map(function(k){
+    var p = harita[k];
+    return { ad:p.ad, zamanlar:Object.keys(p.saatler).map(function(saat){
+      return gunYazi(p.saatler[saat]) + (saat ? ' · ' + saat : '');
+    }) };
+  });
+}
+
 /* ---- sayfayı çiz ---- */
 (function(){
   var kapak  = (Y.cover||'').trim();
@@ -340,7 +393,6 @@ rs.setProperty('--onbrand', _lum(R.color) > 0.6 ? '#111111' : '#ffffff');
   +     portre
   +     '<h1 class="head-font">'+kacir(Y.name)+'</h1>'
   +     (Y.show ? '<div class="prog">'+kacir(Y.show)+'</div>' : '')
-  +     (Y.bio  ? '<div class="kisa">'+kacir(Y.bio)+'</div>' : '')
   +     '<div class="hero-btns">'
   +       '<a class="btn btn-fill" href="radyo.html?r='+kacir(R.slug)+'">'+kacir(R.name)+' sayfası</a>'
   +       (R.url ? '<a class="btn btn-ghost" href="'+kacir(R.url)+'" target="_blank" rel="noopener">Resmî Web Sitesi ↗</a>' : '')
@@ -353,16 +405,27 @@ rs.setProperty('--onbrand', _lum(R.color) > 0.6 ? '#111111' : '#ffffff');
   if((Y.about||'').trim()){
     html += '<section class="sec dark reveal">'
       + '<div class="wrapc"><h2 class="head-font">Hakkında</h2>'
-      + '<div class="lead">Mikrofonun ardındaki isim</div>'
       + '<p class="metin">'+kacir(Y.about)+'</p></div></section>';
   }
 
-  /* --- Programı --- */
+  /* --- Programı / Programları ---
+     Programlar yayın akışından çıkarılıyor: yayıncının sunduğu her programın
+     adı + hangi gün, hangi saatte olduğu. Tek program varsa başlık "Programı",
+     birden fazlaysa "Programları" (revize 29 Eyl). */
+  var programlar = yayinciProgramlari(R, Y);
   var progYazi = (Y.program||'').trim();
-  if(progYazi || kapak){
+  /* Eski otomatik cümle ("…saatleri arasında yayında.") artık listede
+     yazdığı için tekrar edilmiyor; panelden özel metin yazıldıysa gösterilir. */
+  if(/saatleri arasında yayında\.?$/.test(progYazi) && programlar.length) progYazi = '';
+  if(programlar.length || progYazi || kapak){
+    var adet = programlar.length || 1;
     html += '<section class="sec darker reveal">'
-      + '<div class="wrapc"><h2 class="head-font">Programı</h2>'
-      + (Y.show ? '<div class="lead">'+kacir(Y.show)+'</div>' : '<div class="lead">Yayındaki program</div>')
+      + '<div class="wrapc"><h2 class="head-font">'+(adet>1?'Programları':'Programı')+'</h2>'
+      + (programlar.length ? '<div class="plist">'+programlar.map(function(pr){
+          return '<div class="pi"><span class="pn">'+kacir(pr.ad)+'</span><span class="pz">'
+            + pr.zamanlar.map(function(z){ return '<span>'+kacir(z)+'</span>'; }).join('')+'</span></div>';
+        }).join('')+'</div>'
+        : (Y.show ? '<div class="plist"><div class="pi"><span class="pn">'+kacir(Y.show)+'</span></div></div>' : ''))
       + (kapak ? '<div class="prog-kapak" data-buyut="'+kacir(kapak)+'" data-ad="'+kacir(Y.show||Y.name)+'" '
                + 'role="button" tabindex="0" aria-label="Program görselini büyüt">'
                + '<img src="'+kacir(kapak)+'" alt="'+kacir(Y.show||Y.name)+' görseli" loading="lazy"></div>' : '')
@@ -374,7 +437,7 @@ rs.setProperty('--onbrand', _lum(R.color) > 0.6 ? '#111111' : '#ffffff');
   var galeri = Array.isArray(Y.gallery) ? Y.gallery.filter(function(g){return (g||'').trim();}) : [];
   if(galeri.length){
     html += '<section class="sec dark reveal"><div class="wrapc">'
-      + '<h2 class="head-font">Kareler</h2><div class="lead">Yayından ve kulisten</div>'
+      + '<h2 class="head-font">Kareler</h2>'
       + '<div class="galeri">'
       + galeri.map(function(g,i){
           return '<button class="gk" data-buyut="'+kacir(g)+'" data-ad="'+kacir(Y.name)+'" '
@@ -388,7 +451,7 @@ rs.setProperty('--onbrand', _lum(R.color) > 0.6 ? '#111111' : '#ffffff');
   var digerleri = (R.hosts||[]).filter(function(h){ return h && h.slug && h.slug !== Y.slug; });
   html += '<section class="others">';
   if(digerleri.length){
-    html += '<h3 class="head-font">'+kacir(R.name)+' Yayıncıları</h3>'
+    html += '<h3 class="head-font">Diğer Yayıncılarımız</h3>'
       + '<div class="ogrid">'
       + digerleri.map(function(h){
           var f=(h.photo||'').trim();
@@ -473,8 +536,8 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.targ
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 });
 </script>
-<script src="site.js?v=20260928-075816"></script>
-<script src="paketler/kurumsal.js?v=20260928-075816"></script>
+<script src="site.js?v=20260929-095133"></script>
+<script src="paketler/kurumsal.js?v=20260929-095133"></script>
 <div style="text-align:center;padding:0 6vw 42px;background:#111" data-yasal-blok hidden>
   <div data-yasal style="font-size:12.5px;opacity:.5;line-height:2.1"></div>
 </div>

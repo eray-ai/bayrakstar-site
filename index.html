@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="site-surum" content="20260928-075816">
+<meta name="site-surum" content="20260929-095133">
 <!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
      kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
      yayın adresini media-src VE connect-src listelerine ekle. -->
@@ -40,11 +40,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="data.js?v=20260928-075816"></script>
-<script src="bulut.js?v=20260928-075816"></script>
-<script src="yayin.js?v=20260928-075816"></script>
-<script src="simdicaliyor.js?v=20260928-075816"></script>
-<script src="calar.js?v=20260928-075816"></script>
+<script src="data.js?v=20260929-095133"></script>
+<script src="bulut.js?v=20260929-095133"></script>
+<script src="yayin.js?v=20260929-095133"></script>
+<script src="simdicaliyor.js?v=20260929-095133"></script>
+<script src="calar.js?v=20260929-095133"></script>
 <style>
   :root{
     --dark:#242424;
@@ -215,7 +215,7 @@
   .contact .inner{max-width:1000px;margin:0 auto;text-align:center}
   .contact .tag{display:inline-block;font-size:12px;letter-spacing:.3em;text-transform:uppercase;
     font-weight:800;color:var(--yellow);margin-bottom:18px}
-  .contact h2{font-size:clamp(30px,4.4vw,50px);font-weight:800;letter-spacing:-.02em}
+  .contact h2{font-size:clamp(30px,4.4vw,50px);font-weight:800;letter-spacing:-.02em;margin-bottom:34px}
   .contact .lead{opacity:.68;margin:16px auto 44px;font-size:16px;line-height:1.75;max-width:620px}
   /* 4 kalem için 2×2 daha dengeli duruyor; dar ekranda tek sütuna iner */
   .cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;
@@ -232,15 +232,17 @@
   .istek-blok{margin-top:52px;padding-top:44px;position:relative}
   .istek-blok::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
     width:min(280px,60%);height:1px;background:rgba(255,255,255,.14)}
-  .istek-blok h3{font-size:clamp(20px,2.6vw,28px);font-weight:800;letter-spacing:-.01em}
+  .istek-blok h3{font-size:clamp(20px,2.6vw,28px);font-weight:800;letter-spacing:-.01em;margin-bottom:24px}
   .istek-blok .lead{margin:12px auto 30px}
   .contact .cnote{opacity:.45;font-size:13px;line-height:1.7;margin-top:30px}
 
   /* ============ FOOTER ============ */
   footer{background:#161616;padding:70px 5vw 36px}
   .foot-top{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:40px}
-  .foot-brand img{height:46px;margin-bottom:18px}
-  .foot-brand p{opacity:.6;line-height:1.7;font-size:14px;max-width:300px}
+  /* Sol alt: yalnız logo — büyük ve ortalı; yazı kaldırıldı (revize 29 Eyl) */
+  .foot-brand{display:flex;flex-direction:column;align-items:center;align-self:center}
+  .foot-brand img{height:74px}
+  .foot-brand p{display:none}
   .foot-radios{display:flex;flex-direction:column;gap:12px}
   .foot-radios h4{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--yellow);margin-bottom:8px;font-weight:800}
   .foot-radios a{opacity:.72;font-size:14px;transition:opacity .2s,transform .2s}
@@ -248,6 +250,7 @@
   .socials{display:flex;gap:12px;margin-top:4px}
   .socials a{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:.25s;font-weight:800;font-size:13px}
   .socials a:hover{background:var(--coral);transform:translateY(-3px)}
+  .socials a svg{width:18px;height:18px}
   .foot-bottom{max-width:1180px;margin:44px auto 0;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;opacity:.55}
 
   /* ==== uçan kaçan: floating notes ==== */
@@ -276,8 +279,13 @@
   .rcard .site:hover{background:rgba(255,255,255,.16)}
   .rcard .site svg{width:14px;height:14px}
   .rcard.playing{outline:3px solid rgba(255,255,255,.8);outline-offset:-3px}
-  .rcard .onair{position:absolute;top:34px;right:34px;z-index:4;display:none;align-items:center;gap:7px;background:var(--red);padding:6px 12px;border-radius:30px;font-size:11px;font-weight:800;letter-spacing:.12em}
+  /* Sağ üst: yalnız ÇALAN radyonun kartında dönen ses dalgası ("CANLI" yazısı kalktı) */
+  .rcard .onair{position:absolute;top:30px;right:30px;z-index:4;display:none;align-items:center;gap:4px;height:34px;padding:0 12px;border-radius:30px;background:rgba(0,0,0,.35);backdrop-filter:blur(6px)}
+  .rcard .onair i{display:block;width:4px;height:18px;background:#fff;border-radius:3px;animation:eq .9s ease-in-out infinite;transform-origin:center}
+  .rcard .onair i:nth-child(2){animation-delay:.2s;height:22px}.rcard .onair i:nth-child(3){animation-delay:.35s}
+  .rcard .onair i:nth-child(4){animation-delay:.1s;height:22px}.rcard .onair i:nth-child(5){animation-delay:.28s}
   .rcard.playing .onair{display:flex}
+  .rcard.playing .freq{visibility:hidden}
   .rcard.playing .freq{display:none}
 
   /* ==== STICKY LIVE PLAYER ==== */
@@ -315,6 +323,11 @@
 
   /* ==== çoklu radyo bandı ==== */
   .pl-now{display:flex;align-items:center;gap:13px;flex-shrink:0}
+  /* Radyo seçilmeden yalnız radyo düğmeleri görünür; biri seçilince
+     çalan bilgisi, çal düğmesi ve ses bölümü açılır (revize 29 Eyl). */
+  .player:not(.secili) .pl-now,.player:not(.secili) .pl-vol,.player:not(.secili) .pl-close{display:none}
+  .player:not(.secili) .pl-strip > :first-child{margin-left:auto}
+  .player:not(.secili) .pl-strip > :last-child{margin-right:auto}
   .pl-strip{flex:1;display:flex;gap:8px;overflow-x:auto;padding:3px 2px;min-width:0;scrollbar-width:none}
   .pl-strip::-webkit-scrollbar{height:0}
   .pl-chip{flex-shrink:0;display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:40px;padding:5px 15px 5px 5px;cursor:pointer;transition:.2s;color:#fff}
@@ -421,7 +434,7 @@
   }
 
 </style>
-<link rel="stylesheet" href="paketler/kurumsal.css?v=20260928-075816">
+<link rel="stylesheet" href="paketler/kurumsal.css?v=20260929-095133">
 </head>
 <body data-seo="ana">
 
@@ -472,7 +485,6 @@
   <div class="blob b-red"></div><div class="blob b-teal"></div><div class="blob b-blue"></div>
   <div class="head reveal">
     <h2 data-metin="ana.radyolarBaslik">Radyolarımız</h2>
-    <p data-metin="ana.radyolarAlt">Çatımız altındaki radyolar. Kartın üzerine tıkla, radyonun web sitesine git.</p>
   </div>
   <div class="radio-grid" id="grid"></div>
 </section>
@@ -711,21 +723,21 @@ D.radios.forEach((r,idx)=>{
   const a=document.createElement('a');
   a.className='rcard reveal';a.href=r.slug?URLRadyo(r.slug):r.url;a.dataset.idx=idx;a.dataset.slug=r.slug||'';
   if(!r.slug){a.target='_blank';a.rel='noopener';}
-  const freqHtml = (r.freq && r.freq.trim()) ? esc(r.freq)+' <span style="opacity:.6;font-size:11px">MHz</span>' : 'CANLI';
-  const listenBtn = `<button class="listen" onclick="playRadio(${idx},event)" aria-label="${esc(r.name)} canlı yayınını dinle"><span class="pi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span> Canlı Dinle</button>`;
+  const freqHtml = (r.freq && r.freq.trim()) ? esc(r.freq)+' <span style="opacity:.6;font-size:11px">MHz</span>' : '';
+  const listenBtn = `<button class="listen" onclick="playRadio(${idx},event)" aria-label="${esc(r.name)} canlı yayınını dinle"><span class="pi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span> Dinle</button>`;
   a.setAttribute('aria-label', r.name + ' sayfasına git');
   a.innerHTML=`
     <img class="bg" src="${esc(r.img)}" alt="" aria-hidden="true">
     <div class="tint" style="background:${esc(r.color)}"></div>
     <div class="glow"></div>
-    <div class="onair"><span class="ld" style="width:7px;height:7px;border-radius:50%;background:#fff;display:block"></span> CANLI YAYINDA</div>
+    <div class="onair" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="inner">
       <div class="top">
         <img class="logo" src="${esc(r.logo)}" alt="${esc(r.name)} logosu">
-        <div class="freq">${freqHtml}</div>
+        ${freqHtml ? '<div class="freq">'+freqHtml+'</div>' : ''}
       </div>
       <div class="bottom">
-        <div class="sl">${esc(r.slogan)}<span class="eqbadge" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>
+        <div class="sl">${esc(r.slogan)}</div>
         <div class="actions">
           ${listenBtn}
           <span class="site">Radyoyu Keşfet <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
@@ -817,6 +829,35 @@ function closePlayer(){
   player.classList.remove('show');
   try{ sessionStorage.setItem('bs_calar_kapali','1'); }catch(e){}
 }
+/* Radyo seçilince çalar paneli açılır. Düz sınıf değişimi her şeyi bir anda
+   yerine atıyordu; burada FLIP ile yumuşatılıyor: radyo düğmeleri eski
+   yerlerinden yeni yerlerine kayar, bant yüksekliği (telefonda satır ekleniyor)
+   akarak değişir, açılan parçalar süzülerek belirir. */
+function seciliYap(v){
+  if(player.classList.contains('secili')===v) return;
+  const inner=player.querySelector('.pl-inner');
+  const chips=[...strip.children];
+  const once=chips.map(c=>c.getBoundingClientRect());
+  const h0=inner.getBoundingClientRect().height;
+  player.classList.toggle('secili',v);
+  if(azHareket || !player.classList.contains('show') || !inner.animate) return;
+  const EASE='cubic-bezier(.2,.85,.25,1)', SURE=650;
+  chips.forEach((c,i)=>{
+    const s=c.getBoundingClientRect(), dx=once[i].left-s.left, dy=once[i].top-s.top;
+    if(Math.abs(dx)>.5||Math.abs(dy)>.5)
+      c.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],{duration:SURE,easing:EASE});
+  });
+  const h1=inner.getBoundingClientRect().height;
+  if(Math.abs(h1-h0)>.5){
+    inner.style.overflow='hidden';
+    inner.animate([{height:h0+'px'},{height:h1+'px'}],{duration:SURE,easing:EASE})
+      .onfinish=()=>{ inner.style.overflow=''; };
+  }
+  if(v) inner.querySelectorAll('.pl-now,.pl-vol,.pl-close').forEach((el,i)=>{
+    el.animate([{opacity:0,transform:'translateY(10px) scale(.96)'},{opacity:1,transform:'none'}],
+      {duration:520,delay:180+i*70,easing:'ease-out',fill:'backwards'});
+  });
+}
 function markActive(i){
   document.querySelectorAll('.pl-chip').forEach(c=>{
     const acik = (+c.dataset.idx===i && isPlaying);
@@ -853,6 +894,7 @@ function ciz(d){
   curIdx = r ? D.radios.findIndex(x=>x.slug===r.slug) : -1;
 
   player.classList.toggle('on', d.caliyor);
+  seciliYap(!!r);
   setPlayIcon(d.caliyor);
   markActive(curIdx);
 
@@ -898,9 +940,10 @@ plVol.addEventListener('input',e=>{
 /* ---- İLETİŞİM ---- */
 (function(){
   const C = D.contact || {};
-  document.getElementById('cTag').textContent  = C.tag || 'Bize Ulaşın';
+  /* "Bize Ulaşın" üst yazısı kaldırıldı (revize 29 Eyl) */
+  document.getElementById('cTag').style.display='none';
   document.getElementById('cHead').textContent = C.headline || 'İletişim';
-  document.getElementById('cText').textContent = C.text || '';
+  const ct=document.getElementById('cText'); if(C.text) ct.textContent=C.text; else ct.style.display='none';
   const cn=document.getElementById('cNote');
   if(C.note) cn.textContent = C.note; else cn.style.display='none';
 
@@ -954,8 +997,9 @@ document.getElementById('fAbout').innerHTML = D.footer.about;
 
 /* Künye/KVKK bağlantıları site.js'te tek yerden doldurulur ([data-yasal]). */
 const fSoc=document.getElementById('fSocials');
-const socMap={ig:'Instagram',yt:'YouTube',x:'X',sp:'Spotify'};
-const socKisa={ig:'IG',yt:'YT',x:'X',sp:'SP'};
+const socMap={ig:'Instagram',x:'X',yt:'YouTube',fb:'Facebook',tiktok:'TikTok',in:'LinkedIn',sp:'Spotify'};
+/* Resmî marka ikonları (simple-icons, CC0) — radyo sayfalarıyla aynı kaynak */
+const SOC_IKON={"ig": "M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077", "x": "M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z", "yt": "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z", "fb": "M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z", "tiktok": "M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z", "in": "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z", "sp": "M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"};
 /* Gerçek hesap girilmemiş ("#" veya boş) ikonlar hiç basılmaz —
    tıklanamaz ölü ikon görünmesin. Panelden link girilince kendiliğinden çıkar. */
 Object.keys(socMap).forEach(k=>{
@@ -963,7 +1007,7 @@ Object.keys(socMap).forEach(k=>{
   if(!url || url==='#') return;
   const a=document.createElement('a');
   a.href=url; a.title=socMap[k]; a.setAttribute('aria-label',socMap[k]+' sayfamız');
-  a.textContent=socKisa[k];
+  a.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="'+SOC_IKON[k]+'"/></svg>';
   a.target='_blank'; a.rel='noopener';
   fSoc.appendChild(a);
 });
@@ -1100,7 +1144,7 @@ window.togglePlay=togglePlay;window.closePlayer=closePlayer;window.playRadio=pla
   requestAnimationFrame(kare);
 })();
 </script>
-<script src="site.js?v=20260928-075816"></script>
-<script src="paketler/kurumsal.js?v=20260928-075816"></script>
+<script src="site.js?v=20260929-095133"></script>
+<script src="paketler/kurumsal.js?v=20260929-095133"></script>
 </body>
 </html>

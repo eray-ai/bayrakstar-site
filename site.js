@@ -11,13 +11,21 @@
   var css = document.createElement('style');
   css.setAttribute('data-ortak','');   /* sayfa değişse de kalır */
   css.textContent = `
-    .navburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;z-index:1300}
+    /* Üst şerit her ekranda aynı: logo solda (eski düzen), 3 çizgili menü sağda.
+       Sağ üstteki radyo hapları kalktı; radyolar yarım menüde (revize 29 Eyl). */
+    .navburger{display:flex;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;z-index:1300;
+      position:absolute;right:5vw;top:50%;transform:translateY(-50%)}
     .navburger span{width:26px;height:3px;background:#fff;border-radius:3px;transition:.3s}
-    @media(max-width:940px){ .navburger{display:flex} nav.menu{display:none!important} .sib{display:none!important} }
+    header nav.menu, header .sib{display:none!important}
 
-    .navovl{position:fixed;inset:0;z-index:1400;background:rgba(14,14,14,.98);backdrop-filter:blur(10px);
-      display:flex;flex-direction:column;padding:26px 7vw;opacity:0;pointer-events:none;transition:opacity .35s}
-    .navovl.open{opacity:1;pointer-events:auto}
+    /* Yarım menü: sağdan açılan panel + arkada karartma perdesi */
+    .navperde{position:fixed;inset:0;z-index:1390;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .35s}
+    .navperde.open{opacity:1;pointer-events:auto}
+    .navovl{position:fixed;top:0;bottom:0;right:0;width:min(520px,50vw);z-index:1400;background:rgba(14,14,14,.98);backdrop-filter:blur(10px);
+      display:flex;flex-direction:column;padding:26px 44px;overflow-y:auto;box-shadow:-24px 0 60px rgba(0,0,0,.45);
+      transform:translateX(102%);visibility:hidden;transition:transform .45s cubic-bezier(.7,0,.3,1),visibility 0s .45s}
+    .navovl.open{transform:none;visibility:visible;transition:transform .45s cubic-bezier(.7,0,.3,1),visibility 0s}
+    @media(max-width:760px){ .navovl{width:86vw;padding:26px 7vw} }
     .navovl .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:34px}
     .navovl .top img{height:34px}
     .navovl .x{background:none;border:none;color:#fff;font-size:34px;line-height:1;cursor:pointer;opacity:.7}
@@ -32,7 +40,7 @@
        olduğu için yükseklik marka başına ayrı veriliyor — hepsi aynı yükseklikte
        verilirse Boombox devleşiyor, İstanbul FM cılız kalıyor. */
     .navovl a.radio{padding:7px 0}
-    .navovl a.radio img{height:52px;max-width:74vw;width:auto;object-fit:contain;object-position:left center;display:block}
+    .navovl a.radio img{height:52px;max-width:100%;width:auto;object-fit:contain;object-position:left center;display:block}
     .navovl a.radio .now{width:10px;height:10px;border-radius:50%;flex-shrink:0}
     .navovl a.small{font-size:clamp(18px,4.5vw,22px);font-weight:700;opacity:.8}
     .navovl.open a.small{opacity:.8}
@@ -58,7 +66,7 @@
     @media (prefers-reduced-motion:reduce){
       .pagecurtain{transition-duration:.001ms}
       .pagecurtain .cload i{animation:none}
-      .navovl,.navovl a{transition-duration:.001ms}
+      .navovl,.navovl a,.navperde{transition-duration:.001ms}
     }
   `;
   document.head.appendChild(css);
@@ -183,17 +191,22 @@
   ovl.querySelector('.x').addEventListener('click', closeMenu);
   }
   document.body.appendChild(ovl);
+  var perde = document.createElement('div');
+  perde.className = 'navperde';
+  perde.setAttribute('data-kalici','');
+  perde.addEventListener('click', function(){ closeMenu(); });
+  document.body.appendChild(perde);
 
   var burger = null;
   function openMenu(){
-    ovl.classList.add('open'); document.body.style.overflow='hidden';
+    ovl.classList.add('open'); perde.classList.add('open'); document.body.style.overflow='hidden';
     ovl.setAttribute('aria-hidden','false');
     if(burger) burger.setAttribute('aria-expanded','true');
     var ilk = ovl.querySelector('a'); if(ilk) ilk.focus();
   }
   function closeMenu(){
     var aciktiMi = ovl.classList.contains('open');
-    ovl.classList.remove('open'); document.body.style.overflow='';
+    ovl.classList.remove('open'); perde.classList.remove('open'); document.body.style.overflow='';
     ovl.setAttribute('aria-hidden','true');
     if(burger){ burger.setAttribute('aria-expanded','false'); if(aciktiMi) burger.focus(); }
   }
@@ -225,6 +238,9 @@
       });
     }
   }
+  /* Düğme başlığın soluna mutlak konumla oturuyor; başlığı sabit olmayan
+     sayfalarda (websiteler, yasal…) konum için başlık referans olsun. */
+  if(header && getComputedStyle(header).position==='static') header.style.position='relative';
   if(burger){
     burger.setAttribute('aria-label','Menüyü aç');
     burger.setAttribute('aria-expanded','false');
@@ -613,4 +629,68 @@
       location.replace(location.pathname + location.search + ayrac + 's=' + v.surum + location.hash);
     })
     .catch(function () { /* sürüm dosyası okunamadıysa sessizce devam */ });
+})();
+
+/* ============================================================
+   BÜYÜK HARFTE İNGİLİZCE KELİMELER (revize 29 Eyl)
+   ------------------------------------------------------------
+   Sayfalar lang="tr" olduğu için CSS'teki text-transform:uppercase
+   "Hit"i "HİT", "Billy"yi "BİLLY" yapıyor. Büyük harfle gösterilen
+   yazılarda aşağıdaki İngilizce kelimeler <span lang="en"> içine
+   alınıyor → tarayıcı onları İngilizce kuralıyla büyütüyor (HIT).
+   Yalnız içinde "i" geçen kelimeler sorun çıkardığı için liste onlardan
+   oluşuyor. Yeni bir program/kanal adında aynı sorun görülürse
+   kelimeyi buraya küçük harfle eklemek yeter.
+   ============================================================ */
+(function(){
+  var INGILIZCE = ['hit','hits','clubbin','boutique','music','mix','live','vibe','vibes','special',
+    'specialbox','radio','digital','billy','hip','oriental','chill','night','city','classic','indie',
+    'vintage','disco','life','kids','trip','big','time','wild','shine','high','mission','edition',
+    'fire','nights','cities','drive','sing','king','queen','iphone','ipad','android','ios','wifi'];
+  var SET = {}; INGILIZCE.forEach(function(k){ SET[k]=1; });
+  var KELIME = /[A-Za-zÇĞİÖŞÜçğıöşü]+/g;
+
+  function buyukMu(el){
+    try{ return getComputedStyle(el).textTransform==='uppercase'; }catch(e){ return false; }
+  }
+  function isle(dugum){
+    var p = dugum.parentNode;
+    if(!p || p.nodeType!==1 || p.closest('[lang="en"],script,style,textarea,[contenteditable]')) return;
+    var t = dugum.nodeValue; if(!t || !/[iI]/.test(t)) return;
+    if(!buyukMu(p)) return;
+    var parca=[], son=0, m, bulundu=false; KELIME.lastIndex=0;
+    while((m=KELIME.exec(t))){
+      if(SET[m[0].toLowerCase()] && /i/.test(m[0])){
+        bulundu=true;
+        if(m.index>son) parca.push(document.createTextNode(t.slice(son,m.index)));
+        var s=document.createElement('span'); s.setAttribute('lang','en'); s.textContent=m[0];
+        parca.push(s); son=m.index+m[0].length;
+      }
+    }
+    if(!bulundu) return;
+    if(son<t.length) parca.push(document.createTextNode(t.slice(son)));
+    var fr=document.createDocumentFragment(); parca.forEach(function(x){ fr.appendChild(x); });
+    p.replaceChild(fr, dugum);
+  }
+  function tara(kok){
+    if(!kok) return;
+    if(kok.nodeType===3){ isle(kok); return; }
+    if(kok.nodeType!==1) return;
+    var w=document.createTreeWalker(kok, NodeFilter.SHOW_TEXT), liste=[], n;
+    while((n=w.nextNode())) liste.push(n);
+    liste.forEach(isle);
+  }
+  var bekleyen=[], zaman=null;
+  function sirala(){ zaman=null; var l=bekleyen; bekleyen=[]; l.forEach(tara); }
+  function basla(){
+    tara(document.body);
+    new MutationObserver(function(ml){
+      ml.forEach(function(m){
+        if(m.type==='characterData') bekleyen.push(m.target);
+        else m.addedNodes.forEach(function(x){ bekleyen.push(x); });
+      });
+      if(!zaman) zaman=setTimeout(sirala,30);
+    }).observe(document.body,{childList:true,subtree:true,characterData:true});
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',basla); else basla();
 })();

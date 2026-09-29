@@ -11,3 +11,6 @@ supabase/
 araclar/alan-adi-degistir.py
 araclar/surum-yaz.py
 araclar/yayin-akisi-cek.py
+
+# Revize önizleme aracı (yerel)
+araclar/revize-29eyl/
