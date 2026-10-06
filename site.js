@@ -259,6 +259,42 @@
   /* Bunlar TÜM sayfalarda ortak; geçişte yeniden çalıştırılmamalı. */
   var ORTAK_BETIK = ['data.js','bulut.js','yayin.js','simdicaliyor.js','calar.js','site.js'];
 
+  /* Hangi ortak betik bu oturumda YÜKLENDİ? Yasal/web siteleri gibi sayfalar
+     çaları (calar.js vb.) hiç yüklemiyor; oradan ana sayfaya geçilince bunlar
+     "ortak" diye atlanıyordu → ana sayfa betiği "Calar is not defined" ile
+     yarıda kalıyor, alt bilgi ve devamı boş geliyordu. */
+  function ortakAdi(src){
+    for(var i=0;i<ORTAK_BETIK.length;i++){
+      var ad = ORTAK_BETIK[i];
+      if(src.split('?')[0].split('/').pop() === ad) return ad;
+    }
+    return null;
+  }
+  var yuklenenOrtak = {};
+  Array.prototype.forEach.call(document.scripts, function(n){
+    var ad = ortakAdi(n.getAttribute('src') || '');
+    if(ad) yuklenenOrtak[ad] = true;
+  });
+  yuklenenOrtak['site.js'] = true;
+  /* Yeni sayfanın istediği ama henüz yüklenmemiş ortak betikleri SIRAYLA
+     yükler; sayfanın kendi satır içi betikleri ancak bunlar bitince çalışır. */
+  function eksikOrtaklariYukle(doc){
+    var eksik = [];
+    doc.querySelectorAll('script[src]').forEach(function(n){
+      var src = n.getAttribute('src'), ad = ortakAdi(src);
+      if(ad && !yuklenenOrtak[ad] && eksik.every(function(e){ return e.ad!==ad; })) eksik.push({ad:ad, src:src});
+    });
+    return eksik.reduce(function(onceki, b){
+      return onceki.then(function(){ return new Promise(function(tamam, hata){
+        var k = document.createElement('script');
+        k.src = b.src;
+        k.onload = function(){ yuklenenOrtak[b.ad] = true; tamam(); };
+        k.onerror = function(){ hata(new Error(b.src)); };
+        document.head.appendChild(k);
+      }); });
+    }, Promise.resolve());
+  }
+
   var temizleyiciler = [];
   window.sayfaTemizligi = function(fn){ if(typeof fn==='function') temizleyiciler.push(fn); };
   function temizle(){
@@ -283,7 +319,7 @@
     var betikler = Array.prototype.slice.call(kok.querySelectorAll('script'));
     betikler.forEach(function(eski){
       var src = eski.getAttribute('src') || '';
-      if(src && ORTAK_BETIK.some(function(ad){ return src.indexOf(ad) >= 0; })){
+      if(src && ortakAdi(src)){
         eski.parentNode.removeChild(eski); return;
       }
       var yeni = document.createElement('script');
@@ -300,11 +336,17 @@
   function kafayiGuncelle(doc){
     /* Sayfaya ait tüm stiller gider, ortak olan (site.js'inki) kalır. */
     document.head.querySelectorAll('style:not([data-ortak])').forEach(function(n){ n.remove(); });
+    /* Sayfa stilleri ortak stilin ÖNÜNE konur — ilk açılıştaki sıra budur
+       (site.js gövde sonunda çalışıp stilini en sona ekliyor). Sona eklenince
+       aynı güçteki sayfa kuralları ortak olanı eziyordu: ana sayfanın
+       ".burger{display:none}" kuralı yüzünden geri dönünce masaüstünde
+       menü düğmesi kayboluyordu. */
+    var ortak = document.head.querySelector('style[data-ortak]');
     doc.head.querySelectorAll('style').forEach(function(n){
       var k = document.createElement('style');
       k.setAttribute('data-sayfa','');
       k.textContent = n.textContent;
-      document.head.appendChild(k);
+      document.head.insertBefore(k, ortak);
     });
     document.title = doc.title || document.title;
     ['description'].forEach(function(ad){
@@ -354,7 +396,7 @@
       .then(function(r){ if(!r.ok) throw new Error(r.status); return r.text(); })
       .then(function(metin){
         var doc = new DOMParser().parseFromString(metin, 'text/html');
-        return perdeBitti.then(function(){ return doc; });
+        return Promise.all([perdeBitti, eksikOrtaklariYukle(doc)]).then(function(){ return doc; });
       })
       .then(function(doc){
         temizle();
