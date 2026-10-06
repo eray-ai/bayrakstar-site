@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="site-surum" content="20260929-103819">
+<meta name="site-surum" content="20261006-160042">
 <!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
      kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
      yayın adresini media-src VE connect-src listelerine ekle. -->
@@ -40,11 +40,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="data.js?v=20260929-103819"></script>
-<script src="bulut.js?v=20260929-103819"></script>
-<script src="yayin.js?v=20260929-103819"></script>
-<script src="simdicaliyor.js?v=20260929-103819"></script>
-<script src="calar.js?v=20260929-103819"></script>
+<script src="data.js?v=20261006-160042"></script>
+<script src="bulut.js?v=20261006-160042"></script>
+<script src="yayin.js?v=20261006-160042"></script>
+<script src="simdicaliyor.js?v=20261006-160042"></script>
+<script src="calar.js?v=20261006-160042"></script>
 <style>
   :root{
     --dark:#242424;
@@ -168,6 +168,14 @@
   .stat .num{font-size:48px;font-weight:800;line-height:1}
   .stat .num.c1{color:var(--red)}.stat .num.c2{color:var(--teal)}.stat .num.c3{color:var(--blue)}.stat .num.c4{color:var(--yellow);-webkit-text-stroke:1px #e0a800}
   .stat .lbl{font-size:13px;color:#666;margin-top:8px;letter-spacing:.05em}
+  .vm{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:64px;text-align:left}
+  .vm-kart{background:#fff;border-radius:18px;padding:30px 30px 28px;border-top:4px solid var(--red);box-shadow:0 10px 30px rgba(0,0,0,.05)}
+  #vmM{border-top-color:var(--blue)}
+  .vm-et{display:block;font-size:12px;letter-spacing:.3em;text-transform:uppercase;font-weight:800;color:var(--red);margin-bottom:14px}
+  #vmM .vm-et{color:var(--blue)}
+  .intro .vm-kart p{font-size:16.5px;line-height:1.75;color:#333;margin:0;max-width:none}
+  .vm[hidden],.vm-kart[hidden]{display:none}
+  @media (max-width:760px){.vm{grid-template-columns:1fr;gap:16px;margin-top:44px}.vm-kart{padding:24px 22px}}
 
   /* ============ RADYOLAR ============ */
   .radios{padding:100px 5vw 110px;background:var(--dark)}
@@ -434,7 +442,7 @@
   }
 
 </style>
-<link rel="stylesheet" href="paketler/kurumsal.css?v=20260929-103819">
+<link rel="stylesheet" href="paketler/kurumsal.css?v=20261006-160042">
 </head>
 <body data-seo="ana">
 
@@ -477,6 +485,10 @@
     <p id="iP1"></p>
     <p id="iP2"></p>
     <div class="stats" id="iStats"></div>
+    <div class="vm" id="iVM">
+      <div class="vm-kart" id="vmV"><span class="vm-et">Vizyonumuz</span><p id="iVizyon"></p></div>
+      <div class="vm-kart" id="vmM"><span class="vm-et">Misyonumuz</span><p id="iMisyon"></p></div>
+    </div>
   </div>
 </section>
 
@@ -690,6 +702,13 @@ document.getElementById('iTag').textContent = D.intro.tag;
 document.getElementById('iHead').innerHTML = D.intro.headline;
 document.getElementById('iP1').innerHTML = D.intro.p1;
 document.getElementById('iP2').innerHTML = D.intro.p2;
+/* Vizyon / Misyon — boş bırakılan kart gizlenir, ikisi de boşsa blok kalkar */
+[['vizyon','iVizyon','vmV'],['misyon','iMisyon','vmM']].forEach(function(a){
+  const t=String(D.intro[a[0]]||'').trim();
+  document.getElementById(a[1]).innerHTML=t;
+  document.getElementById(a[2]).hidden=!t;
+});
+document.getElementById('iVM').hidden=!String(D.intro.vizyon||'').trim()&&!String(D.intro.misyon||'').trim();
 /* İstatistik rakamları AÇIK kağıt zemine (#f6f5f2) basılıyor; sarı (1.41:1) ve
    turkuaz (2.18:1) orada okunmuyordu. Renk tonu korunup yalnız koyulaştırılarak
    büyük yazı eşiği (3:1) sağlanıyor — zaten yeterli olanlara dokunulmuyor. */
@@ -1147,7 +1166,7 @@ window.togglePlay=togglePlay;window.closePlayer=closePlayer;window.playRadio=pla
   requestAnimationFrame(kare);
 })();
 </script>
-<script src="site.js?v=20260929-103819"></script>
-<script src="paketler/kurumsal.js?v=20260929-103819"></script>
+<script src="site.js?v=20261006-160042"></script>
+<script src="paketler/kurumsal.js?v=20261006-160042"></script>
 </body>
 </html>

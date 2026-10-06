@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="site-surum" content="20260929-103819">
+<meta name="site-surum" content="20261006-160042">
 <!-- GitHub Pages özel HTTP başlığı gönderemediği için güvenlik
      kuralı (CSP) sayfanın içine gömüldü. Yeni radyo eklersen
      yayın adresini media-src VE connect-src listelerine ekle. -->
@@ -15,12 +15,12 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="data.js?v=20260929-103819"></script>
-<script src="simdicaliyor.js?v=20260929-103819"></script>
+<script src="data.js?v=20261006-160042"></script>
+<script src="simdicaliyor.js?v=20261006-160042"></script>
 <!-- Panel bayat kopya üzerinde düzenleme yapıp yeni içeriği ezmesin:
      ön bellek olsa bile bulut HER ZAMAN taze okunur. -->
 <script>window.BULUT_TAZE_SART = true;</script>
-<script src="bulut.js?v=20260929-103819"></script>
+<script src="bulut.js?v=20261006-160042"></script>
 <style>
   :root{--red:#ff0007;--coral:#f75843;--blue:#0081ba;--teal:#00bac5;--yellow:#ffca11;--ink:#1c1c1c;--line:#e6e4df;--bg:#f2f1ee}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -581,6 +581,9 @@ function panelSite(b){
     + zenginAlan('z_p1','1. Paragraf', D.intro.p1, 'D.intro.p1', 300, ['renk','kalin','temiz'], true)
     + zenginAlan('z_p2','2. Paragraf', D.intro.p2, 'D.intro.p2', 300, ['renk','kalin','temiz'], true,
            'İki paragraf yan yana dizilir; benzer uzunlukta olmaları daha düzgün durur.')
+    + zenginAlan('z_vizyon','Vizyon', D.intro.vizyon, 'D.intro.vizyon', 260, ['kalin','temiz'], true)
+    + zenginAlan('z_misyon','Misyon', D.intro.misyon, 'D.intro.misyon', 320, ['kalin','temiz'], true,
+           'İstatistiklerin altında iki kart olarak görünür. Boş bırakılan kart sitede gizlenir.')
     + '<label style="margin-top:20px">İstatistik kutuları</label>'
     + '<div class="hint" style="margin-bottom:10px">Sayı en fazla <b>6</b>, etiket en fazla <b>18</b> karakter.</div>'
     + (D.intro.stats||[]).map(function(s,i){

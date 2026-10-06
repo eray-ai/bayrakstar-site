@@ -27,7 +27,8 @@
     .navovl.open{transform:none;visibility:visible;transition:transform .45s cubic-bezier(.7,0,.3,1),visibility 0s}
     @media(max-width:760px){ .navovl{width:86vw;padding:26px 7vw} }
     .navovl .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:34px}
-    .navovl .top img{height:34px}
+    .navovl .top img{height:64px}
+    @media(max-width:760px){ .navovl .top img{height:54px} }
     .navovl .x{background:none;border:none;color:#fff;font-size:34px;line-height:1;cursor:pointer;opacity:.7}
     .navovl .x:hover{opacity:1}
     .navovl .lbl{font-size:12px;letter-spacing:.28em;text-transform:uppercase;opacity:.45;margin:18px 0 10px;font-weight:700}
@@ -35,13 +36,9 @@
       opacity:0;transform:translateX(-16px);transition:opacity .4s,transform .4s}
     .navovl.open a{opacity:1;transform:none}
     .navovl a .dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
-    /* Radyo satırları isim yerine markanın kendi logosuyla çiziliyor.
-       Logolar farklı en/boy oranında (İstanbul FM çok yatık, Boombox kare gibi)
-       olduğu için yükseklik marka başına ayrı veriliyor — hepsi aynı yükseklikte
-       verilirse Boombox devleşiyor, İstanbul FM cılız kalıyor. */
-    .navovl a.radio{padding:7px 0}
-    .navovl a.radio img{height:52px;max-width:100%;width:auto;object-fit:contain;object-position:left center;display:block}
-    .navovl a.radio .now{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    /* Radyo satırları markanın renkli noktası + adıyla çizilir (logo değil — müşteri isteği, 6 Eki). */
+    .navovl a.radio{font-size:clamp(22px,5.6vw,30px);padding:4px 0}
+    .navovl a.radio .now{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#fff;opacity:.7}
     .navovl a.small{font-size:clamp(18px,4.5vw,22px);font-weight:700;opacity:.8}
     .navovl.open a.small{opacity:.8}
     .navovl a:hover{color:#fff}
@@ -157,22 +154,13 @@
   var ovl = document.createElement('div');
   ovl.className = 'navovl';
   ovl.setAttribute('data-kalici','');       /* sayfa değişince silinmez */
-  /* Logoların optik denge yükseklikleri (px) — dosyadaki en/boy oranından
-     geliyor: yatık logolar alçak, dikey/kare olan Boombox daha yüksek. */
-  var LOGO_H = { fenomen:46, fenomenturk:56, boombox:74, istanbulfm:44 };
   function radyoBaglantilari(){ return (D.radios||[]).map(function(r){
     var href = r.slug ? URLRadyo(r.slug) : r.url;
     var active = r.slug && r.slug===curSlug;
     var hedef = (r.slug?'':' target="_blank" rel="noopener"');
-    var nokta = active ? '<span class="now" style="background:'+(r.color||'#fff')+'"></span>' : '';
-    /* Logosu olmayan radyo eski biçimde (renkli nokta + isim) çizilir. */
-    if(!r.logo){
-      return '<a data-nav href="'+href+'"'+hedef+'>'+
-             '<span class="dot" style="background:'+(r.color||'#fff')+'"></span>'+r.name+(active?' •':'')+'</a>';
-    }
-    var h = LOGO_H[r.slug] || 52;
-    return '<a data-nav class="radio" href="'+href+'"'+hedef+' aria-label="'+r.name+'">'+
-           '<img src="'+r.logo+'" alt="'+r.name+'" style="height:'+h+'px">'+nokta+'</a>';
+    var nokta = active ? '<span class="now" aria-hidden="true"></span>' : '';
+    return '<a data-nav class="radio" href="'+href+'"'+hedef+(active?' aria-current="page"':'')+'>'+
+           '<span class="dot" style="background:'+(r.color||'#fff')+'"></span>'+r.name+nokta+'</a>';
   }).join(''); }
   ovl.setAttribute('role','dialog');
   ovl.setAttribute('aria-modal','true');

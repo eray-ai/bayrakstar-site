@@ -73,6 +73,8 @@ window.DEFAULT_DATA = {
     "headline": "Birçok radyo,<br><span class=\"c\">tek bir çatı</span> altında.",
     "p1": "Bayrakstar; birbirinden farklı hedef kitlelere hitap eden radyolarını aynı yayın gücü, teknolojisi ve kalitesiyle bir araya getiren bir marka evidir. Her radyomuz kendi kimliğini, kendi rengini ve kendi dinleyicisini korurken; ortak bir yayın anlayışını paylaşır.",
     "p2": "Maksimum hit müzikten Türkçe pop'a, eğlenceden sokağın enerjisine — Bayrakstar çatısı altındaki her frekans, ayrı bir hikâye anlatır. <b>colorful life.</b>",
+    "vizyon": "Radyo ve ses pazarlamasından güç alan ancak içeriklerini tüm mecralara taşıyan ve pazarlayan holistik bir medya grubu olmak.",
+    "misyon": "Radyo ve ses alanındaki güçlü mirasımızı yeni nesil içerik ve iletişim çözümleriyle büyütmek; içerikleri üreten, geliştiren, farklı mecralara taşıyan ve markalar için değere dönüştüren bir medya ekosistemi oluşturmak.",
     "stats": [
       {
         "num": "4",
