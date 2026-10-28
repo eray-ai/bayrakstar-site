@@ -540,33 +540,21 @@ window.DEFAULT_DATA = {
         },
         {
           "t": "07:00 – 10:00",
-          "name": "Tansu Çağlayan’la Yeni Gün",
-          "host": "Tansu Çağlayan",
-          "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
+          "name": "Ömer Erişmen’le Extra",
+          "host": "Ömer Erişmen"
         },
         {
           "t": "10:00 – 12:00",
           "name": "Serdar'la Ne Var Ne Yok"
         },
         {
-          "t": "12:00 – 14:00",
-          "name": "Eğlence ve Müzik"
-        },
-        {
-          "t": "14:00 – 16:00",
-          "name": "Ömer Erişmen’le Extra",
-          "host": "Ömer Erişmen",
-          "img": "yayincilar/fenomenturk-omer-erismen.jpg"
-        },
-        {
-          "t": "16:00 – 18:00",
+          "t": "12:00 – 18:00",
           "name": "Eğlence ve Müzik"
         },
         {
           "t": "18:00 – 20:00",
           "name": "Murat Özsoy’la Şarzzz",
-          "host": "Murat Özsoy",
-          "img": "yayincilar/fenomenturk-murat-ozsoy.jpg"
+          "host": "Murat Özsoy"
         },
         {
           "t": "20:00 – 00:00",
@@ -606,43 +594,25 @@ window.DEFAULT_DATA = {
           },
           {
             "t": "07:00 – 10:00",
-            "name": "Tansu Çağlayan’la Yeni Gün",
-            "host": "Tansu Çağlayan",
-            "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
+            "name": "Ömer Erişmen’le Extra",
+            "host": "Ömer Erişmen"
           },
           {
             "t": "10:00 – 12:00",
             "name": "Serdar'la Ne Var Ne Yok"
           },
           {
-            "t": "12:00 – 14:00",
-            "name": "Eğlence ve Müzik"
-          },
-          {
-            "t": "14:00 – 16:00",
-            "name": "Ömer Erişmen’le Extra",
-            "host": "Ömer Erişmen",
-            "img": "yayincilar/fenomenturk-omer-erismen.jpg"
-          },
-          {
-            "t": "16:00 – 18:00",
+            "t": "12:00 – 18:00",
             "name": "Eğlence ve Müzik"
           },
           {
             "t": "18:00 – 20:00",
             "name": "Murat Özsoy’la Şarzzz",
-            "host": "Murat Özsoy",
-            "img": "yayincilar/fenomenturk-murat-ozsoy.jpg"
+            "host": "Murat Özsoy"
           },
           {
-            "t": "20:00 – 22:00",
+            "t": "20:00 – 23:00",
             "name": "Eğlence ve Müzik"
-          },
-          {
-            "t": "22:00 – 23:00",
-            "name": "Retro Hit (Tansu Çağlayan DJ Set)",
-            "host": "Tansu Çağlayan",
-            "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
           },
           {
             "t": "23:00 – 00:00",
@@ -683,14 +653,8 @@ window.DEFAULT_DATA = {
             "name": "Pop Hit"
           },
           {
-            "t": "18:00 – 22:00",
+            "t": "18:00 – 23:00",
             "name": "Eğlence ve Müzik"
-          },
-          {
-            "t": "22:00 – 23:00",
-            "name": "Retro Hit (Tansu Çağlayan DJ Set)",
-            "host": "Tansu Çağlayan",
-            "img": "yayincilar/fenomenturk-tansu-caglayan.jpg"
           },
           {
             "t": "23:00 – 00:00",
